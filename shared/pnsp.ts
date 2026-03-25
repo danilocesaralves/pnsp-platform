@@ -95,4 +95,7 @@ export const GENRES = [
   "Pagode baiano", "Pagode romântico", "Choro", "MPB",
 ] as const;
 
-export const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663116082617/bC6Pj8ksngxNy5fe35WqgW/pnsp-logo_276f7323.png";
+// SVG vetorial — nítido em qualquer tamanho, sem pixelização
+export const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663116082617/bC6Pj8ksngxNy5fe35WqgW/pnsp-logo_0062fa99.svg";
+export const LOGO_URL_WHITE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663116082617/bC6Pj8ksngxNy5fe35WqgW/pnsp-logo-white_eeca339e.svg";
+export const LOGO_URL_GOLD = "https://d2xsxph8kpxj0f.cloudfront.net/310519663116082617/bC6Pj8ksngxNy5fe35WqgW/pnsp-logo-gold_93bb7e34.svg";

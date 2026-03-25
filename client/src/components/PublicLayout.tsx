@@ -40,11 +40,11 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="container">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-[4.5rem]">
 
             {/* Logo */}
             <Link href="/">
-              <PNSPLogo variant="full" size="sm" className="cursor-pointer" />
+              <PNSPLogo variant="full" size="lg" theme="light" className="cursor-pointer" />
             </Link>
 
             {/* Desktop Nav */}
@@ -217,7 +217,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <div className="container py-14">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <div className="md:col-span-2">
-              <PNSPLogo variant="full" size="md" theme="dark" className="mb-5" />
+              <PNSPLogo variant="full" size="lg" theme="dark" className="mb-5" />
               <p className="text-sm leading-relaxed font-body" style={{ color: "var(--n400)" }}>
                 A infraestrutura digital nacional para o ecossistema do samba e do pagode.
                 Conectando artistas, grupos, estúdios e parceiros em todo o Brasil.

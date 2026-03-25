@@ -1,19 +1,35 @@
-import { LOGO_URL } from "@shared/pnsp";
 import { cn } from "@/lib/utils";
+import { PNSPLogoSVG } from "./PNSPLogoSVG";
 
 interface PNSPLogoProps {
+  /** "full" = SVG logo completo (símbolo + PNSP + subtítulo)
+   *  "icon" = apenas o símbolo (pandeiro + notas) — usa img recortada
+   *  "text" = apenas o wordmark tipográfico */
   variant?: "full" | "icon" | "text";
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+  /** "dark" = fundo escuro → logo dourado
+   *  "light" = fundo claro → logo preto
+   *  "auto"  = herda do contexto (currentColor) */
   theme?: "dark" | "light" | "auto";
   className?: string;
 }
 
+// Tamanhos — o logo SVG tem proporção ~2.32:1 (largura:altura)
+// Definimos a altura; a largura é calculada automaticamente
 const sizeMap = {
-  xs: { img: "h-6", text: "text-sm" },
-  sm: { img: "h-8", text: "text-base" },
-  md: { img: "h-10", text: "text-lg" },
-  lg: { img: "h-12", text: "text-xl" },
-  xl: { img: "h-16", text: "text-2xl" },
+  xs:    "h-7",    // 28px
+  sm:    "h-10",   // 40px
+  md:    "h-12",   // 48px
+  lg:    "h-14",   // 56px
+  xl:    "h-18",   // 72px
+  "2xl": "h-24",   // 96px
+};
+
+// Cor do fill conforme tema
+const fillMap = {
+  dark:  "#DCA832",   // dourado sobre fundo escuro
+  light: "#1a1a1a",   // preto sobre fundo claro
+  auto:  "currentColor",
 };
 
 export function PNSPLogo({
@@ -22,31 +38,25 @@ export function PNSPLogo({
   theme = "auto",
   className,
 }: PNSPLogoProps) {
-  const { img: imgSize, text: textSize } = sizeMap[size];
+  const hClass = sizeMap[size];
+  const fill = fillMap[theme];
 
-  const textColor =
-    theme === "dark"
-      ? "text-white"
-      : theme === "light"
-      ? "text-[var(--n950)]"
+  // ── variant: text ─────────────────────────────────────────────────────────
+  if (variant === "text") {
+    const textSizeMap = {
+      xs: "text-sm", sm: "text-base", md: "text-lg",
+      lg: "text-xl", xl: "text-2xl", "2xl": "text-3xl",
+    };
+    const textColor =
+      theme === "dark" ? "text-white"
+      : theme === "light" ? "text-[#1a1a1a]"
       : "text-foreground";
 
-  if (variant === "icon") {
-    return (
-      <img
-        src={LOGO_URL}
-        alt="PNSP"
-        className={cn(imgSize, "w-auto object-contain", className)}
-      />
-    );
-  }
-
-  if (variant === "text") {
     return (
       <span
         className={cn(
           "font-display font-semibold tracking-tight",
-          textSize,
+          textSizeMap[size],
           textColor,
           className
         )}
@@ -57,34 +67,31 @@ export function PNSPLogo({
     );
   }
 
-  // full variant — logo image + text
-  return (
-    <div className={cn("flex items-center gap-2.5", className)}>
-      <img
-        src={LOGO_URL}
-        alt="PNSP"
-        className={cn(imgSize, "w-auto object-contain flex-shrink-0")}
-      />
-      <div className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-display font-semibold tracking-tight",
-            textSize,
-            textColor
-          )}
-        >
-          PNSP
-        </span>
-        <span
-          className={cn(
-            "font-body text-[0.6em] tracking-widest uppercase opacity-70",
-            textColor
-          )}
-        >
-          Samba & Pagode
-        </span>
+  // ── variant: icon ─────────────────────────────────────────────────────────
+  // O SVG é horizontal (símbolo + texto). Para mostrar só o símbolo,
+  // usamos um wrapper com overflow:hidden e largura fixa igual à altura
+  if (variant === "icon") {
+    return (
+      <div
+        className={cn("overflow-hidden flex-shrink-0", hClass, className)}
+        style={{ width: "var(--logo-icon-w, 1em)", aspectRatio: "1 / 1" }}
+        aria-label="PNSP"
+      >
+        <PNSPLogoSVG
+          fill={fill}
+          className={cn(hClass, "max-w-none")}
+          // Shift left to show only the symbol portion (~40% of width)
+        />
       </div>
-    </div>
+    );
+  }
+
+  // ── variant: full (padrão) ────────────────────────────────────────────────
+  return (
+    <PNSPLogoSVG
+      fill={fill}
+      className={cn(hClass, className)}
+    />
   );
 }
 
