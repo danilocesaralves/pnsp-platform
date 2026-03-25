@@ -8,7 +8,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Search, MapPin, Mic2, Star, X, CheckCircle2, Clock,
+  Search, MapPin, Mic2, Star, X, CheckCircle2, Clock, AlertCircle,
 } from "lucide-react";
 import { BRAZIL_STATES } from "@shared/pnsp";
 
@@ -42,7 +42,7 @@ export default function Studios() {
   const [offset, setOffset] = useState(0);
   const limit = 18;
 
-  const { data: studios, isLoading } = trpc.studios.list.useQuery({
+  const { data: studios, isLoading, isError } = trpc.studios.list.useQuery({
     search: search || undefined,
     state: state !== "all" ? state : undefined,
     studioType: studioType !== "all" ? studioType : undefined,
@@ -138,7 +138,7 @@ export default function Studios() {
           )}
 
           <span className="ml-auto text-sm text-muted-foreground font-body">
-            {isLoading ? "Carregando..." : `${studios?.length ?? 0} estúdios`}
+            {isLoading ? "Carregando..." : isError ? "Erro ao carregar" : `${studios?.length ?? 0} estúdios`}
           </span>
         </div>
 
@@ -254,6 +254,15 @@ export default function Studios() {
               )}
             </div>
           </>
+        ) : isError ? (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--o100)" }}>
+              <AlertCircle className="h-8 w-8" style={{ color: "var(--o500)" }} />
+            </div>
+            <h3 className="font-display font-semibold text-xl text-foreground mb-2">Erro ao carregar estúdios</h3>
+            <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">Não foi possível carregar os estúdios. Verifique sua conexão e tente novamente.</p>
+            <Button onClick={() => window.location.reload()} className="font-body" style={{ background: "var(--g600)" }}>Tentar novamente</Button>
+          </div>
         ) : (
           <div className="text-center py-20">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--n100)" }}>
@@ -261,12 +270,16 @@ export default function Studios() {
             </div>
             <h3 className="font-display font-semibold text-xl text-foreground mb-2">Nenhum estúdio encontrado</h3>
             <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">
-              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Ainda não há estúdios cadastrados."}
+              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Ainda não há estúdios cadastrados na sua região."}
             </p>
-            {hasFilters && (
+            {hasFilters ? (
               <Button onClick={clearFilters} variant="outline" className="font-body">
                 <X className="h-4 w-4 mr-2" />Limpar filtros
               </Button>
+            ) : (
+              <Link href="/cadastro">
+                <Button className="font-body" style={{ background: "var(--g600)" }}>Cadastrar meu estúdio</Button>
+              </Link>
             )}
           </div>
         )}

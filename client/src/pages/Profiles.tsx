@@ -9,7 +9,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Search, MapPin, Star, Users, X, Award, Music,
+  Search, MapPin, Star, Users, X, Award, Music, AlertCircle,
 } from "lucide-react";
 import { PROFILE_TYPES, BRAZIL_STATES } from "@shared/pnsp";
 
@@ -64,7 +64,7 @@ export default function Profiles() {
   const [offset, setOffset] = useState(0);
   const limit = 24;
 
-  const { data: profiles, isLoading } = trpc.profiles.list.useQuery({
+  const { data: profiles, isLoading, isError } = trpc.profiles.list.useQuery({
     search: search || undefined,
     profileType: profileType !== "all" ? profileType : undefined,
     state: state !== "all" ? state : undefined,
@@ -250,6 +250,15 @@ export default function Profiles() {
               )}
             </div>
           </>
+        ) : isError ? (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--o100)" }}>
+              <AlertCircle className="h-8 w-8" style={{ color: "var(--o500)" }} />
+            </div>
+            <h3 className="font-display font-semibold text-xl text-foreground mb-2">Erro ao carregar perfis</h3>
+            <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">Não foi possível carregar os perfis. Verifique sua conexão e tente novamente.</p>
+            <Button onClick={() => window.location.reload()} className="font-body" style={{ background: "var(--g600)" }}>Tentar novamente</Button>
+          </div>
         ) : (
           <div className="text-center py-20">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--o100)" }}>
@@ -257,12 +266,16 @@ export default function Profiles() {
             </div>
             <h3 className="font-display font-semibold text-xl text-foreground mb-2">Nenhum perfil encontrado</h3>
             <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">
-              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Ainda não há perfis cadastrados."}
+              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Seja o primeiro a criar seu perfil na PNSP."}
             </p>
-            {hasFilters && (
+            {hasFilters ? (
               <Button onClick={clearFilters} variant="outline" className="font-body">
                 <X className="h-4 w-4 mr-2" />Limpar filtros
               </Button>
+            ) : (
+              <Link href="/cadastro">
+                <Button className="font-body" style={{ background: "var(--g600)" }}>Criar meu perfil</Button>
+              </Link>
             )}
           </div>
         )}

@@ -663,33 +663,22 @@ export async function getProfilesByState() {
 export async function getMonthlyGrowth() {
   const db = await getDb();
   if (!db) return [];
-  // Get counts grouped by month for the last 6 months (createdAt is native timestamp)
-  const sixMonthsAgo = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000);
+  // Use raw SQL with alias to satisfy MySQL ONLY_FULL_GROUP_BY mode
+  // GROUP BY alias is supported in MySQL and avoids repeating the expression
+  const runQuery = async (table: string) => {
+    const [rows] = await (db as any).execute(
+      `SELECT DATE_FORMAT(\`createdAt\`, '%Y-%m') AS \`month\`, COUNT(*) AS \`count\`
+       FROM \`${table}\`
+       WHERE \`createdAt\` >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+       GROUP BY \`month\`
+       ORDER BY \`month\``
+    );
+    return rows as Array<{ month: string; count: string }>;
+  };
   const [profileGrowth, userGrowth, offeringGrowth] = await Promise.all([
-    db.select({
-      month: sql<string>`DATE_FORMAT(${profiles.createdAt}, '%Y-%m')`,
-      count: sql<number>`count(*)`,
-    })
-      .from(profiles)
-      .where(sql`${profiles.createdAt} >= ${sixMonthsAgo}`)
-      .groupBy(sql`DATE_FORMAT(${profiles.createdAt}, '%Y-%m')`)
-      .orderBy(sql`DATE_FORMAT(${profiles.createdAt}, '%Y-%m')`),
-    db.select({
-      month: sql<string>`DATE_FORMAT(${users.createdAt}, '%Y-%m')`,
-      count: sql<number>`count(*)`,
-    })
-      .from(users)
-      .where(sql`${users.createdAt} >= ${sixMonthsAgo}`)
-      .groupBy(sql`DATE_FORMAT(${users.createdAt}, '%Y-%m')`)
-      .orderBy(sql`DATE_FORMAT(${users.createdAt}, '%Y-%m')`),
-    db.select({
-      month: sql<string>`DATE_FORMAT(${offerings.createdAt}, '%Y-%m')`,
-      count: sql<number>`count(*)`,
-    })
-      .from(offerings)
-      .where(sql`${offerings.createdAt} >= ${sixMonthsAgo}`)
-      .groupBy(sql`DATE_FORMAT(${offerings.createdAt}, '%Y-%m')`)
-      .orderBy(sql`DATE_FORMAT(${offerings.createdAt}, '%Y-%m')`),
+    runQuery('profiles'),
+    runQuery('users'),
+    runQuery('offerings'),
   ]);
   // Merge into unified monthly data
   const months = new Set([
@@ -701,9 +690,9 @@ export async function getMonthlyGrowth() {
     const shortMonth = new Date(month + '-01').toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
     return {
       mes: shortMonth,
-      perfis: profileGrowth.find(r => r.month === month)?.count ?? 0,
-      usuarios: userGrowth.find(r => r.month === month)?.count ?? 0,
-      ofertas: offeringGrowth.find(r => r.month === month)?.count ?? 0,
+      perfis: Number(profileGrowth.find(r => r.month === month)?.count ?? 0),
+      usuarios: Number(userGrowth.find(r => r.month === month)?.count ?? 0),
+      ofertas: Number(offeringGrowth.find(r => r.month === month)?.count ?? 0),
     };
   });
 }

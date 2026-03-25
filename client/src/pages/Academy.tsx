@@ -9,7 +9,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Search, BookOpen, Play, Clock, Lock, X, GraduationCap,
+  Search, BookOpen, Play, Clock, Lock, X, GraduationCap, AlertCircle,
 } from "lucide-react";
 import { ACADEMY_CATEGORIES } from "@shared/pnsp";
 
@@ -57,7 +57,7 @@ export default function Academy() {
   const [offset, setOffset] = useState(0);
   const limit = 18;
 
-  const { data: content, isLoading } = trpc.academy.list.useQuery({
+  const { data: content, isLoading, isError } = trpc.academy.list.useQuery({
     search: search || undefined,
     category: category !== "all" ? category : undefined,
     contentType: contentType !== "all" ? contentType : undefined,
@@ -153,7 +153,7 @@ export default function Academy() {
           )}
 
           <span className="ml-auto text-sm text-muted-foreground font-body">
-            {isLoading ? "Carregando..." : `${content?.length ?? 0} conteúdos`}
+            {isLoading ? "Carregando..." : isError ? "Erro ao carregar" : `${content?.length ?? 0} conteúdos`}
           </span>
         </div>
 
@@ -275,6 +275,15 @@ export default function Academy() {
               )}
             </div>
           </>
+        ) : isError ? (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--o100)" }}>
+              <AlertCircle className="h-8 w-8" style={{ color: "var(--o500)" }} />
+            </div>
+            <h3 className="font-display font-semibold text-xl text-foreground mb-2">Erro ao carregar conteúdo</h3>
+            <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">Não foi possível carregar o conteúdo. Verifique sua conexão e tente novamente.</p>
+            <Button onClick={() => window.location.reload()} className="font-body" style={{ background: "var(--g600)" }}>Tentar novamente</Button>
+          </div>
         ) : (
           <div className="text-center py-20">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--g100)" }}>
@@ -282,12 +291,16 @@ export default function Academy() {
             </div>
             <h3 className="font-display font-semibold text-xl text-foreground mb-2">Nenhum conteúdo encontrado</h3>
             <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">
-              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Ainda não há conteúdo publicado."}
+              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Ainda não há conteúdo publicado na Academia."}
             </p>
-            {hasFilters && (
+            {hasFilters ? (
               <Button onClick={clearFilters} variant="outline" className="font-body">
                 <X className="h-4 w-4 mr-2" />Limpar filtros
               </Button>
+            ) : (
+              <Link href="/cadastro">
+                <Button className="font-body" style={{ background: "var(--g600)" }}>Publicar conteúdo</Button>
+              </Link>
             )}
           </div>
         )}

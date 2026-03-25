@@ -1,0 +1,26 @@
+{
+  "query": "SELECT DATE_FORMAT(`createdAt`, '%Y-%m') AS `month`, COUNT(*) AS `count` FROM `offerings` WHERE `offerings`.`createdAt` >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY `month` ORDER BY `month`;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3addFH5ZZ41CXyi.root --database bC6Pj8ksngxNy5fe35WqgW --execute SELECT DATE_FORMAT(`createdAt`, '%Y-%m') AS `month`, COUNT(*) AS `count` FROM `offerings` WHERE `offerings`.`createdAt` >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY `month` ORDER BY `month`;",
+  "rows": [
+    {
+      "month": "2025-12",
+      "count": "3"
+    },
+    {
+      "month": "2026-01",
+      "count": "4"
+    },
+    {
+      "month": "2026-02",
+      "count": "11"
+    },
+    {
+      "month": "2026-03",
+      "count": "12"
+    }
+  ],
+  "messages": [],
+  "stdout": "month\tcount\n2025-12\t3\n2026-01\t4\n2026-02\t11\n2026-03\t12\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

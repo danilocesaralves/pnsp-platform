@@ -130,7 +130,7 @@
 - [x] Todas as rotas públicas usam publicProcedure
 - [x] Validação do .env no startup (check de variáveis obrigatórias)
 - [x] .env.example documentado (via ENVIRONMENT.md)
-- [ ] Adicionar índices críticos no banco
+- [x] Índices críticos criados no banco (type, isActive, state, createdAt)
 - [ ] Adicionar UNIQUE(opportunityId, profileId) em applications
 - [ ] Adicionar campos lat/lng/geocoded em profiles
 - [ ] Adicionar viewCount/leadCount em offers
@@ -141,11 +141,28 @@
 - [x] Code splitting por rota (React.lazy + Suspense)
 - [x] Componente PNSPLogo com variantes (nav, hero, sidebar, footer)
 - [x] Mobile-first: nav hamburger com Sheet (PublicLayout)
-- [ ] Skeleton loading em todas as listagens
-- [ ] Empty state com CTA em todas as listagens
-- [ ] Error state amigável em todos os erros de API
-- [ ] Toast em todas as ações do usuário
-- [ ] Loading state em todos os botões de submit
+- [x] Skeleton loading em Perfis, Ofertas, Oportunidades, Academia, Estúdios (já existia)
+- [x] Empty state em todas as listagens (já existia)
+- [x] Error state (isError + AlertCircle + botão Tentar novamente) em Perfis, Ofertas, Oportunidades, Estúdios, Academia
+- [x] Toast (sonner) em todas as ações do usuário (já existia)
+- [x] Loading state em todos os botões de submit (já existia)
+
+## SESSÃO 3 — Banco + Performance
+- [x] Índices críticos criados: (type, isActive), (state), (createdAt)
+- [x] Dados demo distribuídos em 6 meses com curva de crescimento (out/25 → mar/26)
+- [x] Gráfico de crescimento do Dashboard com dados reais (6 meses visíveis)
+- [x] Query getMonthlyGrowth corrigida com raw SQL + alias para ONLY_FULL_GROUP_BY
+- [ ] UNIQUE(opportunityId, profileId) em applications
+- [ ] Campos latitude/longitude em profiles
+- [ ] viewCount e leadCount em offerings
+
+## SESSÃO 4 — Dashboard Proprietário Completo
+- [x] Aba Financeiro: receitas/custos manuais + previsto x realizado + fontes de receita
+- [x] Aba Operação: usuários recentes + saúde da plataforma + fila de moderação + previsão de receita
+- [x] Aba Crescimento: gráfico temporal (6 meses), distribuição por tipo, distribuição geográfica real
+- [x] Distribuição geográfica com dados reais (RJ, MG, PE, DF, PB)
+- [ ] Exportação de relatório PDF com KPIs e gráficos
+- [ ] Seletor de período (7d, 30d, 90d, 1a)
 
 ## ELEVAÇÃO 10/10 — Fase C (Profissional)
 - [x] 40 testes Vitest passando (auth, profiles, offerings, opportunities, studios, academy, admin, owner, analytics, platform, map, authorization, input validation)

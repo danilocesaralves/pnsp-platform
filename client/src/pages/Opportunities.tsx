@@ -9,7 +9,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Search, MapPin, Calendar, Music, X, Users, Clock, ChevronRight,
+  Search, MapPin, Calendar, Music, X, Users, Clock, ChevronRight, AlertCircle,
 } from "lucide-react";
 import { OPPORTUNITY_CATEGORIES, BRAZIL_STATES } from "@shared/pnsp";
 
@@ -43,7 +43,7 @@ export default function Opportunities() {
   const [offset, setOffset] = useState(0);
   const limit = 20;
 
-  const { data: opportunities, isLoading } = trpc.opportunities.list.useQuery({
+  const { data: opportunities, isLoading, isError } = trpc.opportunities.list.useQuery({
     search: search || undefined,
     category: category !== "all" ? category : undefined,
     state: state !== "all" ? state : undefined,
@@ -139,7 +139,7 @@ export default function Opportunities() {
           )}
 
           <span className="ml-auto text-sm text-muted-foreground font-body">
-            {isLoading ? "Carregando..." : `${opportunities?.length ?? 0} oportunidades`}
+            {isLoading ? "Carregando..." : isError ? "Erro ao carregar" : `${opportunities?.length ?? 0} oportunidades`}
           </span>
         </div>
 
@@ -222,6 +222,15 @@ export default function Opportunities() {
               )}
             </div>
           </>
+        ) : isError ? (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-red-50">
+              <AlertCircle className="h-8 w-8 text-red-500" />
+            </div>
+            <h3 className="font-display font-semibold text-xl text-foreground mb-2">Erro ao carregar oportunidades</h3>
+            <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">Não foi possível carregar as oportunidades. Verifique sua conexão e tente novamente.</p>
+            <Button onClick={() => window.location.reload()} variant="outline" className="font-body">Tentar novamente</Button>
+          </div>
         ) : (
           <div className="text-center py-20">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--o100)" }}>
@@ -229,12 +238,16 @@ export default function Opportunities() {
             </div>
             <h3 className="font-display font-semibold text-xl text-foreground mb-2">Nenhuma oportunidade encontrada</h3>
             <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">
-              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Ainda não há oportunidades abertas."}
+              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Seja o primeiro a publicar uma oportunidade!"}
             </p>
-            {hasFilters && (
+            {hasFilters ? (
               <Button onClick={clearFilters} variant="outline" className="font-body">
                 <X className="h-4 w-4 mr-2" />Limpar filtros
               </Button>
+            ) : (
+              <a href="/criar-oportunidade">
+                <Button className="font-body" style={{ background: "var(--o500)", color: "var(--n950)" }}>Publicar oportunidade</Button>
+              </a>
             )}
           </div>
         )}
