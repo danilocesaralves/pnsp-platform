@@ -1,0 +1,58 @@
+{
+  "query": "SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME IN ('studios','offerings','opportunities','academy_content') AND ORDINAL_POSITION > 20 ORDER BY TABLE_NAME, ORDINAL_POSITION",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3addFH5ZZ41CXyi.root --database bC6Pj8ksngxNy5fe35WqgW --execute SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME IN ('studios','offerings','opportunities','academy_content') AND ORDINAL_POSITION > 20 ORDER BY TABLE_NAME, ORDINAL_POSITION",
+  "rows": [
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "updatedAt"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "updatedAt"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "pricePerHour"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "pricePerDay"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "capacity"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "isVerified"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "isActive"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "rating"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "reviewCount"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "TABLE_NAME": "studios",
+      "COLUMN_NAME": "updatedAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\tCOLUMN_NAME\nacademy_content\tupdatedAt\nofferings\tupdatedAt\nstudios\tpricePerHour\nstudios\tpricePerDay\nstudios\tcapacity\nstudios\tisVerified\nstudios\tisActive\nstudios\tstatus\nstudios\trating\nstudios\treviewCount\nstudios\tcreatedAt\nstudios\tupdatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

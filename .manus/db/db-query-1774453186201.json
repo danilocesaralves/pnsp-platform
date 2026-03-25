@@ -1,0 +1,17 @@
+{
+  "query": "SELECT \n  (SELECT COUNT(*) FROM profiles) as profiles,\n  (SELECT COUNT(*) FROM studios) as studios,\n  (SELECT COUNT(*) FROM offerings) as offerings,\n  (SELECT COUNT(*) FROM opportunities) as opportunities,\n  (SELECT COUNT(*) FROM academy_content) as academy_content",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3addFH5ZZ41CXyi.root --database bC6Pj8ksngxNy5fe35WqgW --execute SELECT \n  (SELECT COUNT(*) FROM profiles) as profiles,\n  (SELECT COUNT(*) FROM studios) as studios,\n  (SELECT COUNT(*) FROM offerings) as offerings,\n  (SELECT COUNT(*) FROM opportunities) as opportunities,\n  (SELECT COUNT(*) FROM academy_content) as academy_content",
+  "rows": [
+    {
+      "profiles": "50",
+      "studios": "12",
+      "offerings": "30",
+      "opportunities": "20",
+      "academy_content": "15"
+    }
+  ],
+  "messages": [],
+  "stdout": "profiles\tstudios\tofferings\topportunities\tacademy_content\n50\t12\t30\t20\t15\n",
+  "stderr": "",
+  "execution_time_ms": 203
+}

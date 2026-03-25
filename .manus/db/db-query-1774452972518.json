@@ -1,0 +1,86 @@
+{
+  "query": "SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'opportunities' ORDER BY ORDINAL_POSITION",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3addFH5ZZ41CXyi.root --database bC6Pj8ksngxNy5fe35WqgW --execute SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'opportunities' ORDER BY ORDINAL_POSITION",
+  "rows": [
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "userId"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "profileId"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "title"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "description"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "category"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "requiredType"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "city"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "state"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "budgetMin"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "budgetMax"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "tags"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "isActive"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "applicationCount"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "viewCount"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "deadline"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "updatedAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\tCOLUMN_NAME\nopportunities\tid\nopportunities\tuserId\nopportunities\tprofileId\nopportunities\ttitle\nopportunities\tdescription\nopportunities\tcategory\nopportunities\trequiredType\nopportunities\tcity\nopportunities\tstate\nopportunities\tbudgetMin\nopportunities\tbudgetMax\nopportunities\ttags\nopportunities\tisActive\nopportunities\tstatus\nopportunities\tapplicationCount\nopportunities\tviewCount\nopportunities\tdeadline\nopportunities\tcreatedAt\nopportunities\tupdatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

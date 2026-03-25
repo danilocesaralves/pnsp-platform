@@ -1,0 +1,254 @@
+{
+  "query": "SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME IN ('offerings','opportunities','academy_content') ORDER BY TABLE_NAME, ORDINAL_POSITION",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3addFH5ZZ41CXyi.root --database bC6Pj8ksngxNy5fe35WqgW --execute SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME IN ('offerings','opportunities','academy_content') ORDER BY TABLE_NAME, ORDINAL_POSITION",
+  "rows": [
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "authorId"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "title"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "slug"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "excerpt"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "content"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "contentType"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "category"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "level"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "thumbnailUrl"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "videoUrl"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "duration"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "isPremium"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "price"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "tags"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "isPublished"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "viewCount"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "likeCount"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "publishedAt"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "TABLE_NAME": "academy_content",
+      "COLUMN_NAME": "updatedAt"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "profileId"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "userId"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "title"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "description"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "category"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "priceType"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "price"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "currency"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "imageUrl"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "city"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "state"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "tags"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "isPremium"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "isActive"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "viewCount"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "interestCount"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "expiresAt"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "TABLE_NAME": "offerings",
+      "COLUMN_NAME": "updatedAt"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "id"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "userId"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "profileId"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "title"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "description"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "category"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "requiredType"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "city"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "state"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "budgetMin"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "budgetMax"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "tags"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "isActive"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "status"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "applicationCount"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "viewCount"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "deadline"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "TABLE_NAME": "opportunities",
+      "COLUMN_NAME": "updatedAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\tCOLUMN_NAME\nacademy_content\tid\nacademy_content\tauthorId\nacademy_content\ttitle\nacademy_content\tslug\nacademy_content\texcerpt\nacademy_content\tcontent\nacademy_content\tcontentType\nacademy_content\tcategory\nacademy_content\tlevel\nacademy_content\tthumbnailUrl\nacademy_content\tvideoUrl\nacademy_content\tduration\nacademy_content\tisPremium\nacademy_content\tprice\nacademy_content\ttags\nacademy_content\tisPublished\nacademy_content\tviewCount\nacademy_content\tlikeCount\nacademy_content\tpublishedAt\nacademy_content\tcreatedAt\nacademy_content\tupdatedAt\nofferings\tid\nofferings\tprofileId\nofferings\tuserId\nofferings\ttitle\nofferings\tdescription\nofferings\tcategory\nofferings\tpriceType\nofferings\tprice\nofferings\tcurrency\nofferings\timageUrl\nofferings\tcity\nofferings\tstate\nofferings\ttags\nofferings\tisPremium\nofferings\tisActive\nofferings\tstatus\nofferings\tviewCount\nofferings\tinterestCount\nofferings\texpiresAt\nofferings\tcreatedAt\nofferings\tupdatedAt\nopportunities\tid\nopportunities\tuserId\nopportunities\tprofileId\nopportunities\ttitle\nopportunities\tdescription\nopportunities\tcategory\nopportunities\trequiredType\nopportunities\tcity\nopportunities\tstate\nopportunities\tbudgetMin\nopportunities\tbudgetMax\nopportunities\ttags\nopportunities\tisActive\nopportunities\tstatus\nopportunities\tapplicationCount\nopportunities\tviewCount\nopportunities\tdeadline\nopportunities\tcreatedAt\nopportunities\tupdatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
