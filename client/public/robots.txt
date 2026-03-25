@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /proprietario/
+
+Sitemap: https://pnsp-samba-bc6pj8ks.manus.space/sitemap.xml

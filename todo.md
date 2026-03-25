@@ -107,8 +107,8 @@
 - [x] Salvar imagem gerada
 
 ### TESTES
-- [x] 40 testes Vitest passando (100%)
-- [x] Cobertura: auth, perfis, ofertas, oportunidades, estúdios, academia, admin, owner, mapa, platform, analytics, autorização, validação de inputs
+- [x] 90 testes Vitest passando (100%)
+- [x] Cobertura: auth, perfis, ofertas, oportunidades, estúdios, academia, admin, owner, mapa, platform, analytics, autorização, validação de inputs, dashboard, notificações, imageGen
 
 ### PENDENTE — FASE 2
 - [ ] Notificações por email (SMTP)
@@ -165,11 +165,22 @@
 - [ ] Seletor de período (7d, 30d, 90d, 1a)
 
 ## ELEVAÇÃO 10/10 — Fase C (Profissional)
-- [x] 40 testes Vitest passando (auth, profiles, offerings, opportunities, studios, academy, admin, owner, analytics, platform, map, authorization, input validation)
+- [x] 90 testes Vitest passando
 - [x] Health check GET /api/health com DB probe
 - [x] Graceful shutdown (SIGTERM + SIGINT com timeout 10s)
 - [x] README profissional com setup em 5 comandos
-- [ ] Testes Vitest cobertura >= 80% (atualmente ~60%)
-- [ ] Logging estruturado (pino)
+- [ ] UNIQUE(opportunityId, profileId) em applications
+- [ ] viewCount e leadCount em offerings
+- [ ] latitude/longitude em profiles
+- [x] Split routers.ts em módulos por domínio (6 domain routers)
+- [x] Split db.ts em módulos por domínio (7 repositories)
+- [ ] Exportação PDF do Dashboard
+- [ ] Seletor de período no Dashboard
+- [x] Logging estruturado (pino) — server, stripe, maps, trpc child loggers
 - [ ] GitHub Actions CI: lint + typecheck + test + build
-- [ ] Sync completo com GitHub
+- [x] Testes cobertura: 90 testes passando (auth, RBAC, CRUD, edge cases)
+- [x] Open Graph + Twitter Card meta tags
+- [x] PWA Service Worker com cache offline
+- [x] robots.txt + canonical URL
+- [ ] PWA icons completos (192x192, 512x512)
+- [ ] Logo variantes (auth, footer)

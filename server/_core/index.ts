@@ -11,13 +11,13 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { serverLogger, stripeLogger, mapsLogger, trpcLogger } from "../lib/logger";
 
 // ─── ENV VALIDATION ──────────────────────────────────────────────────────────
 const REQUIRED_ENV = ["DATABASE_URL", "JWT_SECRET", "VITE_APP_ID", "OAUTH_SERVER_URL"] as const;
 const missingEnv = REQUIRED_ENV.filter((k) => !process.env[k]);
 if (missingEnv.length > 0) {
-  console.error(`[PNSP] FATAL: Missing required environment variables: ${missingEnv.join(", ")}`);
-  console.error("[PNSP] Check .env.example for required variables.");
+  serverLogger.fatal({ missing: missingEnv }, "Missing required environment variables");
   process.exit(1);
 }
 
@@ -77,25 +77,23 @@ async function startServer() {
           webhookSecret as string
         );
         if (event.id.startsWith("evt_test_")) {
-          console.log("[Webhook] Test event detected");
+          stripeLogger.info("Test event detected");
           return res.json({ verified: true });
         }
-        console.log(`[Webhook] ${event.type} | ${event.id}`);
+        stripeLogger.info({ type: event.type, id: event.id }, "Webhook event received");
         switch (event.type) {
           case "checkout.session.completed": {
             const session = event.data.object as Stripe.Checkout.Session;
-            console.log(
-              `[Webhook] Payment completed for user ${session.metadata?.user_id}`
-            );
+            stripeLogger.info({ userId: session.metadata?.user_id }, "Payment completed");
             break;
           }
           case "payment_intent.succeeded":
-            console.log("[Webhook] PaymentIntent succeeded");
+            stripeLogger.info("PaymentIntent succeeded");
             break;
         }
         res.json({ received: true });
       } catch (err: any) {
-        console.error("[Webhook] Error:", err.message);
+        stripeLogger.error({ err: err.message }, "Webhook error");
         res.status(400).send(`Webhook Error: ${err.message}`);
       }
     }
@@ -189,7 +187,7 @@ async function startServer() {
         const proto = req.headers["x-forwarded-proto"] || "https";
         origin = `${proto}://${req.headers.host}`;
       }
-      console.log(`[Maps Proxy] path=${mapPath} origin=${origin} url=${targetUrl.substring(0, 80)}`);
+      mapsLogger.debug({ path: mapPath, origin }, "Maps proxy request");
       const upstream = await fetch(targetUrl, {
         headers: origin ? { "Origin": origin } : {},
       });
@@ -199,7 +197,7 @@ async function startServer() {
       const body = await upstream.text();
       res.status(upstream.status).send(body);
     } catch (err: any) {
-      console.error("[Maps Proxy] Error:", err.message);
+      mapsLogger.error({ err: err.message }, "Maps proxy error");
       res.status(500).json({ error: "Maps proxy error" });
     }
   });
@@ -240,7 +238,7 @@ async function startServer() {
       createContext,
       onError: ({ error, path }) => {
         if (error.code !== "NOT_FOUND" && error.code !== "UNAUTHORIZED") {
-          console.error(`[tRPC] Error in ${path}:`, error.message);
+          trpcLogger.error({ path, code: error.code }, error.message);
         }
       },
     })
@@ -257,12 +255,11 @@ async function startServer() {
   const port = await findAvailablePort(preferredPort);
 
   if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} busy, using ${port}`);
+    serverLogger.warn({ preferredPort, port }, "Port busy, using alternative");
   }
 
   server.listen(port, () => {
-    console.log(`[PNSP] Server running on http://localhost:${port}/`);
-    console.log(`[PNSP] Environment: ${process.env.NODE_ENV || "development"}`);
+    serverLogger.info({ port, env: process.env.NODE_ENV || "development" }, `Server running on http://localhost:${port}/`);
     setupGracefulShutdown(server);
   });
 }
@@ -271,13 +268,13 @@ async function startServer() {
 // ─── GRACEFUL SHUTDOWN ───────────────────────────────────────────────────────
 function setupGracefulShutdown(httpServer: import("http").Server) {
   const shutdown = (signal: string) => {
-    console.log(`[PNSP] ${signal} received. Shutting down gracefully...`);
+    serverLogger.info({ signal }, "Shutting down gracefully...");
     httpServer.close(() => {
-      console.log("[PNSP] HTTP server closed.");
+      serverLogger.info("HTTP server closed");
       process.exit(0);
     });
     setTimeout(() => {
-      console.error("[PNSP] Forced shutdown after timeout.");
+      serverLogger.error("Forced shutdown after timeout");
       process.exit(1);
     }, 10_000);
   };

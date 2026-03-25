@@ -1,0 +1,25 @@
+{
+  "query": "SELECT `city` FROM `profiles` WHERE (`profiles`.`isActive` = true AND `profiles`.`city` IS NOT NULL AND `profiles`.`city` != '') GROUP BY `profiles`.`city` LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3addFH5ZZ41CXyi.root --database bC6Pj8ksngxNy5fe35WqgW --execute SELECT `city` FROM `profiles` WHERE (`profiles`.`isActive` = true AND `profiles`.`city` IS NOT NULL AND `profiles`.`city` != '') GROUP BY `profiles`.`city` LIMIT 5;",
+  "rows": [
+    {
+      "city": "Fortaleza"
+    },
+    {
+      "city": "São Paulo"
+    },
+    {
+      "city": "Brasília"
+    },
+    {
+      "city": "Salvador"
+    },
+    {
+      "city": "Curitiba"
+    }
+  ],
+  "messages": [],
+  "stdout": "city\nFortaleza\nSão Paulo\nBrasília\nSalvador\nCuritiba\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

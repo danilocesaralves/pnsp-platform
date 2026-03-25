@@ -1,0 +1,30 @@
+{
+  "query": "SELECT DATE_FORMAT(`createdAt`, '%Y-%m') AS `month`, COUNT(*) AS `count` FROM `users` WHERE `createdAt` >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY `month` ORDER BY `month` LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3addFH5ZZ41CXyi.root --database bC6Pj8ksngxNy5fe35WqgW --execute SELECT DATE_FORMAT(`createdAt`, '%Y-%m') AS `month`, COUNT(*) AS `count` FROM `users` WHERE `createdAt` >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY `month` ORDER BY `month` LIMIT 5;",
+  "rows": [
+    {
+      "month": "2025-09",
+      "count": "1"
+    },
+    {
+      "month": "2025-10",
+      "count": "2"
+    },
+    {
+      "month": "2025-11",
+      "count": "2"
+    },
+    {
+      "month": "2026-01",
+      "count": "1"
+    },
+    {
+      "month": "2026-02",
+      "count": "3"
+    }
+  ],
+  "messages": [],
+  "stdout": "month\tcount\n2025-09\t1\n2025-10\t2\n2025-11\t2\n2026-01\t1\n2026-02\t3\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}
