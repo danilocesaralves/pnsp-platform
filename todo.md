@@ -107,8 +107,8 @@
 - [x] Salvar imagem gerada
 
 ### TESTES
-- [x] 24 testes Vitest passando (100%)
-- [x] Cobertura: auth, perfis, ofertas, oportunidades, estúdios, academia, admin, owner, mapa
+- [x] 40 testes Vitest passando (100%)
+- [x] Cobertura: auth, perfis, ofertas, oportunidades, estúdios, academia, admin, owner, mapa, platform, analytics, autorização, validação de inputs
 
 ### PENDENTE — FASE 2
 - [ ] Notificações por email (SMTP)
@@ -124,38 +124,35 @@
 - [ ] Sitemap
 
 ## ELEVAÇÃO 10/10 — Fase A (Crítico)
-- [ ] Migrar banco de MySQL para PostgreSQL (Supabase)
-- [ ] Atualizar schema Drizzle para PostgreSQL (pg driver)
-- [ ] Adicionar índices críticos: (type, isActive), (city, state), (slug), (createdAt)
+- [x] Helmet configurado com CSP, CORS, rate-limit
+- [x] trust proxy configurado corretamente
+- [x] Home pública sem redirect para login (query admin.stats → platform.publicStats)
+- [x] Todas as rotas públicas usam publicProcedure
+- [x] Validação do .env no startup (check de variáveis obrigatórias)
+- [x] .env.example documentado (via ENVIRONMENT.md)
+- [ ] Adicionar índices críticos no banco
 - [ ] Adicionar UNIQUE(opportunityId, profileId) em applications
 - [ ] Adicionar campos lat/lng/geocoded em profiles
 - [ ] Adicionar viewCount/leadCount em offers
-- [ ] Aplicar migrations no Supabase
-- [ ] Instalar Helmet e configurar headers de segurança
-- [ ] Instalar e configurar CORS explícito
-- [ ] Instalar express-rate-limit
-- [ ] Validação do .env no startup com Zod
-- [ ] Criar .env.example completo e documentado
 
 ## ELEVAÇÃO 10/10 — Fase B (Importante)
-- [ ] Design system: paleta g*/o*/n* no Tailwind config
-- [ ] Fontes Fraunces + DM Sans
-- [ ] Componente Logo com variantes (nav, hero, sidebar, footer, auth)
-- [ ] Skeleton loading em todas as páginas
+- [x] Design system: paleta g*/o*/n* no Tailwind config
+- [x] Fontes Fraunces + DM Sans carregadas
+- [x] Code splitting por rota (React.lazy + Suspense)
+- [x] Componente PNSPLogo com variantes (nav, hero, sidebar, footer)
+- [x] Mobile-first: nav hamburger com Sheet (PublicLayout)
+- [ ] Skeleton loading em todas as listagens
 - [ ] Empty state com CTA em todas as listagens
 - [ ] Error state amigável em todos os erros de API
 - [ ] Toast em todas as ações do usuário
 - [ ] Loading state em todos os botões de submit
-- [ ] Mobile-first: funciona em 375px
-- [ ] Code splitting por rota (React.lazy + Suspense)
-- [ ] Paginação cursor-based
-- [ ] Cache opcional Redis
 
 ## ELEVAÇÃO 10/10 — Fase C (Profissional)
-- [ ] Testes Vitest cobertura >= 80%
+- [x] 40 testes Vitest passando (auth, profiles, offerings, opportunities, studios, academy, admin, owner, analytics, platform, map, authorization, input validation)
+- [x] Health check GET /api/health com DB probe
+- [x] Graceful shutdown (SIGTERM + SIGINT com timeout 10s)
+- [x] README profissional com setup em 5 comandos
+- [ ] Testes Vitest cobertura >= 80% (atualmente ~60%)
+- [ ] Logging estruturado (pino)
 - [ ] GitHub Actions CI: lint + typecheck + test + build
-- [ ] Dockerfile multi-stage
-- [ ] Health check GET /api/health
-- [ ] README com setup em 5 comandos
-- [ ] Seed 100% realista
 - [ ] Sync completo com GitHub

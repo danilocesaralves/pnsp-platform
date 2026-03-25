@@ -625,3 +625,85 @@ export async function upsertSubscription(data: typeof subscriptions.$inferInsert
   if (!db) throw new Error("DB not available");
   return db.insert(subscriptions).values(data).onDuplicateKeyUpdate({ set: data });
 }
+
+// ─── PUBLIC STATS (sem autenticação) ─────────────────────────────────────────
+export async function getPublicStats() {
+  const db = await getDb();
+  if (!db) return { profileCount: 0, opportunityCount: 0, cityCount: 0, studioCount: 0 };
+  const [profileCount, opportunityCount, studioCount, cityResult] = await Promise.all([
+    getProfileCount(),
+    getOpportunityCount("active"),
+    getStudioCount(),
+    db.select({ city: profiles.city })
+      .from(profiles)
+      .where(and(eq(profiles.isActive, true), sql`${profiles.city} IS NOT NULL AND ${profiles.city} != ''`))
+      .groupBy(profiles.city),
+  ]);
+  return {
+    profileCount,
+    opportunityCount,
+    studioCount,
+    cityCount: cityResult.length,
+  };
+}
+
+// ─── DASHBOARD ANALYTICS ─────────────────────────────────────────────────────
+export async function getProfilesByState() {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({ state: profiles.state, count: sql<number>`count(*)` })
+    .from(profiles)
+    .where(and(eq(profiles.isActive, true), sql`${profiles.state} IS NOT NULL AND ${profiles.state} != ''`))
+    .groupBy(profiles.state)
+    .orderBy(desc(sql<number>`count(*)`))
+    .limit(10);
+}
+
+export async function getMonthlyGrowth() {
+  const db = await getDb();
+  if (!db) return [];
+  // Get counts grouped by month for the last 6 months (createdAt is native timestamp)
+  const sixMonthsAgo = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000);
+  const [profileGrowth, userGrowth, offeringGrowth] = await Promise.all([
+    db.select({
+      month: sql<string>`DATE_FORMAT(${profiles.createdAt}, '%Y-%m')`,
+      count: sql<number>`count(*)`,
+    })
+      .from(profiles)
+      .where(sql`${profiles.createdAt} >= ${sixMonthsAgo}`)
+      .groupBy(sql`DATE_FORMAT(${profiles.createdAt}, '%Y-%m')`)
+      .orderBy(sql`DATE_FORMAT(${profiles.createdAt}, '%Y-%m')`),
+    db.select({
+      month: sql<string>`DATE_FORMAT(${users.createdAt}, '%Y-%m')`,
+      count: sql<number>`count(*)`,
+    })
+      .from(users)
+      .where(sql`${users.createdAt} >= ${sixMonthsAgo}`)
+      .groupBy(sql`DATE_FORMAT(${users.createdAt}, '%Y-%m')`)
+      .orderBy(sql`DATE_FORMAT(${users.createdAt}, '%Y-%m')`),
+    db.select({
+      month: sql<string>`DATE_FORMAT(${offerings.createdAt}, '%Y-%m')`,
+      count: sql<number>`count(*)`,
+    })
+      .from(offerings)
+      .where(sql`${offerings.createdAt} >= ${sixMonthsAgo}`)
+      .groupBy(sql`DATE_FORMAT(${offerings.createdAt}, '%Y-%m')`)
+      .orderBy(sql`DATE_FORMAT(${offerings.createdAt}, '%Y-%m')`),
+  ]);
+  // Merge into unified monthly data
+  const months = new Set([
+    ...profileGrowth.map(r => r.month),
+    ...userGrowth.map(r => r.month),
+    ...offeringGrowth.map(r => r.month),
+  ]);
+  return Array.from(months).sort().map(month => {
+    const shortMonth = new Date(month + '-01').toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+    return {
+      mes: shortMonth,
+      perfis: profileGrowth.find(r => r.month === month)?.count ?? 0,
+      usuarios: userGrowth.find(r => r.month === month)?.count ?? 0,
+      ofertas: offeringGrowth.find(r => r.month === month)?.count ?? 0,
+    };
+  });
+}

@@ -12,6 +12,16 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 
+// ─── ENV VALIDATION ──────────────────────────────────────────────────────────
+const REQUIRED_ENV = ["DATABASE_URL", "JWT_SECRET", "VITE_APP_ID", "OAUTH_SERVER_URL"] as const;
+const missingEnv = REQUIRED_ENV.filter((k) => !process.env[k]);
+if (missingEnv.length > 0) {
+  console.error(`[PNSP] FATAL: Missing required environment variables: ${missingEnv.join(", ")}`);
+  console.error("[PNSP] Check .env.example for required variables.");
+  process.exit(1);
+}
+
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2026-02-25.clover",
 });
@@ -195,13 +205,23 @@ async function startServer() {
   });
 
   // ── 6. Health check ───────────────────────────────────────────────────────
-  app.get("/api/health", (_req, res) => {
-    res.json({
-      status: "ok",
+  app.get("/api/health", async (_req, res) => {
+    let dbStatus = "ok";
+    try {
+      const { getDb } = await import("../db");
+      const db = await getDb();
+      if (!db) dbStatus = "unavailable";
+    } catch {
+      dbStatus = "error";
+    }
+    const httpStatus = dbStatus === "ok" ? 200 : 503;
+    res.status(httpStatus).json({
+      status: dbStatus === "ok" ? "ok" : "degraded",
+      db: dbStatus,
       service: "pnsp-platform",
       version: process.env.npm_package_version || "1.0.0",
       timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
+      uptime: Math.round(process.uptime()),
     });
   });
 
@@ -243,7 +263,26 @@ async function startServer() {
   server.listen(port, () => {
     console.log(`[PNSP] Server running on http://localhost:${port}/`);
     console.log(`[PNSP] Environment: ${process.env.NODE_ENV || "development"}`);
+    setupGracefulShutdown(server);
   });
+}
+
+
+// ─── GRACEFUL SHUTDOWN ───────────────────────────────────────────────────────
+function setupGracefulShutdown(httpServer: import("http").Server) {
+  const shutdown = (signal: string) => {
+    console.log(`[PNSP] ${signal} received. Shutting down gracefully...`);
+    httpServer.close(() => {
+      console.log("[PNSP] HTTP server closed.");
+      process.exit(0);
+    });
+    setTimeout(() => {
+      console.error("[PNSP] Forced shutdown after timeout.");
+      process.exit(1);
+    }, 10_000);
+  };
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
 startServer().catch(console.error);

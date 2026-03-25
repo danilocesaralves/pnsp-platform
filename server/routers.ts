@@ -594,6 +594,12 @@ export const appRouter = router({
       .query(({ ctx }) => db.getUserGeneratedImages(ctx.user.id)),
   }),
 
+  // ─── PLATFORM PUBLIC STATS ────────────────────────────────────────────────
+  platform: router({
+    publicStats: publicProcedure
+      .query(() => db.getPublicStats()),
+  }),
+
   // ─── ADMIN ─────────────────────────────────────────────────────────────────
   admin: router({
     stats: adminProcedure
@@ -669,6 +675,15 @@ export const appRouter = router({
           profit: revenue - costs,
           margin: revenue > 0 ? ((revenue - costs) / revenue) * 100 : 0,
         };
+      }),
+
+    analytics: ownerProcedure
+      .query(async () => {
+        const [profilesByState, monthlyGrowth] = await Promise.all([
+          db.getProfilesByState(),
+          db.getMonthlyGrowth(),
+        ]);
+        return { profilesByState, monthlyGrowth };
       }),
   }),
 

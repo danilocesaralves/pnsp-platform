@@ -79,15 +79,15 @@ function ProfileCardSkeleton() {
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
-  const { data: stats } = trpc.admin.stats.useQuery();
+  const { data: stats } = trpc.platform.publicStats.useQuery();
   const { data: featuredProfiles, isLoading: loadingProfiles } = trpc.profiles.listFeatured.useQuery({ limit: 6 });
   const { data: recentOfferings, isLoading: loadingOfferings } = trpc.offerings.listRecent.useQuery({ limit: 4 });
 
   const platformStats = [
     { label: "Perfis Ativos", value: stats?.profileCount ?? "—", icon: Users, color: "var(--o500)" },
-    { label: "Ofertas Publicadas", value: stats?.offeringCount ?? "—", icon: Briefcase, color: "var(--g500)" },
-    { label: "Oportunidades", value: stats?.opportunityCount ?? "—", icon: Target, color: "#8b5cf6" },
-    { label: "Estados Cobertos", value: "27", icon: Globe, color: "#3b82f6" },
+    { label: "Oportunidades", value: stats?.opportunityCount ?? "—", icon: Target, color: "var(--g500)" },
+    { label: "Cidades", value: stats?.cityCount ?? "—", icon: MapPin, color: "#8b5cf6" },
+    { label: "Estúdios", value: stats?.studioCount ?? "—", icon: Building2, color: "#3b82f6" },
   ];
 
   return (

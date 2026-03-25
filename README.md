@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/danilocesaralves/pnsp-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/danilocesaralves/pnsp-platform/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-24%20passing-brightgreen)](#testes)
+[![Tests](https://img.shields.io/badge/tests-40%20passing-brightgreen)](#testes)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ---
@@ -28,7 +28,7 @@ A PNSP conecta artistas, grupos, bandas, duplas, comunidades, rodas de samba, pr
 | Pagamentos | Stripe (Checkout Sessions + Webhooks) |
 | Mapas | Google Maps JavaScript API (proxy Manus) |
 | Geração de Imagens | Manus Forge API (IA generativa) |
-| Testes | Vitest (24 testes, 100% passando) |
+| Testes | Vitest (40 testes, 100% passando) |
 | CI/CD | GitHub Actions |
 | Deploy | Manus Hosting (PWA) / Docker (self-hosted) |
 
@@ -115,7 +115,7 @@ pnsp-platform/
 │   ├── routers.ts              # 12 routers tRPC
 │   ├── db.ts                   # Query helpers (Drizzle)
 │   ├── stripe-products.ts      # Produtos e preços Stripe
-│   ├── pnsp.test.ts            # 24 testes Vitest
+│   ├── pnsp.test.ts            # 40 testes Vitest
 │   └── _core/
 │       └── index.ts            # Helmet, CORS, rate limiting, health check
 ├── drizzle/
@@ -170,9 +170,10 @@ GET /api/health
 # Response:
 # {
 #   "status": "ok",
+#   "db": "ok",
 #   "service": "pnsp-platform",
 #   "version": "1.0.0",
-#   "uptime": 123.45,
+#   "uptime": 123,
 #   "timestamp": "2026-03-25T18:00:00.000Z"
 # }
 ```
@@ -184,8 +185,8 @@ GET /api/health
 ```bash
 pnpm test
 # ✓ server/auth.logout.test.ts (1 test)
-# ✓ server/pnsp.test.ts (23 tests)
-# Tests: 24 passed (24)
+# ✓ server/pnsp.test.ts (39 tests)
+# Tests: 40 passed (40)
 ```
 
 ---

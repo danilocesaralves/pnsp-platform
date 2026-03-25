@@ -18,34 +18,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
-const COLORS = ["#D4AF37", "#C41E3A", "#1a1a2e", "#22c55e", "#3b82f6", "#8b5cf6"];
-
-// Mock growth data for charts (will be replaced by real data when available)
-const GROWTH_DATA = [
-  { mes: "Out", usuarios: 2, perfis: 8, ofertas: 5 },
-  { mes: "Nov", usuarios: 4, perfis: 15, ofertas: 10 },
-  { mes: "Dez", usuarios: 6, perfis: 22, ofertas: 16 },
-  { mes: "Jan", usuarios: 8, perfis: 30, ofertas: 22 },
-  { mes: "Fev", usuarios: 9, perfis: 40, ofertas: 27 },
-  { mes: "Mar", usuarios: 11, perfis: 50, ofertas: 30 },
-];
-
-const PROFILE_TYPE_DATA = [
-  { name: "Artistas Solo", value: 18 },
-  { name: "Grupos/Bandas", value: 12 },
-  { name: "Produtores", value: 6 },
-  { name: "Professores", value: 5 },
-  { name: "Outros", value: 9 },
-];
-
-const STATE_DATA = [
-  { estado: "RJ", perfis: 18 },
-  { estado: "SP", perfis: 15 },
-  { estado: "MG", estado_label: "MG", perfis: 6 },
-  { estado: "BA", perfis: 4 },
-  { estado: "PE", perfis: 3 },
-  { estado: "Outros", perfis: 4 },
-];
+const COLORS = ["var(--o500)", "var(--g500)", "#8b5cf6", "#3b82f6", "#ef4444", "#f97316"];
 
 export default function OwnerDashboard() {
   const { user, loading } = useAuth();
@@ -53,6 +26,7 @@ export default function OwnerDashboard() {
   const [activeTab, setActiveTab] = useState("visao-geral");
   const { data: stats } = trpc.owner.stats.useQuery();
   const { data: financial } = trpc.owner.financialSummary.useQuery();
+  const { data: analytics } = trpc.owner.analytics.useQuery();
   const { data: recentUsers } = trpc.admin.users.useQuery({ limit: 5, offset: 0 });
 
   useEffect(() => {
@@ -69,6 +43,14 @@ export default function OwnerDashboard() {
   const totalCosts = Number(financial?.totalCosts ?? 0);
   const profit = Number(financial?.profit ?? 0);
   const margin = Number(financial?.margin ?? 0);
+
+  // Real analytics data from DB
+  const GROWTH_DATA = analytics?.monthlyGrowth ?? [];
+  const STATE_DATA = (analytics?.profilesByState ?? []).map((r: any) => ({ estado: r.state, perfis: Number(r.count) }));
+  const PROFILE_TYPE_DATA = (stats?.profilesByType ?? []).map((r: any) => ({
+    name: r.profileType?.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) ?? 'Outro',
+    value: Number(r.count),
+  }));
 
   const kpis = [
     {
