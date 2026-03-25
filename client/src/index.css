@@ -40,17 +40,78 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  /* PNSP Brand Color Utilities */
+
+  /* PNSP Brand — g* verde samba */
+  --color-g50: var(--g50);
+  --color-g100: var(--g100);
+  --color-g200: var(--g200);
+  --color-g500: var(--g500);
+  --color-g700: var(--g700);
+  --color-g900: var(--g900);
+
+  /* PNSP Brand — o* ouro pagode */
+  --color-o50: var(--o50);
+  --color-o100: var(--o100);
+  --color-o300: var(--o300);
+  --color-o500: var(--o500);
+  --color-o700: var(--o700);
+  --color-o900: var(--o900);
+
+  /* PNSP Brand — n* noite */
+  --color-n50: var(--n50);
+  --color-n100: var(--n100);
+  --color-n200: var(--n200);
+  --color-n400: var(--n400);
+  --color-n600: var(--n600);
+  --color-n800: var(--n800);
+  --color-n900: var(--n900);
+  --color-n950: var(--n950);
+
+  /* Legacy PNSP Brand Colors */
   --color-pnsp-gold: var(--pnsp-gold);
   --color-pnsp-gold-dark: var(--pnsp-gold-dark);
   --color-pnsp-gold-light: var(--pnsp-gold-light);
   --color-pnsp-black: var(--pnsp-black);
   --color-pnsp-dark: var(--pnsp-dark);
   --color-pnsp-red: var(--pnsp-red);
+
+  /* Typography */
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-dm-sans);
 }
 
 :root {
-  /* PNSP Brand Colors */
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+  --font-fraunces: 'Fraunces', Georgia, serif;
+  --font-dm-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+  /* ── g* — verde samba (identidade cultural) ─────────────────────────────── */
+  --g50:  oklch(0.97 0.02 155);
+  --g100: oklch(0.92 0.05 155);
+  --g200: oklch(0.84 0.09 155);
+  --g500: oklch(0.55 0.16 155);
+  --g700: oklch(0.40 0.14 155);
+  --g900: oklch(0.25 0.10 155);
+
+  /* ── o* — ouro pagode (prestígio e calor) ───────────────────────────────── */
+  --o50:  oklch(0.98 0.02 85);
+  --o100: oklch(0.95 0.05 85);
+  --o300: oklch(0.88 0.10 85);
+  --o500: oklch(0.78 0.14 85);
+  --o700: oklch(0.62 0.14 78);
+  --o900: oklch(0.40 0.10 78);
+
+  /* ── n* — noite (profundidade e elegância) ──────────────────────────────── */
+  --n50:  oklch(0.97 0.003 260);
+  --n100: oklch(0.93 0.005 260);
+  --n200: oklch(0.87 0.006 260);
+  --n400: oklch(0.65 0.008 260);
+  --n600: oklch(0.42 0.008 260);
+  --n800: oklch(0.22 0.008 260);
+  --n900: oklch(0.16 0.008 260);
+  --n950: oklch(0.10 0.005 260);
+
+  /* ── Legacy PNSP Brand Colors ───────────────────────────────────────────── */
   --pnsp-gold: oklch(0.78 0.14 85);
   --pnsp-gold-dark: oklch(0.62 0.14 78);
   --pnsp-gold-light: oklch(0.92 0.08 85);
@@ -58,12 +119,13 @@
   --pnsp-dark: oklch(0.16 0.008 260);
   --pnsp-red: oklch(0.55 0.22 25);
 
+  /* ── Shadcn/ui semantic tokens ──────────────────────────────────────────── */
   --primary: oklch(0.12 0.005 260);
   --primary-foreground: oklch(0.99 0.002 85);
   --sidebar-primary: oklch(0.12 0.005 260);
   --sidebar-primary-foreground: oklch(0.99 0.002 85);
   --chart-1: oklch(0.78 0.14 85);
-  --chart-2: oklch(0.62 0.14 78);
+  --chart-2: oklch(0.55 0.16 155);
   --chart-3: oklch(0.55 0.22 25);
   --chart-4: oklch(0.45 0.15 160);
   --chart-5: oklch(0.55 0.18 240);
@@ -93,7 +155,138 @@
   --sidebar-ring: oklch(0.78 0.14 85);
 }
 
+/* ─── PNSP TYPOGRAPHY UTILITIES ─────────────────────────────────────────────── */
+.font-display { font-family: var(--font-fraunces); }
+.font-body    { font-family: var(--font-dm-sans); }
+
+.pnsp-hero-text {
+  font-family: var(--font-fraunces);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.pnsp-section-title {
+  font-family: var(--font-fraunces);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* ─── PNSP COMPONENT UTILITIES ───────────────────────────────────────────────── */
+.pnsp-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px oklch(0 0 0 / 0.06);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.pnsp-card:hover {
+  box-shadow: 0 4px 16px oklch(0 0 0 / 0.10);
+  transform: translateY(-1px);
+}
+
+.pnsp-badge-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--o100);
+  color: var(--o900);
+}
+
+.pnsp-badge-green {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--g100);
+  color: var(--g900);
+}
+
+/* ─── PNSP GRADIENT UTILITIES ────────────────────────────────────────────────── */
+.pnsp-gradient-hero {
+  background: linear-gradient(
+    135deg,
+    var(--n950) 0%,
+    var(--n900) 40%,
+    oklch(0.18 0.04 85) 100%
+  );
+}
+
+.pnsp-gradient-gold {
+  background: linear-gradient(135deg, var(--o500) 0%, var(--o700) 100%);
+}
+
+.pnsp-text-gradient {
+  background: linear-gradient(135deg, var(--o500), var(--o300));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pnsp-glass {
+  backdrop-filter: blur(12px);
+  background: oklch(1 0 0 / 0.08);
+  border: 1px solid oklch(1 0 0 / 0.12);
+}
+
+.pnsp-divider {
+  width: 3rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  background: var(--o500);
+}
+
+/* ─── SKELETON ANIMATION ─────────────────────────────────────────────────────── */
+@keyframes pnsp-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.pnsp-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--n100) 25%,
+    var(--n50)  50%,
+    var(--n100) 75%
+  );
+  background-size: 200% 100%;
+  animation: pnsp-shimmer 1.5s infinite;
+  border-radius: 0.375rem;
+}
+
+/* ─── DARK MODE ──────────────────────────────────────────────────────────────── */
 .dark {
+  /* g* dark overrides */
+  --g50:  oklch(0.20 0.04 155);
+  --g100: oklch(0.25 0.06 155);
+  --g200: oklch(0.32 0.08 155);
+  --g500: oklch(0.55 0.16 155);
+  --g700: oklch(0.70 0.14 155);
+  --g900: oklch(0.85 0.08 155);
+  /* o* dark overrides */
+  --o50:  oklch(0.20 0.04 85);
+  --o100: oklch(0.25 0.06 85);
+  --o300: oklch(0.55 0.12 85);
+  --o500: oklch(0.78 0.14 85);
+  --o700: oklch(0.88 0.10 85);
+  --o900: oklch(0.95 0.05 85);
+  /* n* dark overrides */
+  --n50:  oklch(0.22 0.008 260);
+  --n100: oklch(0.28 0.008 260);
+  --n200: oklch(0.35 0.008 260);
+  --n400: oklch(0.52 0.008 260);
+  --n600: oklch(0.68 0.008 260);
+  --n800: oklch(0.82 0.006 260);
+  --n900: oklch(0.92 0.004 260);
+  --n950: oklch(0.97 0.003 260);
+
   --primary: oklch(0.78 0.14 85);
   --primary-foreground: oklch(0.12 0.005 260);
   --sidebar-primary: oklch(0.78 0.14 85);
@@ -116,7 +309,7 @@
   --input: oklch(0.28 0.008 260);
   --ring: oklch(0.78 0.14 85);
   --chart-1: oklch(0.78 0.14 85);
-  --chart-2: oklch(0.62 0.14 78);
+  --chart-2: oklch(0.55 0.16 155);
   --chart-3: oklch(0.65 0.18 25);
   --chart-4: oklch(0.55 0.15 160);
   --chart-5: oklch(0.65 0.18 240);
@@ -135,15 +328,21 @@
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-dm-sans);
     font-feature-settings: "kern" 1, "liga" 1;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-fraunces);
+    letter-spacing: -0.01em;
   }
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
@@ -153,29 +352,16 @@
   select:not(:disabled),
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
-    @apply cursor-pointer;
+    cursor: pointer;
   }
 }
 
 @layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
+    padding-left: 1rem;
     padding-right: 1rem;
   }
 
@@ -186,16 +372,16 @@
 
   @media (min-width: 640px) {
     .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
+      padding-left: 1.5rem;
       padding-right: 1.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .container {
-      padding-left: 2rem; /* 32px - desktop padding */
+      padding-left: 2rem;
       padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
+      max-width: 1280px;
     }
   }
 }

@@ -1,85 +1,95 @@
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { Loader2 } from "lucide-react";
 
-// Public Pages
-import Home from "./pages/Home";
-import Profiles from "./pages/Profiles";
-import ProfileDetail from "./pages/ProfileDetail";
-import Offerings from "./pages/Offerings";
-import OfferingDetail from "./pages/OfferingDetail";
-import Opportunities from "./pages/Opportunities";
-import OpportunityDetail from "./pages/OpportunityDetail";
-import MapPage from "./pages/MapPage";
-import Academy from "./pages/Academy";
-import AcademyDetail from "./pages/AcademyDetail";
-import Studios from "./pages/Studios";
-import StudioDetail from "./pages/StudioDetail";
+// ─── Lazy-loaded pages (code splitting) ─────────────────────────────────────
+const Home = lazy(() => import("./pages/Home"));
+const Profiles = lazy(() => import("./pages/Profiles"));
+const ProfileDetail = lazy(() => import("./pages/ProfileDetail"));
+const Offerings = lazy(() => import("./pages/Offerings"));
+const OfferingDetail = lazy(() => import("./pages/OfferingDetail"));
+const Opportunities = lazy(() => import("./pages/Opportunities"));
+const OpportunityDetail = lazy(() => import("./pages/OpportunityDetail"));
+const MapPage = lazy(() => import("./pages/MapPage"));
+const Academy = lazy(() => import("./pages/Academy"));
+const AcademyDetail = lazy(() => import("./pages/AcademyDetail"));
+const Studios = lazy(() => import("./pages/Studios"));
+const StudioDetail = lazy(() => import("./pages/StudioDetail"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const MyAccount = lazy(() => import("./pages/MyAccount"));
+const CreateProfile = lazy(() => import("./pages/CreateProfile"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
+const CreateOffering = lazy(() => import("./pages/CreateOffering"));
+const CreateOpportunity = lazy(() => import("./pages/CreateOpportunity"));
+const ImageGenerator = lazy(() => import("./pages/ImageGenerator"));
+const AdminPanel = lazy(() => import("./pages/admin/AdminPanel"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminOfferings = lazy(() => import("./pages/admin/AdminOfferings"));
+const AdminOpportunities = lazy(() => import("./pages/admin/AdminOpportunities"));
+const AdminContent = lazy(() => import("./pages/admin/AdminContent"));
+const AdminLogs = lazy(() => import("./pages/admin/AdminLogs"));
+const OwnerDashboard = lazy(() => import("./pages/owner/OwnerDashboard"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Auth / User Pages
-import Dashboard from "./pages/Dashboard";
-import MyAccount from "./pages/MyAccount";
-import CreateProfile from "./pages/CreateProfile";
-import EditProfile from "./pages/EditProfile";
-import CreateOffering from "./pages/CreateOffering";
-import CreateOpportunity from "./pages/CreateOpportunity";
-import ImageGenerator from "./pages/ImageGenerator";
-
-// Admin Pages
-import AdminPanel from "./pages/admin/AdminPanel";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminOfferings from "./pages/admin/AdminOfferings";
-import AdminOpportunities from "./pages/admin/AdminOpportunities";
-import AdminContent from "./pages/admin/AdminContent";
-import AdminLogs from "./pages/admin/AdminLogs";
-
-// Owner Dashboard
-import OwnerDashboard from "./pages/owner/OwnerDashboard";
+// ─── Page loading fallback ───────────────────────────────────────────────────
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--n950)" }}>
+      <div className="flex flex-col items-center gap-4">
+        <Loader2 className="h-8 w-8 animate-spin" style={{ color: "var(--o500)" }} />
+        <p className="text-sm font-body" style={{ color: "var(--n400)" }}>Carregando...</p>
+      </div>
+    </div>
+  );
+}
 
 function Router() {
   return (
-    <Switch>
-      {/* Public */}
-      <Route path="/" component={Home} />
-      <Route path="/perfis" component={Profiles} />
-      <Route path="/perfis/:id" component={ProfileDetail} />
-      <Route path="/ofertas" component={Offerings} />
-      <Route path="/ofertas/:id" component={OfferingDetail} />
-      <Route path="/oportunidades" component={Opportunities} />
-      <Route path="/oportunidades/:id" component={OpportunityDetail} />
-      <Route path="/mapa" component={MapPage} />
-      <Route path="/academia" component={Academy} />
-      <Route path="/academia/:id" component={AcademyDetail} />
-      <Route path="/estudios" component={Studios} />
-      <Route path="/estudios/:id" component={StudioDetail} />
+    <Suspense fallback={<PageLoader />}>
+      <Switch>
+        {/* Public */}
+        <Route path="/" component={Home} />
+        <Route path="/perfis" component={Profiles} />
+        <Route path="/perfis/:id" component={ProfileDetail} />
+        <Route path="/ofertas" component={Offerings} />
+        <Route path="/ofertas/:id" component={OfferingDetail} />
+        <Route path="/oportunidades" component={Opportunities} />
+        <Route path="/oportunidades/:id" component={OpportunityDetail} />
+        <Route path="/mapa" component={MapPage} />
+        <Route path="/academia" component={Academy} />
+        <Route path="/academia/:id" component={AcademyDetail} />
+        <Route path="/estudios" component={Studios} />
+        <Route path="/estudios/:id" component={StudioDetail} />
 
-      {/* User */}
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/minha-conta" component={MyAccount} />
-      <Route path="/criar-perfil" component={CreateProfile} />
-      <Route path="/editar-perfil/:id" component={EditProfile} />
-      <Route path="/criar-oferta" component={CreateOffering} />
-      <Route path="/criar-oportunidade" component={CreateOpportunity} />
-      <Route path="/criar-imagem" component={ImageGenerator} />
+        {/* User */}
+        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/minha-conta" component={MyAccount} />
+        <Route path="/criar-perfil" component={CreateProfile} />
+        <Route path="/editar-perfil/:id" component={EditProfile} />
+        <Route path="/criar-oferta" component={CreateOffering} />
+        <Route path="/criar-oportunidade" component={CreateOpportunity} />
+        <Route path="/criar-imagem" component={ImageGenerator} />
 
-      {/* Admin */}
-      <Route path="/admin" component={AdminPanel} />
-      <Route path="/admin/usuarios" component={AdminUsers} />
-      <Route path="/admin/ofertas" component={AdminOfferings} />
-      <Route path="/admin/oportunidades" component={AdminOpportunities} />
-      <Route path="/admin/conteudo" component={AdminContent} />
-      <Route path="/admin/logs" component={AdminLogs} />
+        {/* Admin */}
+        <Route path="/admin" component={AdminPanel} />
+        <Route path="/admin/usuarios" component={AdminUsers} />
+        <Route path="/admin/ofertas" component={AdminOfferings} />
+        <Route path="/admin/oportunidades" component={AdminOpportunities} />
+        <Route path="/admin/conteudo" component={AdminContent} />
+        <Route path="/admin/logs" component={AdminLogs} />
 
-      {/* Owner */}
-      <Route path="/proprietario" component={OwnerDashboard} />
+        {/* Owner */}
+        <Route path="/proprietario" component={OwnerDashboard} />
 
-      {/* 404 */}
-      <Route path="/404" component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
+        {/* 404 */}
+        <Route path="/404" component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 

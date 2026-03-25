@@ -121,3 +121,40 @@
 - [ ] Clusters no mapa
 - [ ] Meta tags dinâmicas e Open Graph
 - [ ] Sitemap
+
+## ELEVAÇÃO 10/10 — Fase A (Crítico)
+- [ ] Migrar banco de MySQL para PostgreSQL (Supabase)
+- [ ] Atualizar schema Drizzle para PostgreSQL (pg driver)
+- [ ] Adicionar índices críticos: (type, isActive), (city, state), (slug), (createdAt)
+- [ ] Adicionar UNIQUE(opportunityId, profileId) em applications
+- [ ] Adicionar campos lat/lng/geocoded em profiles
+- [ ] Adicionar viewCount/leadCount em offers
+- [ ] Aplicar migrations no Supabase
+- [ ] Instalar Helmet e configurar headers de segurança
+- [ ] Instalar e configurar CORS explícito
+- [ ] Instalar express-rate-limit
+- [ ] Validação do .env no startup com Zod
+- [ ] Criar .env.example completo e documentado
+
+## ELEVAÇÃO 10/10 — Fase B (Importante)
+- [ ] Design system: paleta g*/o*/n* no Tailwind config
+- [ ] Fontes Fraunces + DM Sans
+- [ ] Componente Logo com variantes (nav, hero, sidebar, footer, auth)
+- [ ] Skeleton loading em todas as páginas
+- [ ] Empty state com CTA em todas as listagens
+- [ ] Error state amigável em todos os erros de API
+- [ ] Toast em todas as ações do usuário
+- [ ] Loading state em todos os botões de submit
+- [ ] Mobile-first: funciona em 375px
+- [ ] Code splitting por rota (React.lazy + Suspense)
+- [ ] Paginação cursor-based
+- [ ] Cache opcional Redis
+
+## ELEVAÇÃO 10/10 — Fase C (Profissional)
+- [ ] Testes Vitest cobertura >= 80%
+- [ ] GitHub Actions CI: lint + typecheck + test + build
+- [ ] Dockerfile multi-stage
+- [ ] Health check GET /api/health
+- [ ] README com setup em 5 comandos
+- [ ] Seed 100% realista
+- [ ] Sync completo com GitHub

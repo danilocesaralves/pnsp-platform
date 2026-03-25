@@ -2,6 +2,9 @@ import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
+import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 import Stripe from "stripe";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
@@ -9,10 +12,25 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2026-02-25.clover' });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+  apiVersion: "2026-02-25.clover",
+});
+
+// ─── ALLOWED ORIGINS ─────────────────────────────────────────────────────────
+const ALLOWED_ORIGINS = [
+  /\.manus\.computer$/,
+  /\.manus\.space$/,
+  /^http:\/\/localhost:\d+$/,
+  /^https:\/\/localhost:\d+$/,
+];
+
+function isAllowedOrigin(origin: string | undefined): boolean {
+  if (!origin) return true;
+  return ALLOWED_ORIGINS.some((pattern) => pattern.test(origin));
+}
 
 function isPortAvailable(port: number): Promise<boolean> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const server = net.createServer();
     server.listen(port, () => {
       server.close(() => resolve(true));
@@ -23,9 +41,7 @@ function isPortAvailable(port: number): Promise<boolean> {
 
 async function findAvailablePort(startPort: number = 3000): Promise<number> {
   for (let port = startPort; port < startPort + 20; port++) {
-    if (await isPortAvailable(port)) {
-      return port;
-    }
+    if (await isPortAvailable(port)) return port;
   }
   throw new Error(`No available port found starting from ${startPort}`);
 }
@@ -34,53 +50,143 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Stripe webhook - MUST be before express.json()
-  app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-    const sig = req.headers['stripe-signature'];
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-    try {
-      const event = stripe.webhooks.constructEvent(req.body, sig as string, webhookSecret as string);
-      // Handle test events
-      if (event.id.startsWith('evt_test_')) {
-        console.log('[Webhook] Test event detected, returning verification response');
-        return res.json({ verified: true });
-      }
-      console.log(`[Webhook] Event: ${event.type} | ID: ${event.id}`);
-      switch (event.type) {
-        case 'checkout.session.completed': {
-          const session = event.data.object as Stripe.Checkout.Session;
-          console.log(`[Webhook] Payment completed for user ${session.metadata?.user_id}, type: ${session.metadata?.type}`);
-          break;
+  // ── 1. Stripe webhook — MUST be before express.json() ─────────────────────
+  app.post(
+    "/api/stripe/webhook",
+    express.raw({ type: "application/json" }),
+    async (req, res) => {
+      const sig = req.headers["stripe-signature"];
+      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      try {
+        const event = stripe.webhooks.constructEvent(
+          req.body,
+          sig as string,
+          webhookSecret as string
+        );
+        if (event.id.startsWith("evt_test_")) {
+          console.log("[Webhook] Test event detected");
+          return res.json({ verified: true });
         }
-        case 'payment_intent.succeeded': {
-          console.log('[Webhook] PaymentIntent succeeded');
-          break;
+        console.log(`[Webhook] ${event.type} | ${event.id}`);
+        switch (event.type) {
+          case "checkout.session.completed": {
+            const session = event.data.object as Stripe.Checkout.Session;
+            console.log(
+              `[Webhook] Payment completed for user ${session.metadata?.user_id}`
+            );
+            break;
+          }
+          case "payment_intent.succeeded":
+            console.log("[Webhook] PaymentIntent succeeded");
+            break;
         }
+        res.json({ received: true });
+      } catch (err: any) {
+        console.error("[Webhook] Error:", err.message);
+        res.status(400).send(`Webhook Error: ${err.message}`);
       }
-      res.json({ received: true });
-    } catch (err: any) {
-      console.error('[Webhook] Error:', err.message);
-      res.status(400).send(`Webhook Error: ${err.message}`);
     }
+  );
+
+  // ── 2. Security headers (Helmet) ──────────────────────────────────────────
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://maps.googleapis.com"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          fontSrc: ["'self'", "https://fonts.gstatic.com"],
+          imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
+          connectSrc: ["'self'", "https:", "wss:"],
+          frameSrc: ["'none'"],
+          objectSrc: ["'none'"],
+          upgradeInsecureRequests: [],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    })
+  );
+
+  // ── 3. CORS ────────────────────────────────────────────────────────────────
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        if (isAllowedOrigin(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error(`CORS: origin ${origin} not allowed`));
+        }
+      },
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    })
+  );
+
+  // ── 4. Rate limiting ──────────────────────────────────────────────────────
+  const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 500,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Muitas requisições. Tente novamente em alguns minutos." },
+    skip: (req) => req.path.startsWith("/api/trpc/auth."),
   });
 
-  // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Muitas tentativas de autenticação. Aguarde 15 minutos." },
+  });
 
-  // OAuth callback under /api/oauth/callback
+  const imageGenLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Limite de geração de imagens atingido. Tente em 1 hora." },
+  });
+
+  app.use("/api/", globalLimiter);
+  app.use("/api/oauth/", authLimiter);
+  app.use("/api/trpc/imageGen.", imageGenLimiter);
+
+  // ── 5. Health check ───────────────────────────────────────────────────────
+  app.get("/api/health", (_req, res) => {
+    res.json({
+      status: "ok",
+      service: "pnsp-platform",
+      version: process.env.npm_package_version || "1.0.0",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    });
+  });
+
+  // ── 6. Body parsers ───────────────────────────────────────────────────────
+  app.use(express.json({ limit: "10mb" }));
+  app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
+  // ── 7. OAuth routes ───────────────────────────────────────────────────────
   registerOAuthRoutes(app);
 
-  // tRPC API
+  // ── 8. tRPC ───────────────────────────────────────────────────────────────
   app.use(
     "/api/trpc",
     createExpressMiddleware({
       router: appRouter,
       createContext,
+      onError: ({ error, path }) => {
+        if (error.code !== "NOT_FOUND" && error.code !== "UNAUTHORIZED") {
+          console.error(`[tRPC] Error in ${path}:`, error.message);
+        }
+      },
     })
   );
 
-  // development mode uses Vite, production mode uses static files
+  // ── 9. Frontend ───────────────────────────────────────────────────────────
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
   } else {
@@ -91,11 +197,12 @@ async function startServer() {
   const port = await findAvailablePort(preferredPort);
 
   if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
+    console.log(`Port ${preferredPort} busy, using ${port}`);
   }
 
   server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}/`);
+    console.log(`[PNSP] Server running on http://localhost:${port}/`);
+    console.log(`[PNSP] Environment: ${process.env.NODE_ENV || "development"}`);
   });
 }
 

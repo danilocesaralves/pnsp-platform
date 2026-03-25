@@ -6,19 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PublicLayout from "@/components/PublicLayout";
 import {
-  Music, Users, MapPin, BookOpen, Mic2, Guitar, Star,
-  ArrowRight, Play, Search, Briefcase, Target, Building2
+  Music2, Users, MapPin, BookOpen, Mic2, Guitar, Star,
+  ArrowRight, Search, Briefcase, Target, Building2,
+  ChevronRight, TrendingUp, Award, Globe,
 } from "lucide-react";
 
 const PROFILE_TYPES = [
-  { label: "Artistas Solo", icon: Mic2, href: "/perfis?tipo=artista_solo", color: "bg-amber-500" },
-  { label: "Grupos & Bandas", icon: Users, href: "/perfis?tipo=grupo", color: "bg-red-500" },
-  { label: "Produtores", icon: Music, href: "/perfis?tipo=produtor", color: "bg-purple-500" },
-  { label: "Professores", icon: BookOpen, href: "/perfis?tipo=professor", color: "bg-blue-500" },
-  { label: "Estúdios", icon: Building2, href: "/estudios", color: "bg-green-500" },
-  { label: "Luthiers", icon: Guitar, href: "/perfis?tipo=luthier", color: "bg-orange-500" },
-  { label: "Contratantes", icon: Briefcase, href: "/perfis?tipo=contratante", color: "bg-teal-500" },
-  { label: "Eventos", icon: Star, href: "/oportunidades", color: "bg-pink-500" },
+  { label: "Artistas Solo", icon: Mic2, href: "/perfis?tipo=artista_solo", color: "var(--o500)" },
+  { label: "Grupos & Bandas", icon: Users, href: "/perfis?tipo=grupo", color: "var(--g500)" },
+  { label: "Produtores", icon: Music2, href: "/perfis?tipo=produtor", color: "#8b5cf6" },
+  { label: "Professores", icon: BookOpen, href: "/perfis?tipo=professor", color: "#3b82f6" },
+  { label: "Estúdios", icon: Building2, href: "/estudios", color: "var(--g700)" },
+  { label: "Luthiers", icon: Guitar, href: "/perfis?tipo=luthier", color: "#f97316" },
+  { label: "Contratantes", icon: Briefcase, href: "/perfis?tipo=contratante", color: "#0891b2" },
+  { label: "Eventos", icon: Star, href: "/oportunidades", color: "#ec4899" },
 ];
 
 const FEATURES = [
@@ -26,121 +27,225 @@ const FEATURES = [
     icon: Users,
     title: "Vitrines Profissionais",
     desc: "Perfis completos com bio, portfólio, vídeos, áudio e redes sociais para artistas, grupos e profissionais.",
+    color: "var(--o500)",
   },
   {
     icon: Briefcase,
     title: "Motor de Ofertas",
     desc: "Publique e encontre serviços: shows, aulas, instrumentos, produção musical e muito mais.",
+    color: "var(--g500)",
   },
   {
     icon: Target,
     title: "Motor de Oportunidades",
     desc: "Vagas em grupos, projetos culturais, eventos e colaborações com sistema de candidatura.",
+    color: "#8b5cf6",
   },
   {
     icon: MapPin,
     title: "Mapa Vivo Nacional",
     desc: "Visualize artistas, grupos, estúdios e eventos em todo o Brasil em tempo real.",
+    color: "#ef4444",
   },
   {
     icon: BookOpen,
     title: "Academia Digital",
     desc: "Biblioteca de conteúdo educacional: artigos, vídeos e tutoriais sobre samba e pagode.",
+    color: "#3b82f6",
   },
   {
     icon: Building2,
     title: "Hub de Estúdios",
     desc: "Encontre estúdios de gravação e ensaio com equipamentos, preços e reservas online.",
+    color: "var(--g700)",
   },
 ];
 
+function ProfileCardSkeleton() {
+  return (
+    <div className="pnsp-card p-5 animate-pulse">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="pnsp-skeleton w-12 h-12 rounded-full" />
+        <div className="flex-1">
+          <div className="pnsp-skeleton h-4 w-32 mb-2" />
+          <div className="pnsp-skeleton h-3 w-20" />
+        </div>
+      </div>
+      <div className="pnsp-skeleton h-3 w-full mb-2" />
+      <div className="pnsp-skeleton h-3 w-3/4" />
+    </div>
+  );
+}
+
 export default function Home() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { data: stats } = trpc.admin.stats.useQuery();
-  const { data: featuredProfiles } = trpc.profiles.listFeatured.useQuery({ limit: 6 });
-  const { data: recentOfferings } = trpc.offerings.listRecent.useQuery({ limit: 4 });
+  const { data: featuredProfiles, isLoading: loadingProfiles } = trpc.profiles.listFeatured.useQuery({ limit: 6 });
+  const { data: recentOfferings, isLoading: loadingOfferings } = trpc.offerings.listRecent.useQuery({ limit: 4 });
+
+  const platformStats = [
+    { label: "Perfis Ativos", value: stats?.profileCount ?? "—", icon: Users, color: "var(--o500)" },
+    { label: "Ofertas Publicadas", value: stats?.offeringCount ?? "—", icon: Briefcase, color: "var(--g500)" },
+    { label: "Oportunidades", value: stats?.opportunityCount ?? "—", icon: Target, color: "#8b5cf6" },
+    { label: "Estados Cobertos", value: "27", icon: Globe, color: "#3b82f6" },
+  ];
 
   return (
     <PublicLayout>
       {/* ─── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-pnsp-black via-pnsp-dark to-pnsp-black text-white">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-pnsp-gold blur-3xl" />
-          <div className="absolute bottom-10 right-20 w-96 h-96 rounded-full bg-pnsp-red blur-3xl" />
-        </div>
-        <div className="container relative py-24 lg:py-32">
-          <div className="max-w-3xl">
-            <Badge className="mb-6 bg-pnsp-gold/20 text-pnsp-gold border-pnsp-gold/30 text-sm font-medium px-4 py-1.5">
-              Plataforma Nacional do Samba e do Pagode
-            </Badge>
-            <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
-              O ecossistema digital do{" "}
-              <span className="text-pnsp-gold">samba</span> e do{" "}
-              <span className="text-pnsp-red">pagode</span> brasileiro
-            </h1>
-            <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-2xl leading-relaxed">
-              Conectamos artistas, grupos, produtores, professores, estúdios e parceiros em uma infraestrutura digital nacional para descoberta, visibilidade e oportunidades reais.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              {isAuthenticated ? (
-                <Link href="/dashboard">
-                  <Button size="lg" className="bg-pnsp-gold hover:bg-pnsp-gold/90 text-black font-semibold px-8">
-                    Meu Dashboard <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              ) : (
-                <a href={getLoginUrl()}>
-                  <Button size="lg" className="bg-pnsp-gold hover:bg-pnsp-gold/90 text-black font-semibold px-8">
-                    Criar Perfil Gratuito <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </a>
-              )}
-              <Link href="/perfis">
-                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8">
-                  <Search className="mr-2 h-4 w-4" /> Explorar Plataforma
-                </Button>
-              </Link>
-            </div>
-          </div>
+      <section
+        className="relative overflow-hidden text-white"
+        style={{
+          background: "linear-gradient(135deg, var(--n950) 0%, var(--n900) 50%, oklch(0.18 0.04 85) 100%)",
+          minHeight: "88vh",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {/* Decorative blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div
+            className="absolute rounded-full blur-3xl opacity-20"
+            style={{
+              width: "40rem",
+              height: "40rem",
+              top: "-10rem",
+              right: "-10rem",
+              background: "var(--o500)",
+            }}
+          />
+          <div
+            className="absolute rounded-full blur-3xl opacity-10"
+            style={{
+              width: "30rem",
+              height: "30rem",
+              bottom: "-8rem",
+              left: "-8rem",
+              background: "var(--g500)",
+            }}
+          />
+          <div
+            className="absolute rounded-full blur-2xl opacity-15"
+            style={{
+              width: "20rem",
+              height: "20rem",
+              top: "50%",
+              left: "30%",
+              background: "var(--o300)",
+            }}
+          />
         </div>
 
-        {/* Stats bar */}
-        {stats && (
-          <div className="border-t border-white/10 bg-white/5 backdrop-blur-sm">
-            <div className="container py-6">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { label: "Profissionais", value: stats.profileCount },
-                  { label: "Ofertas Ativas", value: stats.offeringCount },
-                  { label: "Oportunidades", value: stats.opportunityCount },
-                  { label: "Estúdios", value: stats.studioCount },
-                ].map(({ label, value }) => (
-                  <div key={label} className="text-center">
-                    <p className="text-2xl lg:text-3xl font-bold text-pnsp-gold">{value ?? 0}+</p>
-                    <p className="text-sm text-white/60 mt-1">{label}</p>
+        <div className="container relative z-10 py-20 lg:py-28">
+          <div className="max-w-4xl">
+            {/* Eyebrow badge */}
+            <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full pnsp-glass text-sm font-body font-medium">
+              <Award className="h-4 w-4" style={{ color: "var(--o300)" }} />
+              <span style={{ color: "var(--o300)" }}>Plataforma Nacional do Samba e do Pagode</span>
+            </div>
+
+            {/* Main headline */}
+            <h1
+              className="pnsp-hero-text mb-6"
+              style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 1.05 }}
+            >
+              O ecossistema digital do{" "}
+              <span style={{ color: "var(--o500)" }}>samba</span>
+              <br />
+              e do{" "}
+              <span style={{ color: "var(--g500)" }}>pagode</span>{" "}
+              brasileiro
+            </h1>
+
+            <p
+              className="text-lg lg:text-xl font-body mb-10 max-w-2xl leading-relaxed"
+              style={{ color: "var(--n200)" }}
+            >
+              Conecte-se com artistas, grupos, estúdios, produtores e parceiros em todo o Brasil.
+              Descubra oportunidades, publique ofertas e faça parte da maior rede do samba nacional.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-4 mb-16">
+              {isAuthenticated ? (
+                <Button
+                  size="lg"
+                  className="h-12 px-8 text-base font-body font-semibold rounded-xl"
+                  style={{ background: "var(--o500)", color: "var(--n950)" }}
+                  asChild
+                >
+                  <Link href="/dashboard">
+                    Acessar Dashboard
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  className="h-12 px-8 text-base font-body font-semibold rounded-xl"
+                  style={{ background: "var(--o500)", color: "var(--n950)" }}
+                  asChild
+                >
+                  <a href={getLoginUrl()}>
+                    Criar perfil gratuito
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              )}
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 px-8 text-base font-body font-semibold rounded-xl border-white/20 text-white hover:bg-white/10"
+                asChild
+              >
+                <Link href="/perfis">
+                  <Search className="mr-2 h-4 w-4" />
+                  Explorar perfis
+                </Link>
+              </Button>
+            </div>
+
+            {/* Stats strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {platformStats.map(({ label, value, icon: Icon, color }) => (
+                <div key={label} className="pnsp-glass rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Icon className="h-4 w-4" style={{ color }} />
+                    <span className="text-2xl font-display font-semibold" style={{ color }}>
+                      {value}
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <p className="text-xs font-body" style={{ color: "var(--n400)" }}>{label}</p>
+                </div>
+              ))}
             </div>
           </div>
-        )}
+        </div>
       </section>
 
-      {/* ─── CATEGORIES ───────────────────────────────────────────────────── */}
+      {/* ─── CATEGORY GRID ────────────────────────────────────────────────── */}
       <section className="py-16 bg-background">
         <div className="container">
           <div className="text-center mb-10">
-            <h2 className="text-2xl lg:text-3xl font-bold mb-3">Explore por Categoria</h2>
-            <p className="text-muted-foreground">Encontre profissionais e serviços em todo o ecossistema</p>
+            <div className="pnsp-divider mx-auto mb-4" />
+            <h2 className="pnsp-section-title text-3xl text-foreground mb-3">
+              Explore por categoria
+            </h2>
+            <p className="text-muted-foreground font-body max-w-xl mx-auto">
+              Encontre o que você precisa no ecossistema completo do samba e pagode
+            </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {PROFILE_TYPES.map(({ label, icon: Icon, href, color }) => (
               <Link key={href} href={href}>
-                <div className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-card hover:shadow-md hover:border-pnsp-gold/50 transition-all cursor-pointer group text-center">
-                  <div className={`h-10 w-10 rounded-lg ${color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                    <Icon className="h-5 w-5 text-white" />
+                <div className="pnsp-card p-5 text-center cursor-pointer group">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 transition-transform group-hover:scale-110"
+                    style={{ background: `${color}18` }}
+                  >
+                    <Icon className="h-6 w-6" style={{ color }} />
                   </div>
-                  <span className="text-xs font-medium leading-tight">{label}</span>
+                  <p className="text-sm font-body font-semibold text-foreground">{label}</p>
                 </div>
               </Link>
             ))}
@@ -149,75 +254,111 @@ export default function Home() {
       </section>
 
       {/* ─── FEATURED PROFILES ────────────────────────────────────────────── */}
-      {featuredProfiles && featuredProfiles.length > 0 && (
-        <section className="py-16 bg-muted/30">
-          <div className="container">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className="text-2xl lg:text-3xl font-bold mb-1">Perfis em Destaque</h2>
-                <p className="text-muted-foreground">Profissionais verificados na plataforma</p>
-              </div>
-              <Link href="/perfis">
-                <Button variant="outline" size="sm">
-                  Ver todos <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+      <section className="py-16" style={{ background: "var(--n50)" }}>
+        <div className="container">
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <div className="pnsp-divider mb-4" />
+              <h2 className="pnsp-section-title text-3xl text-foreground mb-2">
+                Perfis em destaque
+              </h2>
+              <p className="text-muted-foreground font-body">
+                Artistas e profissionais do ecossistema
+              </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {featuredProfiles.slice(0, 6).map((profile) => (
-                <Link key={profile.id} href={`/perfis/${profile.id}`}>
-                  <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:border-pnsp-gold/40 transition-all cursor-pointer group">
-                    <div className="h-32 bg-gradient-to-br from-pnsp-black to-pnsp-dark relative">
-                      {profile.coverUrl && (
-                        <img src={profile.coverUrl} alt="" className="w-full h-full object-cover opacity-60" />
-                      )}
-                      <div className="absolute bottom-3 left-4 flex items-end gap-3">
-                        <div className="h-14 w-14 rounded-full border-2 border-pnsp-gold bg-pnsp-black flex items-center justify-center overflow-hidden">
-                          {profile.avatarUrl ? (
-                            <img src={profile.avatarUrl} alt={profile.displayName} className="w-full h-full object-cover" />
-                          ) : (
-                            <Music className="h-6 w-6 text-pnsp-gold" />
+            <Button variant="ghost" className="font-body hidden sm:flex" asChild>
+              <Link href="/perfis">
+                Ver todos
+                <ChevronRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {loadingProfiles
+              ? Array.from({ length: 6 }).map((_, i) => <ProfileCardSkeleton key={i} />)
+              : featuredProfiles?.length
+              ? featuredProfiles.map((profile) => (
+                  <Link key={profile.id} href={`/perfis/${profile.id}`}>
+                    <div className="pnsp-card p-5 cursor-pointer">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div
+                          className="w-12 h-12 rounded-full flex items-center justify-center text-white font-display font-semibold text-lg flex-shrink-0"
+                          style={{ background: "var(--o500)" }}
+                        >
+                          {(profile.displayName || "?").charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-body font-semibold text-foreground truncate">
+                            {profile.displayName}
+                          </h3>
+                          <p className="text-xs text-muted-foreground font-body capitalize">
+                            {profile.profileType?.replace(/_/g, " ")}
+                          </p>
+                          {profile.city && (
+                            <p className="text-xs text-muted-foreground font-body flex items-center gap-1 mt-0.5">
+                              <MapPin className="h-3 w-3" />
+                              {profile.city}, {profile.state}
+                            </p>
                           )}
                         </div>
-                      </div>
-                    </div>
-                    <div className="p-4 pt-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold text-sm group-hover:text-pnsp-gold transition-colors">{profile.displayName}</h3>
-                          <p className="text-xs text-muted-foreground">{profile.city}{profile.state ? `, ${profile.state}` : ""}</p>
-                        </div>
-                        {profile.isVerified && (
-                          <Badge className="text-[10px] bg-pnsp-gold/10 text-pnsp-gold border-pnsp-gold/30">Verificado</Badge>
+                        {profile.isFeatured && (
+                          <Star className="h-4 w-4 flex-shrink-0" style={{ color: "var(--o500)" }} />
                         )}
                       </div>
                       {profile.bio && (
-                        <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{profile.bio}</p>
+                        <p className="text-sm text-muted-foreground font-body line-clamp-2 leading-relaxed">
+                          {profile.bio}
+                        </p>
+                      )}
+                      {profile.genres && profile.genres.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-3">
+                          {profile.genres.slice(0, 3).map((g: string) => (
+                            <span key={g} className="pnsp-badge-gold text-xs">{g}</span>
+                          ))}
+                        </div>
                       )}
                     </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  </Link>
+                ))
+              : (
+                <div className="col-span-3 text-center py-12 text-muted-foreground font-body">
+                  Nenhum perfil em destaque ainda.
+                </div>
+              )}
           </div>
-        </section>
-      )}
 
-      {/* ─── FEATURES ─────────────────────────────────────────────────────── */}
+          <div className="text-center mt-8 sm:hidden">
+            <Button variant="outline" className="font-body" asChild>
+              <Link href="/perfis">Ver todos os perfis</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FEATURES GRID ────────────────────────────────────────────────── */}
       <section className="py-16 bg-background">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-2xl lg:text-3xl font-bold mb-3">Infraestrutura completa para o ecossistema</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Tudo que artistas, profissionais e parceiros precisam em uma única plataforma</p>
+            <div className="pnsp-divider mx-auto mb-4" />
+            <h2 className="pnsp-section-title text-3xl text-foreground mb-3">
+              Tudo que o ecossistema precisa
+            </h2>
+            <p className="text-muted-foreground font-body max-w-xl mx-auto">
+              Uma infraestrutura digital completa para artistas, profissionais e parceiros do samba e pagode
+            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURES.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="p-6 rounded-xl border border-border bg-card hover:shadow-md hover:border-pnsp-gold/30 transition-all">
-                <div className="h-12 w-12 rounded-xl bg-pnsp-gold/10 flex items-center justify-center mb-4">
-                  <Icon className="h-6 w-6 text-pnsp-gold" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {FEATURES.map(({ icon: Icon, title, desc, color }) => (
+              <div key={title} className="pnsp-card p-6">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+                  style={{ background: `${color}18` }}
+                >
+                  <Icon className="h-5 w-5" style={{ color }} />
                 </div>
-                <h3 className="font-semibold mb-2">{title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+                <h3 className="font-display font-semibold text-foreground mb-2">{title}</h3>
+                <p className="text-sm text-muted-foreground font-body leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -225,69 +366,111 @@ export default function Home() {
       </section>
 
       {/* ─── RECENT OFFERINGS ─────────────────────────────────────────────── */}
-      {recentOfferings && recentOfferings.length > 0 && (
-        <section className="py-16 bg-muted/30">
+      {(loadingOfferings || (recentOfferings && recentOfferings.length > 0)) && (
+        <section className="py-16" style={{ background: "var(--n50)" }}>
           <div className="container">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-10">
               <div>
-                <h2 className="text-2xl lg:text-3xl font-bold mb-1">Ofertas Recentes</h2>
-                <p className="text-muted-foreground">Serviços disponíveis na plataforma</p>
+                <div className="pnsp-divider mb-4" />
+                <h2 className="pnsp-section-title text-3xl text-foreground mb-2">
+                  Ofertas recentes
+                </h2>
+                <p className="text-muted-foreground font-body">
+                  Serviços disponíveis no ecossistema
+                </p>
               </div>
-              <Link href="/ofertas">
-                <Button variant="outline" size="sm">
-                  Ver todas <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {recentOfferings.slice(0, 4).map((offering) => (
-                <Link key={offering.id} href={`/ofertas/${offering.id}`}>
-                  <div className="bg-card border border-border rounded-xl p-4 hover:shadow-md hover:border-pnsp-gold/40 transition-all cursor-pointer group">
-                    <Badge className="text-xs mb-3 bg-blue-50 text-blue-700 border-blue-200">{offering.category}</Badge>
-                    <h3 className="font-semibold text-sm mb-2 group-hover:text-pnsp-gold transition-colors line-clamp-2">{offering.title}</h3>
-                    {offering.price && (
-                      <p className="text-pnsp-gold font-bold text-sm">
-                        R$ {Number(offering.price).toLocaleString("pt-BR")}
-                        {false && "/h"}
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground mt-2">{offering.city}{offering.state ? `, ${offering.state}` : ""}</p>
-                  </div>
+              <Button variant="ghost" className="font-body hidden sm:flex" asChild>
+                <Link href="/ofertas">
+                  Ver todas
+                  <ChevronRight className="ml-1 h-4 w-4" />
                 </Link>
-              ))}
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {loadingOfferings
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="pnsp-card p-5 animate-pulse">
+                      <div className="pnsp-skeleton h-4 w-3/4 mb-3" />
+                      <div className="pnsp-skeleton h-3 w-full mb-2" />
+                      <div className="pnsp-skeleton h-3 w-1/2 mb-4" />
+                      <div className="pnsp-skeleton h-8 w-full rounded-lg" />
+                    </div>
+                  ))
+                : recentOfferings?.map((offering) => (
+                    <Link key={offering.id} href={`/ofertas/${offering.id}`}>
+                      <div className="pnsp-card p-5 cursor-pointer h-full flex flex-col">
+                        <div className="flex items-start justify-between mb-2">
+                          <span className="pnsp-badge-green text-xs capitalize">
+                            {offering.category?.replace(/_/g, " ")}
+                          </span>
+                          {offering.price && (
+                            <span className="text-sm font-semibold font-body" style={{ color: "var(--g700)" }}>
+                              R$ {Number(offering.price).toLocaleString("pt-BR")}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-body font-semibold text-foreground mb-2 line-clamp-2 flex-1">
+                          {offering.title}
+                        </h3>
+                        {offering.city && (
+                          <p className="text-xs text-muted-foreground font-body flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {offering.city}, {offering.state}
+                          </p>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* ─── CTA ──────────────────────────────────────────────────────────── */}
-      <section className="py-20 bg-gradient-to-br from-pnsp-black to-pnsp-dark text-white">
+      {/* ─── CTA FINAL ────────────────────────────────────────────────────── */}
+      <section
+        className="py-20"
+        style={{
+          background: "linear-gradient(135deg, var(--n950) 0%, var(--n900) 100%)",
+        }}
+      >
         <div className="container text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Faça parte da maior plataforma do samba e pagode
-          </h2>
-          <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">
-            Crie seu perfil gratuito, publique ofertas e conecte-se com todo o ecossistema nacional.
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            {isAuthenticated ? (
-              <Link href="/criar-perfil">
-                <Button size="lg" className="bg-pnsp-gold hover:bg-pnsp-gold/90 text-black font-semibold px-10">
-                  Criar Minha Vitrine <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            ) : (
-              <a href={getLoginUrl()}>
-                <Button size="lg" className="bg-pnsp-gold hover:bg-pnsp-gold/90 text-black font-semibold px-10">
-                  Começar Agora — É Gratuito <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </a>
-            )}
-            <Link href="/mapa">
-              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-8">
-                <MapPin className="mr-2 h-4 w-4" /> Ver Mapa Nacional
+          <div className="max-w-2xl mx-auto">
+            <TrendingUp className="h-10 w-10 mx-auto mb-6" style={{ color: "var(--o500)" }} />
+            <h2
+              className="pnsp-section-title text-3xl lg:text-4xl mb-4"
+              style={{ color: "var(--n50)" }}
+            >
+              Faça parte do movimento
+            </h2>
+            <p className="font-body mb-8 text-lg" style={{ color: "var(--n400)" }}>
+              Crie seu perfil gratuito, publique ofertas, candidate-se a oportunidades
+              e conecte-se com o ecossistema nacional do samba e pagode.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button
+                size="lg"
+                className="h-12 px-8 font-body font-semibold rounded-xl"
+                style={{ background: "var(--o500)", color: "var(--n950)" }}
+                asChild
+              >
+                <a href={getLoginUrl()}>
+                  Começar agora — é grátis
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
               </Button>
-            </Link>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 px-8 font-body font-semibold rounded-xl border-white/20 text-white hover:bg-white/10"
+                asChild
+              >
+                <Link href="/mapa">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  Ver mapa nacional
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>

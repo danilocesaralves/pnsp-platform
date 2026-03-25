@@ -1,60 +1,295 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import PublicLayout from "@/components/PublicLayout";
 import { trpc } from "@/lib/trpc";
-import { Input } from "@/components/ui/input";
+import PublicLayout from "@/components/PublicLayout";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, BookOpen, Play, Clock, Lock } from "lucide-react";
-
-
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
+  Search, BookOpen, Play, Clock, Lock, X, GraduationCap,
+} from "lucide-react";
 import { ACADEMY_CATEGORIES } from "@shared/pnsp";
-const CONTENT_TYPES: Record<string,string> = { artigo:"Artigo", video:"Vídeo", tutorial:"Tutorial", curso:"Curso", podcast:"Podcast", partitura:"Partitura" };
+
+const CONTENT_TYPES: Record<string, string> = {
+  artigo: "Artigo",
+  video: "Vídeo",
+  tutorial: "Tutorial",
+  curso: "Curso",
+  podcast: "Podcast",
+  partitura: "Partitura",
+};
+
+const CONTENT_TYPE_COLORS: Record<string, string> = {
+  artigo: "var(--g500)",
+  video: "#ef4444",
+  tutorial: "#8b5cf6",
+  curso: "var(--o500)",
+  podcast: "#3b82f6",
+  partitura: "#0891b2",
+};
+
+function AcademySkeleton() {
+  return (
+    <div className="pnsp-card overflow-hidden animate-pulse">
+      <div className="pnsp-skeleton h-44 w-full" />
+      <div className="p-4">
+        <div className="pnsp-skeleton h-4 w-20 rounded-full mb-3" />
+        <div className="pnsp-skeleton h-5 w-full mb-2" />
+        <div className="pnsp-skeleton h-4 w-4/5 mb-1" />
+        <div className="pnsp-skeleton h-4 w-3/5 mb-3" />
+        <div className="flex justify-between">
+          <div className="pnsp-skeleton h-4 w-16" />
+          <div className="pnsp-skeleton h-4 w-20" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Academy() {
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [contentType, setContentType] = useState("");
+  const [category, setCategory] = useState("all");
+  const [contentType, setContentType] = useState("all");
   const [offset, setOffset] = useState(0);
-  const limit = 20;
-  const { data: content, isLoading } = trpc.academy.list.useQuery({ search: search || undefined, category: category || undefined, contentType: contentType || undefined, limit, offset });
+  const limit = 18;
+
+  const { data: content, isLoading } = trpc.academy.list.useQuery({
+    search: search || undefined,
+    category: category !== "all" ? category : undefined,
+    contentType: contentType !== "all" ? contentType : undefined,
+    limit,
+    offset,
+  });
+
+  const hasFilters = search || category !== "all" || contentType !== "all";
+
+  function clearFilters() {
+    setSearch(""); setSearchInput("");
+    setCategory("all"); setContentType("all");
+    setOffset(0);
+  }
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setSearch(searchInput);
+    setOffset(0);
+  }
+
   return (
     <PublicLayout>
-      <div className="container py-8">
-        <div className="mb-8"><h1 className="text-3xl font-bold mb-2">Academia Digital</h1><p className="text-muted-foreground">Conteúdo educacional sobre samba, pagode e o ecossistema musical</p></div>
-        <div className="flex flex-col sm:flex-row gap-3 mb-8">
-          <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Buscar conteúdo..." value={search} onChange={(e) => { setSearch(e.target.value); setOffset(0); }} className="pl-9" /></div>
-          <Select value={category} onValueChange={(v) => { setCategory(v === "all" ? "" : v); setOffset(0); }}><SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Categoria" /></SelectTrigger><SelectContent><SelectItem value="all">Todas</SelectItem>{Object.entries(ACADEMY_CATEGORIES).map(([k,v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent></Select>
-          <Select value={contentType} onValueChange={(v) => { setContentType(v === "all" ? "" : v); setOffset(0); }}><SelectTrigger className="w-full sm:w-40"><SelectValue placeholder="Tipo" /></SelectTrigger><SelectContent><SelectItem value="all">Todos</SelectItem>{Object.entries(CONTENT_TYPES).map(([k,v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent></Select>
+      {/* ─── Header ─────────────────────────────────────────────────────── */}
+      <div
+        className="py-12 border-b border-border"
+        style={{ background: "linear-gradient(135deg, var(--n950) 0%, var(--n900) 100%)" }}
+      >
+        <div className="container">
+          <div className="max-w-2xl">
+            <div className="pnsp-divider mb-4" />
+            <h1 className="pnsp-section-title text-3xl lg:text-4xl mb-3" style={{ color: "var(--n50)" }}>
+              Academia Digital
+            </h1>
+            <p className="font-body text-lg mb-6" style={{ color: "var(--n400)" }}>
+              Conteúdo educacional sobre samba, pagode, instrumentos e o ecossistema musical
+            </p>
+            <form onSubmit={handleSearch} className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "var(--n400)" }} />
+                <Input
+                  placeholder="Buscar conteúdo..."
+                  value={searchInput}
+                  onChange={e => setSearchInput(e.target.value)}
+                  className="pl-10 h-11 font-body bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                />
+              </div>
+              <Button
+                type="submit"
+                size="lg"
+                className="h-11 px-6 font-body font-semibold"
+                style={{ background: "var(--o500)", color: "var(--n950)" }}
+              >
+                Buscar
+              </Button>
+            </form>
+          </div>
         </div>
-        {isLoading ? <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({length:6}).map((_,i) => <div key={i} className="rounded-xl border border-border bg-card animate-pulse h-64" />)}</div> : (
+      </div>
+
+      <div className="container py-8">
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <Select value={category} onValueChange={v => { setCategory(v); setOffset(0); }}>
+            <SelectTrigger className="w-52 h-9 font-body text-sm">
+              <SelectValue placeholder="Categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="font-body">Todas as categorias</SelectItem>
+              {Object.entries(ACADEMY_CATEGORIES).map(([k, v]) => (
+                <SelectItem key={k} value={k} className="font-body">{v}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={contentType} onValueChange={v => { setContentType(v); setOffset(0); }}>
+            <SelectTrigger className="w-40 h-9 font-body text-sm">
+              <SelectValue placeholder="Tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="font-body">Todos os tipos</SelectItem>
+              {Object.entries(CONTENT_TYPES).map(([k, v]) => (
+                <SelectItem key={k} value={k} className="font-body">{v}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {hasFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9 font-body text-muted-foreground gap-1">
+              <X className="h-3.5 w-3.5" />
+              Limpar
+            </Button>
+          )}
+
+          <span className="ml-auto text-sm text-muted-foreground font-body">
+            {isLoading ? "Carregando..." : `${content?.length ?? 0} conteúdos`}
+          </span>
+        </div>
+
+        {/* Grid */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {Array.from({ length: 9 }).map((_, i) => <AcademySkeleton key={i} />)}
+          </div>
+        ) : content && content.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(content ?? []).map((item) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {content.map(item => (
                 <Link key={item.id} href={`/academia/${item.id}`}>
-                  <div className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer">
-                    <div className="relative h-44 bg-muted overflow-hidden">
-                      {item.thumbnailUrl ? <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /> : <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">{item.contentType === "video" ? <Play className="h-10 w-10 text-muted-foreground/40" /> : <BookOpen className="h-10 w-10 text-muted-foreground/40" />}</div>}
-                      {item.isPremium && <div className="absolute top-2 right-2"><Badge className="bg-amber-500 text-white border-0 text-xs"><Lock className="h-3 w-3 mr-1" />Premium</Badge></div>}
-                      <div className="absolute top-2 left-2"><Badge variant="secondary" className="text-xs">{CONTENT_TYPES[item.contentType] ?? item.contentType}</Badge></div>
+                  <div className="pnsp-card overflow-hidden cursor-pointer h-full flex flex-col">
+                    {/* Thumbnail */}
+                    <div className="relative h-44 bg-muted overflow-hidden flex-shrink-0">
+                      {item.thumbnailUrl ? (
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.title}
+                          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center"
+                          style={{ background: `linear-gradient(135deg, var(--n900) 0%, var(--n800) 100%)` }}
+                        >
+                          {item.contentType === "video" || item.contentType === "podcast" ? (
+                            <Play className="h-12 w-12 text-white/20" />
+                          ) : (
+                            <BookOpen className="h-12 w-12 text-white/20" />
+                          )}
+                        </div>
+                      )}
+
+                      {/* Content type badge */}
+                      <div className="absolute top-2 left-2">
+                        <span
+                          className="text-xs font-body font-semibold px-2 py-0.5 rounded-full text-white"
+                          style={{ background: CONTENT_TYPE_COLORS[item.contentType] ?? "var(--n700)" }}
+                        >
+                          {CONTENT_TYPES[item.contentType] ?? item.contentType}
+                        </span>
+                      </div>
+
+                      {/* Premium badge */}
+                      {item.isPremium && (
+                        <div className="absolute top-2 right-2">
+                          <span
+                            className="text-xs font-body font-semibold px-2 py-0.5 rounded-full text-white flex items-center gap-1"
+                            style={{ background: "var(--o500)" }}
+                          >
+                            <Lock className="h-3 w-3" />Premium
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    <div className="p-4">
-                      <div className="flex items-center gap-2 mb-2"><Badge variant="outline" className="text-xs">{(ACADEMY_CATEGORIES as Record<string,string>)[item.category] ?? item.category}</Badge></div>
-                      <h3 className="font-semibold line-clamp-2 mb-2 group-hover:text-accent-foreground transition-colors">{item.title}</h3>
-                      {item.excerpt && <p className="text-xs text-muted-foreground line-clamp-2">{item.excerpt}</p>}
-                      <div className="flex items-center justify-between mt-3">
-                        {item.duration && <div className="flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" />{item.duration} min</div>}
-                        {!item.isPremium ? <span className="text-sm font-bold text-accent-foreground">R$ {Number(!item.isPremium).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span> : <span className="text-xs text-green-600 font-medium">Gratuito</span>}
+
+                    {/* Content */}
+                    <div className="p-4 flex flex-col flex-1">
+                      <div className="mb-2">
+                        <span className="text-xs text-muted-foreground font-body">
+                          {(ACADEMY_CATEGORIES as Record<string, string>)[item.category] ?? item.category}
+                        </span>
+                      </div>
+
+                      <h3 className="font-body font-semibold text-foreground text-sm leading-snug line-clamp-2 mb-2">
+                        {item.title}
+                      </h3>
+
+                      {item.excerpt && (
+                        <p className="text-xs text-muted-foreground font-body line-clamp-2 leading-relaxed flex-1 mb-3">
+                          {item.excerpt}
+                        </p>
+                      )}
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between mt-auto">
+                        {item.duration ? (
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground font-body">
+                            <Clock className="h-3 w-3" />
+                            {item.duration} min
+                          </div>
+                        ) : <span />}
+
+                        {item.isPremium ? (
+                          item.price ? (
+                            <span className="text-sm font-display font-bold" style={{ color: "var(--o500)" }}>
+                              R$ {Number(item.price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                            </span>
+                          ) : (
+                            <span className="text-xs font-body font-semibold" style={{ color: "var(--o500)" }}>
+                              Premium
+                            </span>
+                          )
+                        ) : (
+                          <span className="text-xs font-body font-semibold" style={{ color: "var(--g600)" }}>
+                            Gratuito
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                 </Link>
               ))}
             </div>
-            {(content ?? []).length === 0 && <div className="text-center py-16"><BookOpen className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" /><p className="text-muted-foreground">Nenhum conteudo encontrado</p></div>}
-            <div className="flex justify-center gap-3 mt-8">{offset > 0 && <Button variant="outline" onClick={() => setOffset(o => o - limit)}>Anterior</Button>}{(content ?? []).length === limit && <Button variant="outline" onClick={() => setOffset(o => o + limit)}>Próxima</Button>}</div>
+
+            {/* Pagination */}
+            <div className="flex justify-center gap-3 mt-8">
+              {offset > 0 && (
+                <Button variant="outline" className="font-body" onClick={() => setOffset(o => Math.max(0, o - limit))}>
+                  ← Anterior
+                </Button>
+              )}
+              {content.length === limit && (
+                <Button variant="outline" className="font-body" onClick={() => setOffset(o => o + limit)}>
+                  Próxima →
+                </Button>
+              )}
+            </div>
           </>
+        ) : (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--g100)" }}>
+              <GraduationCap className="h-8 w-8" style={{ color: "var(--g600)" }} />
+            </div>
+            <h3 className="font-display font-semibold text-xl text-foreground mb-2">Nenhum conteúdo encontrado</h3>
+            <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">
+              {hasFilters ? "Ajuste os filtros ou limpe a busca para ver mais resultados." : "Ainda não há conteúdo publicado."}
+            </p>
+            {hasFilters && (
+              <Button onClick={clearFilters} variant="outline" className="font-body">
+                <X className="h-4 w-4 mr-2" />Limpar filtros
+              </Button>
+            )}
+          </div>
         )}
       </div>
     </PublicLayout>

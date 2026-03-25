@@ -1,8 +1,19 @@
 # PNSP — Plataforma Nacional de Samba e Pagode
 
-**Infraestrutura digital setorial para o ecossistema do samba e do pagode brasileiro.**
+> Infraestrutura digital setorial para o ecossistema do samba e pagode brasileiro.
 
-A PNSP conecta artistas solo, grupos, bandas, duplas, comunidades, rodas de samba, projetos culturais, compositores, músicos, produtores, professores, estúdios, lojas de instrumentos, luthiers, artesãos, contratantes, bares, casas de show, eventos, hotelaria, turismo e parceiros do ecossistema.
+[![CI](https://github.com/danilocesaralves/pnsp-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/danilocesaralves/pnsp-platform/actions/workflows/ci.yml)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
+[![Tests](https://img.shields.io/badge/tests-24%20passing-brightgreen)](#testes)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+---
+
+## O que é a PNSP
+
+A PNSP conecta artistas, grupos, bandas, duplas, comunidades, rodas de samba, projetos culturais, compositores, músicos, produtores, professores, estúdios, lojas de instrumentos, luthiers, artesãos, contratantes, bares, casas de show, eventos, hotelaria, turismo e parceiros do ecossistema.
+
+**Não é rede social genérica. Não é diretório simples. É infraestrutura digital setorial.**
 
 ---
 
@@ -10,83 +21,78 @@ A PNSP conecta artistas solo, grupos, bandas, duplas, comunidades, rodas de samb
 
 | Camada | Tecnologia |
 |---|---|
-| Frontend | React 19 + TypeScript + TailwindCSS 4 |
+| Frontend | React 19 + TypeScript + Tailwind CSS 4 |
 | Backend | Node.js + Express 4 + tRPC 11 |
 | Banco de Dados | MySQL (TiDB) + Drizzle ORM |
-| Autenticação | Manus OAuth (JWT + cookies seguros) |
-| Pagamentos | Stripe (checkout, webhooks) |
-| Mapas | Google Maps API (proxy Manus) |
-| Geração de Imagens | IA generativa (Manus Forge API) |
+| Autenticação | Manus OAuth 2.0 (JWT + cookies seguros) |
+| Pagamentos | Stripe (Checkout Sessions + Webhooks) |
+| Mapas | Google Maps JavaScript API (proxy Manus) |
+| Geração de Imagens | Manus Forge API (IA generativa) |
 | Testes | Vitest (24 testes, 100% passando) |
-| Deploy | Manus Hosting (PWA) |
+| CI/CD | GitHub Actions |
+| Deploy | Manus Hosting (PWA) / Docker (self-hosted) |
 
 ---
 
 ## Módulos da Fase 1
 
-### 1. Autenticação e Contas
-- Login/Registro com Manus OAuth
-- Sessões persistentes com cookie seguro (HttpOnly, SameSite)
-- Roles: `user`, `admin`, `owner`
-- Proteção de rotas por role (protectedProcedure, adminProcedure, ownerProcedure)
+| Módulo | Status | Descrição |
+|---|---|---|
+| Autenticação OAuth | Produção | Login com Manus OAuth, roles user/admin/owner |
+| Perfis e Vitrines | Produção | 10 tipos de perfil, portfólio, busca e filtros |
+| Motor de Ofertas | Produção | Publicação e busca de serviços, shows, aulas |
+| Motor de Oportunidades | Produção | Vagas, eventos, projetos, candidaturas |
+| Mapa Vivo Nacional | Produção | Google Maps com marcadores interativos |
+| Academia V1 | Produção | Biblioteca educacional com conteúdo premium |
+| Hub de Estúdios V1 | Produção | Diretório com reservas via Stripe |
+| Painel Admin | Produção | Moderação, aprovação, logs de auditoria |
+| Dashboard Proprietário | Produção | KPIs executivos, gráficos, financeiro |
+| Geração de Imagens IA | Produção | Criação de material visual por prompt |
+| Pagamentos Stripe | Sandbox | Reservas, cursos, assinaturas premium |
 
-### 2. Perfis e Vitrines Públicas
-- Criação e edição de perfil unificado
-- Tipos: artista solo, grupo/banda, comunidade/roda, produtor, estúdio, professor, loja, luthier, contratante, parceiro
-- Portfólio de mídia (imagens, vídeos, áudio)
-- Perfis verificados e em destaque
-- Busca e filtros avançados
+---
 
-### 3. Motor de Ofertas
-- Publicação de serviços, produtos, aulas, shows, produção
-- Categorias: show, aula, produção, instrumento novo/usado, artesanato, luthieria, estúdio, serviço
-- Tipos de preço: fixo, sob consulta, gratuito, a combinar
-- Gestão pelo usuário (criar, editar, ativar/desativar)
+## Setup em 5 Comandos
 
-### 4. Motor de Oportunidades
-- Publicação de vagas, eventos, projetos, parcerias
-- Candidatura a oportunidades
-- Gestão de candidaturas
-- Status: aberta, em andamento, encerrada
+```bash
+# 1. Clone
+git clone https://github.com/danilocesaralves/pnsp-platform.git
+cd pnsp-platform
 
-### 5. Mapa Vivo Nacional
-- Visualização geográfica interativa de perfis
-- Filtros por tipo de perfil e estado
-- Marcadores com popup de informações
-- Link direto para vitrine pública
+# 2. Instale dependências
+pnpm install
 
-### 6. Academia V1
-- Biblioteca de conteúdo educacional
-- Tipos: artigo, vídeo, tutorial, curso, podcast
-- Categorias: história, técnica, instrumentos, composição, produção, carreira, negócios, cultura
-- Níveis: iniciante, intermediário, avançado
-- Conteúdo premium com Stripe
+# 3. Configure variáveis de ambiente
+cp ENVIRONMENT.md .env
+# Edite .env com suas credenciais
 
-### 7. Hub de Estúdios V1
-- Diretório de estúdios de gravação e ensaio
-- Informações completas: equipamentos, preços, localização
-- Sistema de reservas com pagamento via Stripe
+# 4. Aplique o schema do banco
+pnpm drizzle-kit generate && pnpm drizzle-kit migrate
 
-### 8. Painel Admin
-- Gestão de usuários (listar, alterar role)
-- Moderação de perfis, ofertas, oportunidades e conteúdo
-- Aprovação, suspensão, verificação e destaque
-- Logs de auditoria completos
-- Estatísticas da plataforma
+# 5. Inicie em desenvolvimento
+pnpm dev
+```
 
-### 9. Dashboard Proprietário
-- 8 KPIs executivos em tempo real
-- Gráficos: crescimento (AreaChart), distribuição por tipo (PieChart), geográfico (BarChart)
-- Metas vs Realizado com barras de progresso
-- Resumo financeiro: receita, custos, lucro, margem
-- Previsão de receita (3 meses)
-- Saúde da plataforma
-- 4 abas: Visão Geral, Financeiro, Crescimento, Operação
+---
 
-### 10. Geração de Imagens com IA
-- Criação de imagens promocionais por prompt de texto
-- Histórico de imagens geradas
-- Integração com Manus Forge API
+## Variáveis de Ambiente
+
+| Variável | Obrigatória | Descrição |
+|---|---|---|
+| `DATABASE_URL` | Sim | MySQL/TiDB connection string |
+| `JWT_SECRET` | Sim | Mínimo 32 caracteres |
+| `VITE_APP_ID` | Sim | Manus OAuth App ID |
+| `OAUTH_SERVER_URL` | Sim | `https://api.manus.im` |
+| `VITE_OAUTH_PORTAL_URL` | Sim | `https://auth.manus.im` |
+| `OWNER_OPEN_ID` | Sim | OpenID do proprietário |
+| `OWNER_NAME` | Sim | Nome do proprietário |
+| `BUILT_IN_FORGE_API_URL` | Sim | Manus Forge API URL |
+| `BUILT_IN_FORGE_API_KEY` | Sim | Manus Forge API Key (server) |
+| `VITE_FRONTEND_FORGE_API_KEY` | Sim | Manus Forge API Key (client) |
+| `VITE_FRONTEND_FORGE_API_URL` | Sim | Manus Forge API URL (client) |
+| `STRIPE_SECRET_KEY` | Pagamentos | `sk_live_...` ou `sk_test_...` |
+| `STRIPE_WEBHOOK_SECRET` | Pagamentos | `whsec_...` |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | Pagamentos | `pk_live_...` ou `pk_test_...` |
 
 ---
 
@@ -94,37 +100,32 @@ A PNSP conecta artistas solo, grupos, bandas, duplas, comunidades, rodas de samb
 
 ```
 pnsp-platform/
-├── client/
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── Home.tsx              # Landing page premium
-│   │   │   ├── Profiles.tsx          # Listagem de perfis
-│   │   │   ├── ProfileDetail.tsx     # Vitrine pública
-│   │   │   ├── Offerings.tsx         # Motor de Ofertas
-│   │   │   ├── OfferingDetail.tsx    # Detalhe de oferta
-│   │   │   ├── Opportunities.tsx     # Motor de Oportunidades
-│   │   │   ├── MapPage.tsx           # Mapa Vivo Nacional
-│   │   │   ├── Academy.tsx           # Academia V1
-│   │   │   ├── Studios.tsx           # Hub de Estúdios V1
-│   │   │   ├── Dashboard.tsx         # Dashboard do usuário
-│   │   │   ├── ImageGenerator.tsx    # Geração de imagens IA
-│   │   │   ├── admin/
-│   │   │   │   └── AdminPanel.tsx    # Painel Admin
-│   │   │   └── owner/
-│   │   │       └── OwnerDashboard.tsx # Dashboard Proprietário
-│   │   ├── components/
-│   │   │   └── PublicLayout.tsx      # Layout principal com nav
-│   │   └── lib/
-│   │       └── pnsp-constants.ts     # Constantes da plataforma
-├── server/
-│   ├── routers.ts                    # Todos os endpoints tRPC
-│   ├── db.ts                         # Query helpers (Drizzle)
-│   ├── stripe-products.ts            # Produtos Stripe
-│   └── pnsp.test.ts                  # 24 testes Vitest
+├── client/                     # Frontend React (lazy-loaded, code splitting)
+│   └── src/
+│       ├── pages/              # 25 páginas
+│       │   ├── admin/          # Painel Admin (5 páginas)
+│       │   └── owner/          # Dashboard Proprietário
+│       ├── components/         # Componentes reutilizáveis
+│       │   ├── PublicLayout.tsx # Navbar + Footer premium
+│       │   └── PNSPLogo.tsx    # Componente Logo com variantes
+│       ├── lib/
+│       │   └── pnsp-constants.ts # Constantes da plataforma
+│       └── index.css           # Design system (g*/o*/n* palette)
+├── server/                     # Backend Express + tRPC
+│   ├── routers.ts              # 12 routers tRPC
+│   ├── db.ts                   # Query helpers (Drizzle)
+│   ├── stripe-products.ts      # Produtos e preços Stripe
+│   ├── pnsp.test.ts            # 24 testes Vitest
+│   └── _core/
+│       └── index.ts            # Helmet, CORS, rate limiting, health check
 ├── drizzle/
-│   └── schema.ts                     # 16 tabelas do banco
-└── shared/
-    └── pnsp.ts                       # Constantes compartilhadas
+│   └── schema.ts               # 16 tabelas
+├── shared/
+│   └── pnsp.ts                 # Constantes compartilhadas
+├── .github/workflows/
+│   └── ci.yml                  # GitHub Actions CI/CD
+├── Dockerfile                  # Multi-stage build
+└── ENVIRONMENT.md              # Documentação de variáveis
 ```
 
 ---
@@ -133,16 +134,16 @@ pnsp-platform/
 
 | Tabela | Descrição |
 |---|---|
-| `users` | Usuários autenticados |
+| `users` | Usuários autenticados (role: user/admin/owner) |
 | `profiles` | Vitrines públicas dos profissionais |
 | `portfolio_items` | Portfólio de mídia dos perfis |
 | `offerings` | Motor de Ofertas |
 | `opportunities` | Motor de Oportunidades |
 | `applications` | Candidaturas a oportunidades |
 | `studios` | Hub de Estúdios |
-| `studio_bookings` | Reservas de estúdios |
+| `studio_bookings` | Reservas de estúdios (Stripe) |
 | `academy_content` | Conteúdo da Academia |
-| `academy_purchases` | Compras de conteúdo premium |
+| `academy_purchases` | Compras de conteúdo premium (Stripe) |
 | `generated_images` | Imagens geradas por IA |
 | `financial_records` | Registros financeiros |
 | `admin_logs` | Logs de auditoria |
@@ -151,37 +152,29 @@ pnsp-platform/
 
 ---
 
-## Dados Demo
+## Segurança
 
-| Entidade | Quantidade |
-|---|---|
-| Usuários | 11 |
-| Perfis | 50 |
-| Estúdios | 12 |
-| Ofertas | 30 |
-| Oportunidades | 20 |
-| Conteúdos Academia | 15 |
+- **Helmet.js** — Headers HTTP de segurança (CSP, HSTS, X-Frame-Options)
+- **CORS explícito** — Apenas origens `*.manus.space` e `*.manus.computer`
+- **Rate limiting** — 500 req/15min global, 30 req/15min auth, 20 req/h imagens
+- **RBAC** — Roles: `user`, `admin`, `owner` com procedures separadas
+- **Stripe Webhooks** — Verificação de assinatura obrigatória
+- **JWT** — Sessões assinadas com secret configurável, HttpOnly, SameSite
 
 ---
 
-## Como Executar Localmente
+## Health Check
 
 ```bash
-# Instalar dependências
-pnpm install
-
-# Configurar variáveis de ambiente
-cp .env.example .env
-# Preencher DATABASE_URL, JWT_SECRET, etc.
-
-# Rodar em desenvolvimento
-pnpm dev
-
-# Rodar testes
-pnpm test
-
-# Build para produção
-pnpm build
+GET /api/health
+# Response:
+# {
+#   "status": "ok",
+#   "service": "pnsp-platform",
+#   "version": "1.0.0",
+#   "uptime": 123.45,
+#   "timestamp": "2026-03-25T18:00:00.000Z"
+# }
 ```
 
 ---
@@ -197,33 +190,47 @@ pnpm test
 
 ---
 
-## Variáveis de Ambiente Necessárias
+## Deploy com Docker
 
-| Variável | Descrição |
+```bash
+# Build
+docker build -t pnsp-platform .
+
+# Run
+docker run -p 3000:3000 \
+  -e DATABASE_URL="..." \
+  -e JWT_SECRET="..." \
+  pnsp-platform
+```
+
+O Dockerfile usa **multi-stage build** com usuário não-root e healthcheck integrado.
+
+---
+
+## Dados Demo
+
+| Entidade | Quantidade |
 |---|---|
-| `DATABASE_URL` | Connection string MySQL/TiDB |
-| `JWT_SECRET` | Chave para assinar cookies de sessão |
-| `VITE_APP_ID` | ID do app Manus OAuth |
-| `OAUTH_SERVER_URL` | URL do servidor OAuth Manus |
-| `STRIPE_SECRET_KEY` | Chave secreta Stripe |
-| `STRIPE_WEBHOOK_SECRET` | Segredo do webhook Stripe |
-| `BUILT_IN_FORGE_API_KEY` | Chave da API Manus Forge (imagens, LLM) |
+| Perfis | 50 (artistas, grupos, produtores, professores, luthiers...) |
+| Estúdios | 12 (em 8 estados brasileiros) |
+| Ofertas | 30 (shows, aulas, produção, instrumentos) |
+| Oportunidades | 20 (vagas, eventos, projetos, parcerias) |
+| Conteúdos Academia | 15 (artigos e tutoriais) |
 
 ---
 
 ## Roadmap — Fase 2
 
-- Notificações por email (SMTP)
-- Chat entre usuários
-- Sistema de avaliações e reviews
-- Exportação de relatórios (PDF/Excel)
-- App nativo (iOS/Android)
-- Pagamentos internos completos (split, escrow)
-- Antifraude avançado
-- BI enterprise
+- [ ] Notificações por email (Resend)
+- [ ] Chat em tempo real (Socket.io)
+- [ ] Sistema de avaliações e reviews
+- [ ] Exportação de relatórios (PDF/Excel)
+- [ ] App nativo (React Native)
+- [ ] Pagamentos split e escrow
+- [ ] Antifraude avançado
+- [ ] BI enterprise
 
 ---
 
 **Fundador:** Danilo — Estrategista e fundador da PNSP  
-**Stack construída por:** Manus AI  
-**Licença:** MIT
+**Licença:** MIT © 2026 PNSP
