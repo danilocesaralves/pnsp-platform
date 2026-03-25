@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useLocation, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import jsPDF from "jspdf";
 
 const COLORS = ["var(--o500)", "var(--g500)", "#8b5cf6", "#3b82f6", "#ef4444", "#f97316"];
 
@@ -51,6 +52,128 @@ export default function OwnerDashboard() {
     name: r.profileType?.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) ?? 'Outro',
     value: Number(r.count),
   }));
+
+  const handleExportPDF = useCallback(() => {
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const timeStr = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    const pageW = doc.internal.pageSize.getWidth();
+    // ── Header ──────────────────────────────────────────────────────────────
+    doc.setFillColor(20, 15, 5);
+    doc.rect(0, 0, pageW, 32, "F");
+    doc.setTextColor(212, 175, 55); // gold
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("PNSP — Dashboard Proprietário", 14, 14);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(180, 160, 100);
+    doc.text("Plataforma Nacional de Samba e Pagode", 14, 21);
+    doc.text(`Gerado em ${dateStr} às ${timeStr}`, 14, 27);
+    // ── KPIs Section ────────────────────────────────────────────────────────
+    let y = 42;
+    doc.setTextColor(30, 30, 30);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Indicadores Principais (KPIs)", 14, y);
+    y += 8;
+    const kpiRows = [
+      ["Usuários Totais", String(stats?.userCount ?? 0)],
+      ["Perfis Ativos", String(stats?.profileCount ?? 0)],
+      ["Ofertas Ativas", String(stats?.offeringCount ?? 0)],
+      ["Oportunidades", String(stats?.opportunityCount ?? 0)],
+      ["Estúdios", String(stats?.studioCount ?? 0)],
+      ["Conteúdo Academia", String(stats?.academyCount ?? 0)],
+    ];
+    const colW = (pageW - 28) / 2;
+    kpiRows.forEach(([label, val], i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const x = 14 + col * (colW + 4);
+      const ky = y + row * 14;
+      doc.setFillColor(248, 246, 240);
+      doc.roundedRect(x, ky, colW, 11, 2, 2, "F");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 90, 70);
+      doc.text(label, x + 3, ky + 4.5);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(30, 20, 5);
+      doc.text(val, x + 3, ky + 9);
+    });
+    y += Math.ceil(kpiRows.length / 2) * 14 + 10;
+    // ── Financial Section ───────────────────────────────────────────────────
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(30, 30, 30);
+    doc.text("Resumo Financeiro", 14, y);
+    y += 8;
+    const finRows = [
+      ["Receita Total", `R$ ${totalRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`],
+      ["Custos Totais", `R$ ${totalCosts.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`],
+      ["Lucro Líquido", `R$ ${profit.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`],
+      ["Margem de Lucro", `${margin.toFixed(1)}%`],
+    ];
+    finRows.forEach(([label, val], i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      const x = 14 + col * (colW + 4);
+      const ky = y + row * 14;
+      doc.setFillColor(240, 248, 242);
+      doc.roundedRect(x, ky, colW, 11, 2, 2, "F");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(60, 100, 70);
+      doc.text(label, x + 3, ky + 4.5);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(20, 60, 30);
+      doc.text(val, x + 3, ky + 9);
+    });
+    y += Math.ceil(finRows.length / 2) * 14 + 10;
+    // ── Growth Table ────────────────────────────────────────────────────────
+    if (GROWTH_DATA.length > 0) {
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(30, 30, 30);
+      doc.text("Crescimento Mensal", 14, y);
+      y += 7;
+      const headers = ["Mês", "Usuários", "Perfis", "Ofertas"];
+      const colWidths = [40, 40, 40, 40];
+      doc.setFillColor(30, 20, 5);
+      doc.setTextColor(212, 175, 55);
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      let hx = 14;
+      headers.forEach((h, i) => { doc.rect(hx, y, colWidths[i], 7, "F"); doc.text(h, hx + 2, y + 5); hx += colWidths[i]; });
+      y += 7;
+      doc.setFont("helvetica", "normal");
+      GROWTH_DATA.slice(0, 8).forEach((row: any, ri: number) => {
+        doc.setFillColor(ri % 2 === 0 ? 252 : 246, ri % 2 === 0 ? 250 : 244, ri % 2 === 0 ? 244 : 238);
+        doc.setTextColor(40, 30, 10);
+        let rx = 14;
+        const cells = [row.mes ?? "", String(row.usuarios ?? 0), String(row.perfis ?? 0), String(row.ofertas ?? 0)];
+        cells.forEach((cell, ci) => { doc.rect(rx, y, colWidths[ci], 6, "F"); doc.text(cell, rx + 2, y + 4.3); rx += colWidths[ci]; });
+        y += 6;
+      });
+      y += 6;
+    }
+    // ── Footer ──────────────────────────────────────────────────────────────
+    const pageH = doc.internal.pageSize.getHeight();
+    doc.setFillColor(20, 15, 5);
+    doc.rect(0, pageH - 12, pageW, 12, "F");
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(150, 130, 80);
+    doc.text("PNSP — Plataforma Nacional de Samba e Pagode | Documento Confidencial", 14, pageH - 4.5);
+    doc.text(`Página 1`, pageW - 25, pageH - 4.5);
+    // ── Save ────────────────────────────────────────────────────────────────
+    const filename = `PNSP-Dashboard-${now.toISOString().slice(0, 10)}.pdf`;
+    doc.save(filename);
+    toast.success(`Relatório exportado: ${filename}`);
+  }, [stats, financial, analytics, totalRevenue, totalCosts, profit, margin, GROWTH_DATA]);
 
   const kpis = [
     {
@@ -142,8 +265,8 @@ export default function OwnerDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => toast.info("Exportação em desenvolvimento")}>
-              <Download className="h-4 w-4 mr-2" /> Exportar
+            <Button variant="outline" size="sm" onClick={handleExportPDF}>
+              <Download className="h-4 w-4 mr-2" /> Exportar PDF
             </Button>
             <Button size="sm" asChild>
               <Link href="/admin">

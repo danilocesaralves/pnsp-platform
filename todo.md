@@ -114,7 +114,7 @@
 - [ ] Notificações por email (SMTP)
 - [ ] Chat entre usuários
 - [ ] Sistema de avaliações e reviews
-- [ ] Exportação de relatórios (PDF/Excel)
+- [x] Exportação de relatórios (PDF/Excel) — Dashboard Proprietário
 - [ ] App nativo (iOS/Android)
 - [ ] Pagamentos internos completos (split, escrow)
 - [ ] Antifraude avançado
@@ -161,7 +161,7 @@
 - [x] Aba Operação: usuários recentes + saúde da plataforma + fila de moderação + previsão de receita
 - [x] Aba Crescimento: gráfico temporal (6 meses), distribuição por tipo, distribuição geográfica real
 - [x] Distribuição geográfica com dados reais (RJ, MG, PE, DF, PB)
-- [ ] Exportação de relatório PDF com KPIs e gráficos
+- [x] Exportação de relatório PDF com KPIs e gráficos
 - [ ] Seletor de período (7d, 30d, 90d, 1a)
 
 ## ELEVAÇÃO 10/10 — Fase C (Profissional)
@@ -174,13 +174,13 @@
 - [ ] latitude/longitude em profiles
 - [x] Split routers.ts em módulos por domínio (6 domain routers)
 - [x] Split db.ts em módulos por domínio (7 repositories)
-- [ ] Exportação PDF do Dashboard
+- [x] Exportação PDF do Dashboard (jsPDF, KPIs + financeiro + crescimento)
 - [ ] Seletor de período no Dashboard
 - [x] Logging estruturado (pino) — server, stripe, maps, trpc child loggers
-- [ ] GitHub Actions CI: lint + typecheck + test + build
+- [x] GitHub Actions CI: lint + typecheck + test + build
 - [x] Testes cobertura: 90 testes passando (auth, RBAC, CRUD, edge cases)
 - [x] Open Graph + Twitter Card meta tags
 - [x] PWA Service Worker com cache offline
 - [x] robots.txt + canonical URL
-- [ ] PWA icons completos (192x192, 512x512)
+- [x] PWA icons completos (192x192, 512x512) — CDN
 - [ ] Logo variantes (auth, footer)

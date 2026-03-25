@@ -5,6 +5,7 @@ import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PublicLayout from "@/components/PublicLayout";
+import { PNSPLogo } from "@/components/PNSPLogo";
 import {
   Music2, Users, MapPin, BookOpen, Mic2, Guitar, Star,
   ArrowRight, Search, Briefcase, Target, Building2,
@@ -138,10 +139,14 @@ export default function Home() {
 
         <div className="container relative z-10 py-20 lg:py-28">
           <div className="max-w-4xl">
-            {/* Eyebrow badge */}
-            <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full pnsp-glass text-sm font-body font-medium">
-              <Award className="h-4 w-4" style={{ color: "var(--o300)" }} />
-              <span style={{ color: "var(--o300)" }}>Plataforma Nacional do Samba e do Pagode</span>
+            {/* Hero Logo — elemento de destaque principal */}
+            <div className="mb-10">
+              <PNSPLogo
+                variant="full"
+                size="2xl"
+                theme="dark"
+                className="drop-shadow-2xl"
+              />
             </div>
 
             {/* Main headline */}

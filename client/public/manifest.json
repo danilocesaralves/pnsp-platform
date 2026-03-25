@@ -4,23 +4,41 @@
   "description": "A infraestrutura digital nacional para o ecossistema do samba e do pagode",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#1a1a1a",
+  "background_color": "#1a0f00",
+  "theme_color": "#DCA832",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663116082617/bC6Pj8ksngxNy5fe35WqgW/pnsp-icon-192_6ab198d3.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663116082617/bC6Pj8ksngxNy5fe35WqgW/pnsp-icon-512_deb0dd73.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
   "categories": ["music", "entertainment", "business"],
-  "lang": "pt-BR"
+  "lang": "pt-BR",
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Explorar Perfis",
+      "url": "/perfis",
+      "description": "Descobrir artistas e grupos"
+    },
+    {
+      "name": "Ver Ofertas",
+      "url": "/ofertas",
+      "description": "Serviços e produtos do ecossistema"
+    },
+    {
+      "name": "Mapa Vivo",
+      "url": "/mapa",
+      "description": "Mapa nacional do samba"
+    }
+  ]
 }
