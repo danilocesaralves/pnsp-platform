@@ -20,8 +20,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 const ALLOWED_ORIGINS = [
   /\.manus\.computer$/,
   /\.manus\.space$/,
-  /^http:\/\/localhost:\d+$/,
-  /^https:\/\/localhost:\d+$/,
+  /^https?:\/\/localhost:\d+$/,
+  /^https?:\/\/127\.0\.0\.1:\d+$/,
 ];
 
 function isAllowedOrigin(origin: string | undefined): boolean {
@@ -49,6 +49,9 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  // Trust the Manus gateway proxy (required for rate limiting + X-Forwarded-For)
+  app.set("trust proxy", 1);
 
   // ── 1. Stripe webhook — MUST be before express.json() ─────────────────────
   app.post(
@@ -94,11 +97,12 @@ async function startServer() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://maps.googleapis.com"],
-          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-          fontSrc: ["'self'", "https://fonts.gstatic.com"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://maps.googleapis.com", "https://maps.gstatic.com"],
+          workerSrc: ["blob:", "https://maps.googleapis.com"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+          fontSrc: ["'self'", "https://fonts.gstatic.com", "https://fonts.googleapis.com"],
           imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
-          connectSrc: ["'self'", "https:", "wss:"],
+          connectSrc: ["'self'", "https:", "wss:", "https://maps.googleapis.com", "https://maps.gstatic.com"],
           frameSrc: ["'none'"],
           objectSrc: ["'none'"],
           upgradeInsecureRequests: [],
@@ -126,10 +130,11 @@ async function startServer() {
 
   // ── 4. Rate limiting ──────────────────────────────────────────────────────
   const globalLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 15 * 60 * 1000,
     max: 500,
     standardHeaders: true,
     legacyHeaders: false,
+    validate: { xForwardedForHeader: false },
     message: { error: "Muitas requisições. Tente novamente em alguns minutos." },
     skip: (req) => req.path.startsWith("/api/trpc/auth."),
   });
@@ -139,14 +144,16 @@ async function startServer() {
     max: 30,
     standardHeaders: true,
     legacyHeaders: false,
+    validate: { xForwardedForHeader: false },
     message: { error: "Muitas tentativas de autenticação. Aguarde 15 minutos." },
   });
 
   const imageGenLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
+    windowMs: 60 * 60 * 1000,
     max: 20,
     standardHeaders: true,
     legacyHeaders: false,
+    validate: { xForwardedForHeader: false },
     message: { error: "Limite de geração de imagens atingido. Tente em 1 hora." },
   });
 
@@ -154,7 +161,40 @@ async function startServer() {
   app.use("/api/oauth/", authLimiter);
   app.use("/api/trpc/imageGen.", imageGenLimiter);
 
-  // ── 5. Health check ───────────────────────────────────────────────────────
+  // ── 5. Maps proxy (forward Google Maps JS with frontend key + Origin) ────────
+  app.get("/api/maps-proxy/*", async (req, res) => {
+    try {
+      const forgeUrl = process.env.BUILT_IN_FORGE_API_URL || "https://forge.manus.ai";
+      // Frontend key is required for maps/api/js (browser-scoped endpoint)
+      const frontendKey = process.env.VITE_FRONTEND_FORGE_API_KEY || process.env.BUILT_IN_FORGE_API_KEY || "";
+      const mapPath = (req.params as any)[0];
+      const queryParams = new URLSearchParams(req.query as Record<string, string>);
+      queryParams.set("key", frontendKey);
+      const targetUrl = `${forgeUrl}/v1/maps/proxy/${mapPath}?${queryParams.toString()}`;
+      // Determine origin: browser sends Origin for cross-origin requests, but NOT for same-origin script tags.
+      // Fall back to constructing origin from the Host header.
+      const rawOrigin = req.headers.origin || req.headers.referer;
+      let origin = rawOrigin ? rawOrigin.replace(/\/$/, "") : "";
+      if (!origin && req.headers.host) {
+        const proto = req.headers["x-forwarded-proto"] || "https";
+        origin = `${proto}://${req.headers.host}`;
+      }
+      console.log(`[Maps Proxy] path=${mapPath} origin=${origin} url=${targetUrl.substring(0, 80)}`);
+      const upstream = await fetch(targetUrl, {
+        headers: origin ? { "Origin": origin } : {},
+      });
+      const contentType = upstream.headers.get("content-type") || "application/javascript";
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      const body = await upstream.text();
+      res.status(upstream.status).send(body);
+    } catch (err: any) {
+      console.error("[Maps Proxy] Error:", err.message);
+      res.status(500).json({ error: "Maps proxy error" });
+    }
+  });
+
+  // ── 6. Health check ───────────────────────────────────────────────────────
   app.get("/api/health", (_req, res) => {
     res.json({
       status: "ok",

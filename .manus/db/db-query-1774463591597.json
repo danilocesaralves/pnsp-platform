@@ -1,0 +1,98 @@
+{
+  "query": "SELECT id, openId, name, email, role, createdAt FROM users ORDER BY createdAt ASC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3addFH5ZZ41CXyi.root --database bC6Pj8ksngxNy5fe35WqgW --execute SELECT id, openId, name, email, role, createdAt FROM users ORDER BY createdAt ASC;",
+  "rows": [
+    {
+      "id": "1",
+      "openId": "TBwSeWEznmkxxfRhENuCkU",
+      "name": "Danilo Alves de Araújo",
+      "email": "composisamba@gmail.com",
+      "role": "owner",
+      "createdAt": "2026-03-25 15:12:41"
+    },
+    {
+      "id": "22",
+      "openId": "demo_user_1",
+      "name": "Carlinhos Samba",
+      "email": "carlinhos@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "23",
+      "openId": "demo_user_2",
+      "name": "Grupo Raízes do Pagode",
+      "email": "raizes@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "24",
+      "openId": "demo_user_3",
+      "name": "Estúdio Batucada SP",
+      "email": "batucada@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "25",
+      "openId": "demo_user_4",
+      "name": "Mestre Joãozinho",
+      "email": "joaozinho@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "26",
+      "openId": "demo_user_5",
+      "name": "Comunidade Roda do Bem",
+      "email": "roda@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "27",
+      "openId": "demo_user_6",
+      "name": "Produtora Ritmo Certo",
+      "email": "ritmo@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "28",
+      "openId": "demo_user_7",
+      "name": "Luthier Marcos Cordas",
+      "email": "marcos@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "29",
+      "openId": "demo_user_8",
+      "name": "Bar do Samba RJ",
+      "email": "bardosamba@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "30",
+      "openId": "demo_user_9",
+      "name": "Fernanda Voz e Alma",
+      "email": "fernanda@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    },
+    {
+      "id": "31",
+      "openId": "demo_user_10",
+      "name": "Conjunto Pagode Raiz",
+      "email": "pagoderaiz@demo.pnsp.com.br",
+      "role": "user",
+      "createdAt": "2026-03-25 15:30:22"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\tcreatedAt\n1\tTBwSeWEznmkxxfRhENuCkU\tDanilo Alves de Araújo\tcomposisamba@gmail.com\towner\t2026-03-25 15:12:41\n22\tdemo_user_1\tCarlinhos Samba\tcarlinhos@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n23\tdemo_user_2\tGrupo Raízes do Pagode\traizes@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n24\tdemo_user_3\tEstúdio Batucada SP\tbatucada@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n25\tdemo_user_4\tMestre Joãozinho\tjoaozinho@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n26\tdemo_user_5\tComunidade Roda do Bem\troda@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n27\tdemo_user_6\tProdutora Ritmo Certo\tritmo@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n28\tdemo_user_7\tLuthier Marcos Cordas\tmarcos@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n29\tdemo_user_8\tBar do Samba RJ\tbardosamba@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n30\tdemo_user_9\tFernanda Voz e Alma\tfernanda@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n31\tdemo_user_10\tConjunto Pagode Raiz\tpagoderaiz@demo.pnsp.com.br\tuser\t2026-03-25 15:30:22\n",
+  "stderr": "",
+  "execution_time_ms": 239
+}

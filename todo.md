@@ -41,6 +41,7 @@
 
 ### MAPA VIVO NACIONAL
 - [x] Integração Google Maps (proxy Manus)
+- [x] Proxy server-side corrigido (Origin header + callback-based loading)
 - [x] Visualização de perfis por localização
 - [x] Filtros no mapa (tipo, estado)
 - [x] Detalhes ao clicar no marcador
