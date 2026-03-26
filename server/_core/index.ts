@@ -13,15 +13,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { serverLogger, stripeLogger, mapsLogger, trpcLogger } from "../lib/logger";
 
-// ─── ENV VALIDATION ──────────────────────────────────────────────────────────
-const REQUIRED_ENV = ["DATABASE_URL", "JWT_SECRET", "VITE_APP_ID", "OAUTH_SERVER_URL"] as const;
-const missingEnv = REQUIRED_ENV.filter((k) => !process.env[k]);
-if (missingEnv.length > 0) {
-  serverLogger.fatal({ missing: missingEnv }, "Missing required environment variables");
-  process.exit(1);
-}
-
-
+// ENV is validated via Zod in server/_core/env.ts (imported transitively)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2026-02-25.clover",
 });
@@ -149,11 +141,21 @@ async function startServer() {
 
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30,
+    max: 10,
     standardHeaders: true,
     legacyHeaders: false,
     validate: { xForwardedForHeader: false },
     message: { error: "Muitas tentativas de autenticação. Aguarde 15 minutos." },
+  });
+
+  const publicLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 120,
+    standardHeaders: true,
+    legacyHeaders: false,
+    validate: { xForwardedForHeader: false },
+    message: { error: "Muitas requisições. Tente novamente em alguns segundos." },
+    skip: (req) => !!req.headers.cookie,
   });
 
   const imageGenLimiter = rateLimit({
@@ -167,6 +169,7 @@ async function startServer() {
 
   app.use("/api/", globalLimiter);
   app.use("/api/oauth/", authLimiter);
+  app.use("/api/trpc/", publicLimiter);
   app.use("/api/trpc/imageGen.", imageGenLimiter);
 
   // ── 5. Maps proxy (forward Google Maps JS with frontend key + Origin) ────────
