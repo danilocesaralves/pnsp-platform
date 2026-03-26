@@ -20,16 +20,22 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 });
 
 // ─── ALLOWED ORIGINS ─────────────────────────────────────────────────────────
-const ALLOWED_ORIGINS = [
+const ALLOWED_ORIGINS: Array<RegExp | string> = [
   /\.manus\.computer$/,
   /\.manus\.space$/,
   /^https?:\/\/localhost:\d+$/,
   /^https?:\/\/127\.0\.0\.1:\d+$/,
+  // Additional origins from CORS_ORIGIN env var (comma-separated)
+  ...(process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
+    : []),
 ];
 
 function isAllowedOrigin(origin: string | undefined): boolean {
   if (!origin) return true;
-  return ALLOWED_ORIGINS.some((pattern) => typeof pattern === "string" ? pattern === origin : pattern.test(origin));
+  return ALLOWED_ORIGINS.some((pattern) =>
+    typeof pattern === "string" ? pattern === origin : pattern.test(origin)
+  );
 }
 
 function isPortAvailable(port: number): Promise<boolean> {
