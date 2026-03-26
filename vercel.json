@@ -2,5 +2,11 @@
   "buildCommand": "pnpm exec vite build",
   "outputDirectory": "dist/public",
   "installCommand": "pnpm install",
-  "framework": "vite"
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://pnsp-platform-production.up.railway.app/api/:path*"
+    }
+  ]
 }
