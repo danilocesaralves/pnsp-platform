@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Globe, Star, Clock, Users, Mic2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+
 
 export default function StudioDetail() {
   const params = useParams<{ slug: string }>();
@@ -59,7 +59,7 @@ export default function StudioDetail() {
                   <Button className="w-full" onClick={() => book.mutate({ studioId: studio.id, startAt, endAt, notes })} disabled={!startAt || !endAt || book.isPending}>{book.isPending ? "Solicitando..." : "Solicitar Reserva"}</Button>
                 </div>
               ) : (
-                <Button className="w-full" asChild><a href={getLoginUrl()}>Entrar para reservar</a></Button>
+                <Button className="w-full" asChild><a href={"/entrar"}>Entrar para reservar</a></Button>
               )}
             </div>
           </div>

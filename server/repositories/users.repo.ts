@@ -4,12 +4,13 @@ import { getDb } from "../db";
 import { ENV } from "../_core/env";
 
 export async function upsertUser(user: InsertUser): Promise<void> {
-  if (!user.openId) throw new Error("User openId is required for upsert");
   const db = await getDb();
   if (!db) return;
 
-  const values: InsertUser = { openId: user.openId };
+  const values: InsertUser = {};
   const updateSet: Partial<InsertUser> = {};
+
+  if (user.openId !== undefined) values.openId = user.openId;
 
   const textFields = ["name", "email", "loginMethod"] as const;
   textFields.forEach((field) => {
@@ -27,7 +28,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   if (user.role !== undefined) {
     values.role = user.role;
     updateSet.role = user.role;
-  } else if (user.openId === ENV.ownerOpenId) {
+  } else if (user.openId && user.openId === ENV.ownerOpenId) {
     values.role = "owner";
     updateSet.role = "owner";
   }
@@ -35,16 +36,33 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   if (!values.lastSignedIn) values.lastSignedIn = new Date();
   if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
 
-  await db
-    .insert(users)
-    .values(values)
-    .onConflictDoUpdate({ target: users.openId, set: updateSet });
+  // Conflict resolution: prefer email (unique) if present, else openId
+  if (user.email) {
+    await db
+      .insert(users)
+      .values(values)
+      .onConflictDoUpdate({ target: users.email, set: updateSet });
+  } else if (user.openId) {
+    await db
+      .insert(users)
+      .values(values)
+      .onConflictDoUpdate({ target: users.openId, set: updateSet });
+  } else {
+    await db.insert(users).values(values).onConflictDoNothing();
+  }
 }
 
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
   if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
   return result.length > 0 ? result[0] : undefined;
 }
 

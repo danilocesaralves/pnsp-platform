@@ -7,7 +7,8 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 import Stripe from "stripe";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "./oauth";
+import { auth } from "./auth";
+import { toNodeHandler } from "better-auth/node";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -28,7 +29,7 @@ const ALLOWED_ORIGINS = [
 
 function isAllowedOrigin(origin: string | undefined): boolean {
   if (!origin) return true;
-  return ALLOWED_ORIGINS.some((pattern) => pattern.test(origin));
+  return ALLOWED_ORIGINS.some((pattern) => typeof pattern === "string" ? pattern === origin : pattern.test(origin));
 }
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -168,7 +169,7 @@ async function startServer() {
   });
 
   app.use("/api/", globalLimiter);
-  app.use("/api/oauth/", authLimiter);
+  app.use("/api/auth/", authLimiter);
   app.use("/api/trpc/", publicLimiter);
   app.use("/api/trpc/imageGen.", imageGenLimiter);
 
@@ -230,8 +231,8 @@ async function startServer() {
   app.use(express.json({ limit: "10mb" }));
   app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-  // ── 7. OAuth routes ───────────────────────────────────────────────────────
-  registerOAuthRoutes(app);
+  // ── 7. Better-auth routes ────────────────────────────────────────────────
+  app.all("/api/auth/*", toNodeHandler(auth));
 
   // ── 8. tRPC ───────────────────────────────────────────────────────────────
   app.use(

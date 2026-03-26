@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PublicLayout from "@/components/PublicLayout";
@@ -191,7 +191,7 @@ export default function Home() {
                   style={{ background: "var(--o500)", color: "var(--n950)" }}
                   asChild
                 >
-                  <a href={getLoginUrl()}>
+                  <a href={"/entrar"}>
                     Criar perfil gratuito
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
@@ -459,7 +459,7 @@ export default function Home() {
                 style={{ background: "var(--o500)", color: "var(--n950)" }}
                 asChild
               >
-                <a href={getLoginUrl()}>
+                <a href={"/entrar"}>
                   Começar agora — é grátis
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>

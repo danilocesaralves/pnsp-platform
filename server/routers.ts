@@ -5,8 +5,6 @@
  * Business logic lives in server/routers/*.router.ts.
  * Data access lives in server/repositories/*.repo.ts.
  */
-import { COOKIE_NAME } from "@shared/const";
-import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 
@@ -30,14 +28,14 @@ import {
 export const appRouter = router({
   system: systemRouter,
 
-  // ─── AUTH (kept inline — small & framework-coupled) ────────────────────────
+  // ─── AUTH ─────────────────────────────────────────────────────────────────
+  // Session management is handled by better-auth at /api/auth/*
+  // auth.me reads user from tRPC context (populated by better-auth session)
+  // auth.logout is a no-op kept for backwards compatibility; clients should
+  // call POST /api/auth/sign-out directly for proper cookie invalidation.
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => {
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return { success: true } as const;
-    }),
+    logout: publicProcedure.mutation(() => ({ success: true } as const)),
   }),
 
   // ─── DOMAIN ROUTERS ───────────────────────────────────────────────────────

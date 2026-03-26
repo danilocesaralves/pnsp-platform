@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -141,7 +141,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               ) : (
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="sm" asChild className="font-body">
-                    <a href={getLoginUrl()}>Entrar</a>
+                    <a href={"/entrar"}>Entrar</a>
                   </Button>
                   <Button
                     size="sm"
@@ -149,7 +149,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     className="hidden sm:flex font-body font-semibold"
                     style={{ background: "var(--o500)", color: "var(--n950)" }}
                   >
-                    <a href={getLoginUrl()}>Cadastrar grátis</a>
+                    <a href={"/entrar"}>Cadastrar grátis</a>
                   </Button>
                 </div>
               )}
@@ -190,7 +190,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               {!isAuthenticated && (
                 <div className="pt-3 border-t border-border flex gap-2">
                   <Button variant="outline" size="sm" className="flex-1 font-body" asChild>
-                    <a href={getLoginUrl()}>Entrar</a>
+                    <a href={"/entrar"}>Entrar</a>
                   </Button>
                   <Button
                     size="sm"
@@ -198,7 +198,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     style={{ background: "var(--o500)", color: "var(--n950)" }}
                     asChild
                   >
-                    <a href={getLoginUrl()}>Cadastrar</a>
+                    <a href={"/entrar"}>Cadastrar</a>
                   </Button>
                 </div>
               )}

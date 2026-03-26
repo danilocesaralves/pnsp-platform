@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPin, MessageSquare, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+
 
 const OFFERING_CATEGORIES: Record<string, string> = {
   show: "Show", aula: "Aula", producao: "Produção", instrumento_novo: "Instrumento Novo",
@@ -101,7 +101,7 @@ export default function OfferingDetail() {
                 </div>
               ) : (
                 <Button className="w-full" asChild>
-                  <a href={getLoginUrl()}>Entrar para contatar</a>
+                  <a href={"/entrar"}>Entrar para contatar</a>
                 </Button>
               )}
             </div>

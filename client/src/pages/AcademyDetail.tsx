@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Lock } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+
 
 const ACAD_CATS: Record<string,string> = { historia:"Historia", tecnica:"Tecnica", instrumentos:"Instrumentos", composicao:"Composicao", producao:"Producao", carreira:"Carreira", negocios:"Negocios", cultura:"Cultura" };
 
@@ -29,7 +29,7 @@ export default function AcademyDetail() {
         {content.excerpt && <p className="text-lg text-muted-foreground mb-6 leading-relaxed">{content.excerpt}</p>}
         {content.videoUrl && <div className="rounded-xl overflow-hidden mb-6 bg-black aspect-video"><iframe src={content.videoUrl} className="w-full h-full" allowFullScreen title={content.title} /></div>}
         {content.isPremium && !isAuthenticated ? (
-          <div className="rounded-xl border border-border bg-card p-8 text-center"><Lock className="h-12 w-12 mx-auto text-amber-500 mb-4" /><h3 className="font-semibold text-lg mb-2">Conteúdo Premium</h3><p className="text-muted-foreground mb-4">Faca login para acessar este conteudo</p><Button asChild><a href={getLoginUrl()}>Acessar</a></Button></div>
+          <div className="rounded-xl border border-border bg-card p-8 text-center"><Lock className="h-12 w-12 mx-auto text-amber-500 mb-4" /><h3 className="font-semibold text-lg mb-2">Conteúdo Premium</h3><p className="text-muted-foreground mb-4">Faca login para acessar este conteudo</p><Button asChild><a href={"/entrar"}>Acessar</a></Button></div>
         ) : (
           content.content && <div className="prose max-w-none text-foreground leading-relaxed whitespace-pre-wrap">{content.content}</div>
         )}

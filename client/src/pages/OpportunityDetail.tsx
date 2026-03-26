@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Calendar, DollarSign, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -55,7 +55,7 @@ export default function OpportunityDetail() {
                   <Button className="w-full" onClick={() => apply.mutate({ opportunityId: opp.id, coverLetter })} disabled={apply.isPending}>{apply.isPending ? "Enviando..." : "Candidatar-se"}</Button>
                 </div>
               ) : (
-                <Button className="w-full" asChild><a href={getLoginUrl()}>Entrar para candidatar</a></Button>
+                <Button className="w-full" asChild><a href={"/entrar"}>Entrar para candidatar</a></Button>
               )}
             </div>
           </div>
