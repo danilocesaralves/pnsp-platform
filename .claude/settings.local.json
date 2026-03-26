@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npm install:*)",
+      "Bash(pnpm --version)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm check:*)",
+      "Bash(pnpm test:*)",
+      "Bash(DATABASE_URL=\"postgresql://placeholder:placeholder@localhost:5432/pnsp\" JWT_SECRET=\"build-placeholder-secret-32chars-ok\" VITE_APP_ID=\"build\" OAUTH_SERVER_URL=\"https://api.manus.im\" OWNER_OPEN_ID=\"owner\" BUILT_IN_FORGE_API_URL=\"https://api.manus.im\" BUILT_IN_FORGE_API_KEY=\"build-key\" STRIPE_SECRET_KEY=\"sk_test_placeholder\" STRIPE_WEBHOOK_SECRET=\"whsec_placeholder\" VITE_STRIPE_PUBLISHABLE_KEY=\"pk_test_placeholder\" pnpm build)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm add:*)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_oLkEczIZta23@ep-orange-leaf-amjkgsj2-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" pnpm drizzle-kit generate)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_oLkEczIZta23@ep-orange-leaf-amjkgsj2-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" pnpm drizzle-kit migrate)"
+    ]
+  }
+}
