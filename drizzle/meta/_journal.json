@@ -1,26 +1,12 @@
 {
   "version": "7",
-  "dialect": "mysql",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1774449716518,
-      "tag": "0000_common_gamora",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1774449950007,
-      "tag": "0001_worthless_tag",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1774450059674,
-      "tag": "0002_melted_sugar_man",
+      "version": "7",
+      "when": 1774496813627,
+      "tag": "0000_real_tigra",
       "breakpoints": true
     }
   ]
