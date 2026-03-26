@@ -1,9 +1,12 @@
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
+import { useRef, useState } from "react";
 import PublicLayout from "@/components/PublicLayout";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink } from "lucide-react";
+import { MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink, Pencil, Camera, ImagePlus, Loader2 } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { toast } from "sonner";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -35,14 +38,68 @@ function instagramHref(url: string): string {
 }
 import { PROFILE_TYPES } from "@shared/pnsp";
 
+const MAX_SIZE = 5 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+type AllowedType = typeof ALLOWED_TYPES[number];
+
+function validateImage(file: File): string | null {
+  if (!ALLOWED_TYPES.includes(file.type as AllowedType)) return "Formato inválido. Use JPG, PNG ou WebP.";
+  if (file.size > MAX_SIZE) return "Arquivo muito grande. Máximo 5MB.";
+  return null;
+}
+
 export default function ProfileBySlug() {
   const params = useParams<{ slug: string }>();
   const slug = (params.slug ?? "").toLowerCase();
+  const [, navigate] = useLocation();
+  const { user } = useAuth();
 
-  const { data: profile, isLoading, error } = trpc.profiles.getBySlug.useQuery(
+  const { data: profile, isLoading, error, refetch } = trpc.profiles.getBySlug.useQuery(
     { slug },
     { enabled: !!slug, staleTime: 5 * 60 * 1000 },
   );
+
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const getPresignedUrl = trpc.upload.getPresignedUrl.useMutation();
+  const updateProfile = trpc.profiles.update.useMutation({ onSuccess: () => refetch() });
+
+  const isOwner = !!user && !!profile && user.id === profile.userId;
+
+  async function handleFileUpload(
+    file: File,
+    type: "avatar" | "cover",
+    setUploading: (v: boolean) => void,
+  ) {
+    const err = validateImage(file);
+    if (err) { toast.error(err); return; }
+    setUploading(true);
+    try {
+      const { presignedUrl, publicUrl } = await getPresignedUrl.mutateAsync({
+        fileName: file.name,
+        contentType: file.type as AllowedType,
+        fileSize: file.size,
+        type,
+      });
+      const res = await fetch(presignedUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
+      if (!res.ok) throw new Error(`Upload falhou: ${res.status}`);
+      await updateProfile.mutateAsync({
+        id: profile!.id,
+        ...(type === "avatar" ? { avatarUrl: publicUrl } : { coverUrl: publicUrl }),
+      });
+      toast.success(type === "avatar" ? "Foto atualizada!" : "Capa atualizada!");
+    } catch (e: any) {
+      toast.error(e.message ?? "Erro no upload");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -81,14 +138,61 @@ export default function ProfileBySlug() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
+        {/* Trocar capa (owner only) */}
+        {isOwner && (
+          <button
+            type="button"
+            className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/50 hover:bg-black/70 text-white text-xs px-3 py-1.5 rounded-full backdrop-blur-sm transition-colors"
+            onClick={() => coverInputRef.current?.click()}
+            disabled={uploadingCover}
+          >
+            {uploadingCover ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
+            Trocar capa
+          </button>
+        )}
+        <input
+          ref={coverInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={e => {
+            const file = e.target.files?.[0];
+            if (file) handleFileUpload(file, "cover", setUploadingCover);
+            e.target.value = "";
+          }}
+        />
+
         {/* Hero content overlaid on cover */}
         <div className="absolute bottom-0 left-0 right-0">
           <div className="container pb-5">
             <div className="flex items-end gap-4">
-              <img
-                src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
-                alt={profile.displayName}
-                className="h-24 w-24 rounded-xl object-cover border-4 border-white/30 shadow-xl bg-muted flex-shrink-0"
+              <div className="relative flex-shrink-0">
+                <img
+                  src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
+                  alt={profile.displayName}
+                  className="h-24 w-24 rounded-xl object-cover border-4 border-white/30 shadow-xl bg-muted"
+                />
+                {isOwner && (
+                  <button
+                    type="button"
+                    className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground rounded-full p-1.5 shadow-md hover:bg-primary/90 disabled:opacity-50"
+                    onClick={() => avatarInputRef.current?.click()}
+                    disabled={uploadingAvatar}
+                  >
+                    {uploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+                  </button>
+                )}
+              </div>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file, "avatar", setUploadingAvatar);
+                  e.target.value = "";
+                }}
               />
               <div className="flex-1 min-w-0 pb-1">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -118,8 +222,13 @@ export default function ProfileBySlug() {
 
       <div className="container pb-12">
         {/* Action buttons */}
-        {(profile.phone || profile.website || profile.instagramUrl || profile.youtubeUrl) && (
+        {(isOwner || profile.phone || profile.website || profile.instagramUrl || profile.youtubeUrl) && (
           <div className="flex gap-2 flex-wrap py-4 border-b border-border mb-6">
+            {isOwner && (
+              <Button size="sm" onClick={() => navigate("/dashboard")}>
+                <Pencil className="h-4 w-4 mr-1" />Editar perfil
+              </Button>
+            )}
             {profile.phone && (
               <Button variant="outline" size="sm" asChild>
                 <a href={phoneHref(profile.phone)}>
