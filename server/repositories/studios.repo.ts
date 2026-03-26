@@ -18,7 +18,7 @@ export async function getStudioById(id: number) {
 export async function getStudioBySlug(slug: string) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(studios).where(eq(studios.slug, slug)).limit(1);
+  const result = await db.select().from(studios).where(sql`LOWER(${studios.slug}) = ${slug.toLowerCase()}`).limit(1);
   return result[0];
 }
 

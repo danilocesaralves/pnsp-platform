@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { adminProcedure } from "../lib/guards";
+import { slugify } from "../lib/slugify";
 import * as repo from "../repositories";
 
 export const profilesRouter = router({
@@ -62,7 +63,7 @@ export const profilesRouter = router({
       tags: z.array(z.string()).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const slug = `${input.displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-${Date.now()}`.toLowerCase();
+      const slug = slugify(input.displayName, Date.now());
       await repo.createProfile({
         ...input,
         userId: ctx.user.id,

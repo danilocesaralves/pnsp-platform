@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { adminProcedure } from "../lib/guards";
+import { slugify } from "../lib/slugify";
 import * as repo from "../repositories";
 
 const CONTENT_TYPE_ENUM = z.enum(["artigo","video","tutorial","curso","podcast"]);
@@ -25,7 +26,7 @@ export const academyRouter = router({
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
-      const content = await repo.getAcademyContentBySlug(input.slug);
+      const content = await repo.getAcademyContentBySlug(input.slug.toLowerCase());
       if (!content) throw new TRPCError({ code: "NOT_FOUND" });
       return content;
     }),
@@ -47,10 +48,7 @@ export const academyRouter = router({
       isPublished: z.boolean().default(false),
     }))
     .mutation(async ({ ctx, input }) => {
-      const slug = `${input.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")}-${Date.now()}`;
+      const slug = slugify(input.title, Date.now());
       await repo.createAcademyContent({
         ...input,
         authorId: ctx.user.id,

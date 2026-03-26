@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { adminProcedure } from "../lib/guards";
+import { slugify } from "../lib/slugify";
 import * as repo from "../repositories";
 
 const STUDIO_TYPE_ENUM = z.enum(["gravacao","ensaio","ambos"]);
@@ -21,7 +22,7 @@ export const studiosRouter = router({
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
-      const studio = await repo.getStudioBySlug(input.slug);
+      const studio = await repo.getStudioBySlug(input.slug.toLowerCase());
       if (!studio) throw new TRPCError({ code: "NOT_FOUND" });
       return studio;
     }),
@@ -48,10 +49,7 @@ export const studiosRouter = router({
       profileId: z.number().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const slug = `${input.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")}-${Date.now()}`;
+      const slug = slugify(input.name, Date.now());
       await repo.createStudio({
         ...input,
         userId: ctx.user.id,

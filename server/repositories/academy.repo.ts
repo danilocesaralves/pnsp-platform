@@ -11,7 +11,7 @@ export async function createAcademyContent(data: typeof academyContent.$inferIns
 export async function getAcademyContentBySlug(slug: string) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(academyContent).where(eq(academyContent.slug, slug)).limit(1);
+  const result = await db.select().from(academyContent).where(sql`LOWER(${academyContent.slug}) = ${slug.toLowerCase()}`).limit(1);
   return result[0];
 }
 
