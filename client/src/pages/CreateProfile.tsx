@@ -25,7 +25,7 @@ export default function CreateProfile() {
   const [form, setForm] = useState({ profileType: "", displayName: "", bio: "", city: "", state: "", phone: "", website: "", instagramUrl: "", youtubeUrl: "" });
   const [avatarStyle, setAvatarStyle] = useState("avataaars");
   const create = trpc.profiles.create.useMutation({
-    onSuccess: (data) => { toast.success("Perfil criado!"); navigate(`/perfil/${data.slug}`); },
+    onSuccess: (data) => { toast.success("Perfil criado!"); navigate(`/perfil/${data.slug?.toLowerCase()}`); },
     onError: (e) => toast.error(e.message),
   });
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));

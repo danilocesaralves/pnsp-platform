@@ -33,7 +33,7 @@ export default function EditProfile() {
     }
   }, [profile]);
   const update = trpc.profiles.update.useMutation({
-    onSuccess: () => { toast.success("Perfil atualizado!"); navigate(`/perfil/${profile?.slug}`); },
+    onSuccess: () => { toast.success("Perfil atualizado!"); navigate(`/perfil/${profile?.slug?.toLowerCase()}`); },
     onError: (e) => toast.error(e.message),
   });
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));

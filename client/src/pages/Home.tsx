@@ -284,7 +284,7 @@ export default function Home() {
               ? Array.from({ length: 6 }).map((_, i) => <ProfileCardSkeleton key={i} />)
               : featuredProfiles?.length
               ? featuredProfiles.map((profile) => (
-                  <Link key={profile.id} href={`/perfis/${profile.id}`}>
+                  <Link key={profile.id} href={`/perfil/${profile.slug?.toLowerCase()}`}>
                     <div className="pnsp-card p-5 cursor-pointer">
                       <div className="flex items-start gap-3 mb-3">
                         <div

@@ -164,7 +164,7 @@ export default function Profiles() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {profiles.map(profile => (
-                <Link key={profile.id} href={`/perfil/${profile.slug}`}>
+                <Link key={profile.id} href={`/perfil/${profile.slug?.toLowerCase()}`}>
                   <div className="pnsp-card p-5 cursor-pointer h-full flex flex-col">
                     <div className="flex items-start gap-3 mb-3">
                       <img

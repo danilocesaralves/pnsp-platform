@@ -37,7 +37,7 @@ import { PROFILE_TYPES } from "@shared/pnsp";
 
 export default function ProfileBySlug() {
   const params = useParams<{ slug: string }>();
-  const slug = params.slug ?? "";
+  const slug = (params.slug ?? "").toLowerCase();
 
   const { data: profile, isLoading, error } = trpc.profiles.getBySlug.useQuery(
     { slug },

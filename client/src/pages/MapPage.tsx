@@ -38,8 +38,8 @@ export default function MapPage() {
         },
       });
       const href = marker.type === "studio"
-        ? "/estudios/" + marker.id
-        : "/perfis/" + marker.id;
+        ? "/estudios/" + (marker.slug ?? marker.id).toLowerCase()
+        : "/perfil/" + (marker.slug ?? marker.id).toLowerCase();
       const infoContent = [
         '<div style="padding:8px;min-width:140px">',
         "<strong>" + marker.name + "</strong><br/>",
