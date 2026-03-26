@@ -43,45 +43,54 @@ export default function ProfileBySlug() {
   return (
     <PublicLayout>
       {/* Cover */}
-      <div className="relative h-48 md:h-64 bg-gradient-to-br from-primary to-primary/80 overflow-hidden">
+      <div
+        className="relative h-60 md:h-80 overflow-hidden"
+        style={!profile.coverUrl ? { background: "linear-gradient(135deg, #0d1f15 0%, #1a3a26 100%)" } : undefined}
+      >
         {profile.coverUrl && (
-          <img src={profile.coverUrl} alt="" className="w-full h-full object-cover opacity-60" />
+          <img src={profile.coverUrl} alt="" className="w-full h-full object-cover" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+        {/* Hero content overlaid on cover */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <div className="container pb-5">
+            <div className="flex items-end gap-4">
+              <img
+                src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
+                alt={profile.displayName}
+                className="h-24 w-24 rounded-xl object-cover border-4 border-white/30 shadow-xl bg-muted flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0 pb-1">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">
+                    {profile.displayName}
+                  </h1>
+                  {profile.isVerified && (
+                    <div className="bg-green-500 rounded-full p-1">
+                      <Award className="h-4 w-4 text-white" />
+                    </div>
+                  )}
+                  <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                    {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES]}
+                  </Badge>
+                </div>
+                {profile.city && (
+                  <div className="flex items-center gap-1 text-sm text-white/80 drop-shadow">
+                    <MapPin className="h-4 w-4" />
+                    {profile.city}, {profile.state}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="container pb-12">
-        {/* Profile Header */}
-        <div className="relative -mt-16 mb-6 flex flex-col sm:flex-row items-start sm:items-end gap-4">
-          <div className="relative">
-            <img
-              src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
-              alt={profile.displayName}
-              className="h-28 w-28 rounded-xl object-cover border-4 border-background shadow-lg bg-muted"
-            />
-            {profile.isVerified && (
-              <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1">
-                <Award className="h-4 w-4 text-white" />
-              </div>
-            )}
-          </div>
-          <div className="flex-1 pb-2">
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                {profile.displayName}
-              </h1>
-              <Badge variant="secondary">
-                {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES]}
-              </Badge>
-            </div>
-            {profile.city && (
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4" />
-                {profile.city}, {profile.state}
-              </div>
-            )}
-          </div>
-          <div className="flex gap-2 flex-wrap">
+        {/* Action buttons */}
+        {(profile.phone || profile.website || profile.instagramUrl || profile.youtubeUrl) && (
+          <div className="flex gap-2 flex-wrap py-4 border-b border-border mb-6">
             {profile.phone && (
               <Button variant="outline" size="sm" asChild>
                 <a href={`tel:${profile.phone}`}>
@@ -111,7 +120,7 @@ export default function ProfileBySlug() {
               </Button>
             )}
           </div>
-        </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
