@@ -18,7 +18,9 @@ export async function getProfileById(id: number) {
 export async function getProfileBySlug(slug: string) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(profiles).where(eq(profiles.slug, slug)).limit(1);
+  const result = await db.select().from(profiles)
+    .where(sql`LOWER(${profiles.slug}) = ${slug.toLowerCase()}`)
+    .limit(1);
   return result[0];
 }
 

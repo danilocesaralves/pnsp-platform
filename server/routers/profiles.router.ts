@@ -23,7 +23,7 @@ export const profilesRouter = router({
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input }) => {
-      const profile = await repo.getProfileBySlug(input.slug);
+      const profile = await repo.getProfileBySlug(input.slug.toLowerCase());
       if (!profile) throw new TRPCError({ code: "NOT_FOUND" });
       await repo.incrementProfileView(profile.id);
       const portfolio = await repo.getPortfolioByProfileId(profile.id);
@@ -62,7 +62,7 @@ export const profilesRouter = router({
       tags: z.array(z.string()).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const slug = `${input.displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-${Date.now()}`;
+      const slug = `${input.displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-${Date.now()}`.toLowerCase();
       await repo.createProfile({
         ...input,
         userId: ctx.user.id,
