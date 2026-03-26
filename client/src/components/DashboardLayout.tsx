@@ -59,24 +59,24 @@ export default function DashboardLayout({
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen" style={{ background: "var(--n950)" }}>
         <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
-          <div className="flex flex-col items-center gap-6">
-            <h1 className="text-2xl font-semibold tracking-tight text-center">
-              Sign in to continue
+          <PNSPLogo variant="full" size="xl" theme="dark" />
+          <div className="flex flex-col items-center gap-3">
+            <h1 className="text-2xl font-semibold tracking-tight text-center font-display" style={{ color: "var(--n50)" }}>
+              Acesse sua conta
             </h1>
-            <p className="text-sm text-muted-foreground text-center max-w-sm">
-              Access to this dashboard requires authentication. Continue to launch the login flow.
+            <p className="text-sm text-center font-body" style={{ color: "var(--n400)" }}>
+              O dashboard requer autenticação. Clique abaixo para entrar.
             </p>
           </div>
           <Button
-            onClick={() => {
-              window.location.href = getLoginUrl();
-            }}
+            onClick={() => { window.location.href = getLoginUrl(); }}
             size="lg"
-            className="w-full shadow-lg hover:shadow-xl transition-all"
+            className="w-full font-semibold font-body"
+            style={{ background: "var(--o500)", color: "var(--n950)" }}
           >
-            Sign in
+            Entrar na PNSP
           </Button>
         </div>
       </div>
@@ -171,7 +171,7 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
-                  <PNSPLogo variant="full" size="sm" theme="auto" />
+                  <PNSPLogo variant="full" size="sm" theme="dark" />
                 </div>
               ) : null}
             </div>
