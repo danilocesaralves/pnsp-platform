@@ -9,7 +9,7 @@ import { PROFILE_TYPES } from "@shared/pnsp";
 export default function ProfileDetail() {
   const params = useParams<{ id: string }>();
   const profileId = parseInt(params.id ?? "0");
-  const { data: profile, isLoading } = trpc.profiles.getById.useQuery({ id: profileId }, { enabled: !!profileId });
+  const { data: profile, isLoading } = trpc.profiles.getById.useQuery({ id: profileId }, { enabled: !!profileId, staleTime: 5 * 60 * 1000 });
 
   if (isLoading) return <PublicLayout><div className="container py-16 text-center"><div className="animate-pulse text-muted-foreground">Carregando...</div></div></PublicLayout>;
   if (!profile) return <PublicLayout><div className="container py-16 text-center text-muted-foreground">Perfil não encontrado</div></PublicLayout>;

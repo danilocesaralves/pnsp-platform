@@ -12,7 +12,7 @@ export default function ProfileBySlug() {
 
   const { data: profile, isLoading, error } = trpc.profiles.getBySlug.useQuery(
     { slug },
-    { enabled: !!slug },
+    { enabled: !!slug, staleTime: 5 * 60 * 1000 },
   );
 
   if (isLoading) {
