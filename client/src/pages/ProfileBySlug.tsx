@@ -3,7 +3,36 @@ import PublicLayout from "@/components/PublicLayout";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Globe, Instagram, Youtube, Award, Phone, Music, ExternalLink } from "lucide-react";
+import { MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink } from "lucide-react";
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className={className} fill="none">
+      <defs>
+        <linearGradient id="ig-grad-slug" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0%" stopColor="#F77737" />
+          <stop offset="50%" stopColor="#E1306C" />
+          <stop offset="100%" stopColor="#833AB4" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig-grad-slug)" />
+      <circle cx="12" cy="12" r="4.5" stroke="white" strokeWidth="1.7" />
+      <circle cx="17.5" cy="6.5" r="1.2" fill="white" />
+    </svg>
+  );
+}
+
+function phoneHref(phone: string): string {
+  const cleaned = phone.replace(/[^\d+]/g, "").replace(/(?!^)\+/g, "");
+  return `tel:${cleaned}`;
+}
+
+function instagramHref(url: string): string {
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  const handle = trimmed.replace(/^@/, "").replace(/^(?:www\.)?instagram\.com\//i, "");
+  return `https://www.instagram.com/${handle}`;
+}
 import { PROFILE_TYPES } from "@shared/pnsp";
 
 export default function ProfileBySlug() {
@@ -93,7 +122,7 @@ export default function ProfileBySlug() {
           <div className="flex gap-2 flex-wrap py-4 border-b border-border mb-6">
             {profile.phone && (
               <Button variant="outline" size="sm" asChild>
-                <a href={`tel:${profile.phone}`}>
+                <a href={phoneHref(profile.phone)}>
                   <Phone className="h-4 w-4 mr-1" />Contato
                 </a>
               </Button>
@@ -107,8 +136,8 @@ export default function ProfileBySlug() {
             )}
             {profile.instagramUrl && (
               <Button variant="outline" size="sm" asChild>
-                <a href={profile.instagramUrl} target="_blank" rel="noopener noreferrer">
-                  <Instagram className="h-4 w-4" />
+                <a href={instagramHref(profile.instagramUrl)} target="_blank" rel="noopener noreferrer">
+                  <InstagramIcon className="h-4 w-4" />
                 </a>
               </Button>
             )}
