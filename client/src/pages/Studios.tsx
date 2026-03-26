@@ -277,7 +277,7 @@ export default function Studios() {
                 <X className="h-4 w-4 mr-2" />Limpar filtros
               </Button>
             ) : (
-              <Link href="/cadastro">
+              <Link href="/criar-perfil">
                 <Button className="font-body" style={{ background: "var(--g600)" }}>Cadastrar meu estúdio</Button>
               </Link>
             )}
