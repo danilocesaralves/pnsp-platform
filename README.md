@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/danilocesaralves/pnsp-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/danilocesaralves/pnsp-platform/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-40%20passing-brightgreen)](#testes)
+[![Tests](https://img.shields.io/badge/tests-90%20passing-brightgreen)](#testes)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ---
@@ -23,12 +23,12 @@ A PNSP conecta artistas, grupos, bandas, duplas, comunidades, rodas de samba, pr
 |---|---|
 | Frontend | React 19 + TypeScript + Tailwind CSS 4 |
 | Backend | Node.js + Express 4 + tRPC 11 |
-| Banco de Dados | MySQL (TiDB) + Drizzle ORM |
+| Banco de Dados | PostgreSQL 16 + Drizzle ORM |
 | Autenticação | Manus OAuth 2.0 (JWT + cookies seguros) |
 | Pagamentos | Stripe (Checkout Sessions + Webhooks) |
 | Mapas | Google Maps JavaScript API (proxy Manus) |
 | Geração de Imagens | Manus Forge API (IA generativa) |
-| Testes | Vitest (40 testes, 100% passando) |
+| Testes | Vitest (90 testes, 100% passando) |
 | CI/CD | GitHub Actions |
 | Deploy | Manus Hosting (PWA) / Docker (self-hosted) |
 
@@ -63,7 +63,7 @@ cd pnsp-platform
 pnpm install
 
 # 3. Configure variáveis de ambiente
-cp ENVIRONMENT.md .env
+cp .env.example .env
 # Edite .env com suas credenciais
 
 # 4. Aplique o schema do banco
@@ -79,7 +79,7 @@ pnpm dev
 
 | Variável | Obrigatória | Descrição |
 |---|---|---|
-| `DATABASE_URL` | Sim | MySQL/TiDB connection string |
+| `DATABASE_URL` | Sim | PostgreSQL connection string (`postgresql://user:pass@host:5432/db`) |
 | `JWT_SECRET` | Sim | Mínimo 32 caracteres |
 | `VITE_APP_ID` | Sim | Manus OAuth App ID |
 | `OAUTH_SERVER_URL` | Sim | `https://api.manus.im` |
@@ -124,8 +124,9 @@ pnsp-platform/
 │   └── pnsp.ts                 # Constantes compartilhadas
 ├── .github/workflows/
 │   └── ci.yml                  # GitHub Actions CI/CD
-├── Dockerfile                  # Multi-stage build
-└── ENVIRONMENT.md              # Documentação de variáveis
+├── Dockerfile                  # Multi-stage build (deps → builder → runner)
+├── docker-compose.yml          # PostgreSQL + app com healthcheck
+└── .env.example                # Template de variáveis de ambiente
 ```
 
 ---
@@ -156,7 +157,7 @@ pnsp-platform/
 
 - **Helmet.js** — Headers HTTP de segurança (CSP, HSTS, X-Frame-Options)
 - **CORS explícito** — Apenas origens `*.manus.space` e `*.manus.computer`
-- **Rate limiting** — 500 req/15min global, 30 req/15min auth, 20 req/h imagens
+- **Rate limiting** — 500 req/15min global, 10 req/15min auth, 120 req/min tRPC público, 20 req/h imagens
 - **RBAC** — Roles: `user`, `admin`, `owner` com procedures separadas
 - **Stripe Webhooks** — Verificação de assinatura obrigatória
 - **JWT** — Sessões assinadas com secret configurável, HttpOnly, SameSite
@@ -185,8 +186,8 @@ GET /api/health
 ```bash
 pnpm test
 # ✓ server/auth.logout.test.ts (1 test)
-# ✓ server/pnsp.test.ts (39 tests)
-# Tests: 40 passed (40)
+# ✓ server/pnsp.test.ts (89 tests)
+# Tests: 90 passed (90)
 ```
 
 ---
@@ -194,17 +195,20 @@ pnpm test
 ## Deploy com Docker
 
 ```bash
-# Build
-docker build -t pnsp-platform .
+# Iniciar com docker-compose (PostgreSQL + app)
+cp .env.example .env
+# Edite .env com suas credenciais
+docker compose up -d
 
-# Run
+# Ou build manual
+docker build -t pnsp-platform .
 docker run -p 3000:3000 \
-  -e DATABASE_URL="..." \
+  -e DATABASE_URL="postgresql://user:pass@host:5432/pnsp" \
   -e JWT_SECRET="..." \
   pnsp-platform
 ```
 
-O Dockerfile usa **multi-stage build** com usuário não-root e healthcheck integrado.
+O Dockerfile usa **multi-stage build** (deps → builder → runner) com usuário não-root e healthcheck integrado via `/api/health`.
 
 ---
 
