@@ -10,6 +10,9 @@ import { Loader2 } from "lucide-react";
 const Home = lazy(() => import("./pages/Home"));
 const Profiles = lazy(() => import("./pages/Profiles"));
 const ProfileDetail = lazy(() => import("./pages/ProfileDetail"));
+const ProfileBySlug = lazy(() => import("./pages/ProfileBySlug"));
+const EntrarPage = lazy(() => import("./pages/EntrarPage"));
+const CadastrarPage = lazy(() => import("./pages/CadastrarPage"));
 const Offerings = lazy(() => import("./pages/Offerings"));
 const OfferingDetail = lazy(() => import("./pages/OfferingDetail"));
 const Opportunities = lazy(() => import("./pages/Opportunities"));
@@ -54,7 +57,11 @@ function Router() {
         {/* Public */}
         <Route path="/" component={Home} />
         <Route path="/perfis" component={Profiles} />
+        <Route path="/explorar" component={Profiles} />
+        <Route path="/perfil/:slug" component={ProfileBySlug} />
         <Route path="/perfis/:id" component={ProfileDetail} />
+        <Route path="/entrar" component={EntrarPage} />
+        <Route path="/cadastrar" component={CadastrarPage} />
         <Route path="/ofertas" component={Offerings} />
         <Route path="/ofertas/:id" component={OfferingDetail} />
         <Route path="/oportunidades" component={Opportunities} />
