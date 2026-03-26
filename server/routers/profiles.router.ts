@@ -112,6 +112,22 @@ export const profilesRouter = router({
       return { success: true };
     }),
 
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const profile = await repo.getProfileById(input.id);
+      if (!profile) throw new TRPCError({ code: "NOT_FOUND" });
+      if (
+        profile.userId !== ctx.user.id &&
+        ctx.user.role !== "admin" &&
+        ctx.user.role !== "owner"
+      ) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
+      await repo.updateProfile(input.id, { isActive: false, status: "suspended" });
+      return { success: true };
+    }),
+
   addPortfolioItem: protectedProcedure
     .input(z.object({
       profileId: z.number(),

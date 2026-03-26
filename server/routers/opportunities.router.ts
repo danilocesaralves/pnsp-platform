@@ -1,7 +1,16 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { adminProcedure } from "../lib/guards";
 import * as repo from "../repositories";
+
+const CATEGORY_ENUM = z.enum([
+  "vaga_grupo","show","evento","projeto","aula","producao","estudio","servico","outro",
+]);
+const REQUIRED_TYPE_ENUM = z.enum([
+  "artista_solo","grupo_banda","comunidade_roda","produtor","estudio",
+  "professor","loja","luthier","contratante","qualquer",
+]);
 
 export const opportunitiesRouter = router({
   list: publicProcedure
@@ -28,8 +37,8 @@ export const opportunitiesRouter = router({
     .input(z.object({
       title: z.string().min(3).max(300),
       description: z.string().optional(),
-      category: z.enum(["vaga_grupo","show","evento","projeto","aula","producao","estudio","servico","outro"]),
-      requiredType: z.enum(["artista_solo","grupo_banda","comunidade_roda","produtor","estudio","professor","loja","luthier","contratante","qualquer"]).default("qualquer"),
+      category: CATEGORY_ENUM,
+      requiredType: REQUIRED_TYPE_ENUM.default("qualquer"),
       city: z.string().optional(),
       state: z.string().optional(),
       budgetMin: z.number().optional(),
@@ -47,6 +56,57 @@ export const opportunitiesRouter = router({
         deadline: input.deadline ? new Date(input.deadline) : null,
         status: "active",
       });
+      return { success: true };
+    }),
+
+  update: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      title: z.string().min(3).max(300).optional(),
+      description: z.string().optional(),
+      category: CATEGORY_ENUM.optional(),
+      requiredType: REQUIRED_TYPE_ENUM.optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      budgetMin: z.number().optional(),
+      budgetMax: z.number().optional(),
+      tags: z.array(z.string()).optional(),
+      deadline: z.string().optional(),
+      isActive: z.boolean().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const opp = await repo.getOpportunityById(input.id);
+      if (!opp) throw new TRPCError({ code: "NOT_FOUND" });
+      if (
+        opp.userId !== ctx.user.id &&
+        ctx.user.role !== "admin" &&
+        ctx.user.role !== "owner"
+      ) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
+      const { id, budgetMin, budgetMax, deadline, ...rest } = input;
+      await repo.updateOpportunity(id, {
+        ...rest,
+        budgetMin: budgetMin != null ? String(budgetMin) : undefined,
+        budgetMax: budgetMax != null ? String(budgetMax) : undefined,
+        deadline: deadline != null ? new Date(deadline) : undefined,
+      });
+      return { success: true };
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const opp = await repo.getOpportunityById(input.id);
+      if (!opp) throw new TRPCError({ code: "NOT_FOUND" });
+      if (
+        opp.userId !== ctx.user.id &&
+        ctx.user.role !== "admin" &&
+        ctx.user.role !== "owner"
+      ) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
+      await repo.updateOpportunity(input.id, { isActive: false, status: "closed" });
       return { success: true };
     }),
 

@@ -207,6 +207,118 @@ describe("notifications.markRead", () => {
   });
 });
 
+// ── BLOCO A: delete / update guards ──────────────────────────────────────────
+describe("profiles.delete", () => {
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(caller.profiles.delete({ id: 1 })).rejects.toThrow();
+  });
+});
+
+describe("offerings.delete", () => {
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(caller.offerings.delete({ id: 1 })).rejects.toThrow();
+  });
+});
+
+describe("offerings.update — full fields", () => {
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(
+      caller.offerings.update({ id: 1, title: "Novo Título" }),
+    ).rejects.toThrow();
+  });
+
+  it("rejects title shorter than 3 chars", async () => {
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(
+      caller.offerings.update({ id: 1, title: "Ab" }),
+    ).rejects.toThrow();
+  });
+});
+
+describe("opportunities.delete", () => {
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(caller.opportunities.delete({ id: 1 })).rejects.toThrow();
+  });
+});
+
+describe("opportunities.update", () => {
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(
+      caller.opportunities.update({ id: 1, title: "Novo Título Válido" }),
+    ).rejects.toThrow();
+  });
+
+  it("rejects title shorter than 3 chars", async () => {
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(
+      caller.opportunities.update({ id: 1, title: "Ab" }),
+    ).rejects.toThrow();
+  });
+});
+
+describe("studios.create", () => {
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(
+      caller.studios.create({ name: "Estúdio Teste" }),
+    ).rejects.toThrow();
+  });
+
+  it("rejects name shorter than 2 chars", async () => {
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(caller.studios.create({ name: "A" })).rejects.toThrow();
+  });
+});
+
+describe("studios.update", () => {
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(
+      caller.studios.update({ id: 1, name: "Novo Nome" }),
+    ).rejects.toThrow();
+  });
+});
+
+describe("studios.delete", () => {
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(caller.studios.delete({ id: 1 })).rejects.toThrow();
+  });
+});
+
+describe("academy.adminUpdate", () => {
+  it("requires admin role (rejects regular user)", async () => {
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(
+      caller.academy.adminUpdate({ id: 1, title: "Novo Título" }),
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(
+      caller.academy.adminUpdate({ id: 1, title: "Novo Título" }),
+    ).rejects.toThrow();
+  });
+});
+
+describe("academy.adminDelete", () => {
+  it("requires admin role (rejects regular user)", async () => {
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(caller.academy.adminDelete({ id: 1 })).rejects.toThrow();
+  });
+
+  it("requires authentication", async () => {
+    const caller = appRouter.createCaller(makePublicCtx());
+    await expect(caller.academy.adminDelete({ id: 1 })).rejects.toThrow();
+  });
+});
+
 // ── dashboard.summary — data shape ───────────────────────────────────────────
 describe("dashboard.summary — data shape", () => {
   it("returns all required fields with correct types", async () => {

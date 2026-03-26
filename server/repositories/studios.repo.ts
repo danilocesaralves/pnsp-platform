@@ -71,6 +71,12 @@ export async function getBookingsByUser(userId: number) {
   return db.select().from(studioBookings).where(eq(studioBookings.userId, userId)).orderBy(desc(studioBookings.createdAt));
 }
 
+export async function updateStudio(id: number, data: Partial<typeof studios.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  return db.update(studios).set(data).where(eq(studios.id, id));
+}
+
 export async function getStudioCount() {
   const db = await getDb();
   if (!db) return 0;

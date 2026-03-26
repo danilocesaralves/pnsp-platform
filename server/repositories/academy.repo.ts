@@ -55,6 +55,12 @@ export async function listAcademyContent(opts: {
     .offset(opts.offset ?? 0);
 }
 
+export async function updateAcademyContent(id: number, data: Partial<typeof academyContent.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("DB not available");
+  return db.update(academyContent).set(data).where(eq(academyContent.id, id));
+}
+
 export async function getAcademyContentCount() {
   const db = await getDb();
   if (!db) return 0;

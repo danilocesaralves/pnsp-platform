@@ -4,6 +4,12 @@ import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { adminProcedure } from "../lib/guards";
 import * as repo from "../repositories";
 
+const CATEGORY_ENUM = z.enum([
+  "show","aula","producao","instrumento_novo","instrumento_usado",
+  "artesanato","acessorio","audiovisual","luthieria","estudio","servico","outro",
+]);
+const PRICE_TYPE_ENUM = z.enum(["fixo","sob_consulta","gratuito","a_combinar"]);
+
 export const offeringsRouter = router({
   list: publicProcedure
     .input(z.object({
@@ -35,8 +41,8 @@ export const offeringsRouter = router({
       profileId: z.number(),
       title: z.string().min(3).max(300),
       description: z.string().optional(),
-      category: z.enum(["show","aula","producao","instrumento_novo","instrumento_usado","artesanato","acessorio","audiovisual","luthieria","estudio","servico","outro"]),
-      priceType: z.enum(["fixo","sob_consulta","gratuito","a_combinar"]).default("a_combinar"),
+      category: CATEGORY_ENUM,
+      priceType: PRICE_TYPE_ENUM.default("a_combinar"),
       price: z.number().optional(),
       imageUrl: z.string().optional(),
       city: z.string().optional(),
@@ -61,20 +67,48 @@ export const offeringsRouter = router({
   update: protectedProcedure
     .input(z.object({
       id: z.number(),
-      title: z.string().optional(),
+      title: z.string().min(3).max(300).optional(),
       description: z.string().optional(),
+      category: CATEGORY_ENUM.optional(),
       price: z.number().optional(),
-      priceType: z.enum(["fixo","sob_consulta","gratuito","a_combinar"]).optional(),
+      priceType: PRICE_TYPE_ENUM.optional(),
       imageUrl: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      tags: z.array(z.string()).optional(),
       isActive: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const offering = await repo.getOfferingById(input.id);
-      if (!offering || offering.userId !== ctx.user.id) {
+      if (!offering) throw new TRPCError({ code: "NOT_FOUND" });
+      if (
+        offering.userId !== ctx.user.id &&
+        ctx.user.role !== "admin" &&
+        ctx.user.role !== "owner"
+      ) {
         throw new TRPCError({ code: "FORBIDDEN" });
       }
       const { id, price, ...rest } = input;
-      await repo.updateOffering(id, { ...rest, price: price != null ? String(price) : undefined });
+      await repo.updateOffering(id, {
+        ...rest,
+        price: price != null ? String(price) : undefined,
+      });
+      return { success: true };
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const offering = await repo.getOfferingById(input.id);
+      if (!offering) throw new TRPCError({ code: "NOT_FOUND" });
+      if (
+        offering.userId !== ctx.user.id &&
+        ctx.user.role !== "admin" &&
+        ctx.user.role !== "owner"
+      ) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
+      await repo.updateOffering(input.id, { isActive: false, status: "expired" });
       return { success: true };
     }),
 
