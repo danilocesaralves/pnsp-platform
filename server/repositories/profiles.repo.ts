@@ -1,4 +1,4 @@
-import { and, desc, eq, like, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, like, or, sql } from "drizzle-orm";
 import { profiles, portfolioItems } from "../../drizzle/schema";
 import { getDb } from "../db";
 
@@ -51,13 +51,13 @@ export async function listProfiles(opts: {
   const conditions = [eq(profiles.isActive, true), eq(profiles.status, "active")];
   if (opts.profileType) conditions.push(eq(profiles.profileType, opts.profileType as any));
   if (opts.state) conditions.push(eq(profiles.state, opts.state));
-  if (opts.city) conditions.push(like(profiles.city, `%${opts.city}%`));
+  if (opts.city) conditions.push(ilike(profiles.city, `%${opts.city}%`));
   if (opts.featured) conditions.push(eq(profiles.isFeatured, true));
   if (opts.search) {
     conditions.push(
       or(
-        like(profiles.displayName, `%${opts.search}%`),
-        like(profiles.bio, `%${opts.search}%`),
+        ilike(profiles.displayName, `%${opts.search}%`),
+        ilike(profiles.bio, `%${opts.search}%`),
       ) as any
     );
   }
