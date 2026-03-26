@@ -53,6 +53,19 @@ export default function OwnerDashboard() {
     value: Number(r.count),
   }));
 
+  // Month-over-month trends derived from growth data
+  function calcTrend(field: "usuarios" | "perfis" | "ofertas"): { label: string; up: boolean } {
+    if (GROWTH_DATA.length < 2) return { label: "—", up: true };
+    const cur = Number((GROWTH_DATA.at(-1) as any)?.[field] ?? 0);
+    const prev = Number((GROWTH_DATA.at(-2) as any)?.[field] ?? 0);
+    if (prev === 0) return { label: cur > 0 ? "+∞" : "—", up: cur > 0 };
+    const pct = ((cur - prev) / prev) * 100;
+    return { label: `${pct >= 0 ? "+" : ""}${pct.toFixed(0)}%`, up: pct >= 0 };
+  }
+  const trendUsers = calcTrend("usuarios");
+  const trendProfiles = calcTrend("perfis");
+  const trendOfferings = calcTrend("ofertas");
+
   const handleExportPDF = useCallback(() => {
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     const now = new Date();
@@ -180,8 +193,8 @@ export default function OwnerDashboard() {
       icon: Users,
       label: "Usuários Totais",
       value: stats?.userCount ?? 0,
-      trend: "+12%",
-      up: true,
+      trend: trendUsers.label,
+      up: trendUsers.up,
       color: "text-blue-600",
       bg: "bg-blue-50",
     },
@@ -189,8 +202,8 @@ export default function OwnerDashboard() {
       icon: Music2,
       label: "Perfis Ativos",
       value: stats?.profileCount ?? 0,
-      trend: "+18%",
-      up: true,
+      trend: trendProfiles.label,
+      up: trendProfiles.up,
       color: "text-amber-600",
       bg: "bg-amber-50",
     },
@@ -198,8 +211,8 @@ export default function OwnerDashboard() {
       icon: Briefcase,
       label: "Ofertas Ativas",
       value: stats?.offeringCount ?? 0,
-      trend: "+8%",
-      up: true,
+      trend: trendOfferings.label,
+      up: trendOfferings.up,
       color: "text-purple-600",
       bg: "bg-purple-50",
     },
@@ -207,7 +220,7 @@ export default function OwnerDashboard() {
       icon: Target,
       label: "Oportunidades",
       value: stats?.opportunityCount ?? 0,
-      trend: "+15%",
+      trend: "—",
       up: true,
       color: "text-green-600",
       bg: "bg-green-50",
@@ -216,7 +229,7 @@ export default function OwnerDashboard() {
       icon: Building2,
       label: "Estúdios",
       value: stats?.studioCount ?? 0,
-      trend: "+5%",
+      trend: "—",
       up: true,
       color: "text-teal-600",
       bg: "bg-teal-50",
@@ -225,7 +238,7 @@ export default function OwnerDashboard() {
       icon: BookOpen,
       label: "Conteúdo Academia",
       value: stats?.academyCount ?? 0,
-      trend: "+10%",
+      trend: "—",
       up: true,
       color: "text-indigo-600",
       bg: "bg-indigo-50",
@@ -234,7 +247,7 @@ export default function OwnerDashboard() {
       icon: DollarSign,
       label: "Receita Total",
       value: `R$ ${totalRevenue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
-      trend: totalRevenue > 0 ? "+positivo" : "—",
+      trend: totalRevenue > 0 ? "positivo" : "—",
       up: totalRevenue > 0,
       color: "text-green-600",
       bg: "bg-green-50",
@@ -243,8 +256,8 @@ export default function OwnerDashboard() {
       icon: Activity,
       label: "Margem de Lucro",
       value: `${margin.toFixed(1)}%`,
-      trend: margin > 0 ? "positivo" : "—",
-      up: margin > 0,
+      trend: margin > 0 ? `${margin.toFixed(1)}%` : "—",
+      up: margin >= 0,
       color: margin >= 0 ? "text-green-600" : "text-red-600",
       bg: margin >= 0 ? "bg-green-50" : "bg-red-50",
     },
