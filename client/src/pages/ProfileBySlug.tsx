@@ -54,19 +54,11 @@ export default function ProfileBySlug() {
         {/* Profile Header */}
         <div className="relative -mt-16 mb-6 flex flex-col sm:flex-row items-start sm:items-end gap-4">
           <div className="relative">
-            {profile.avatarUrl ? (
-              <img
-                src={profile.avatarUrl}
-                alt={profile.displayName}
-                className="h-28 w-28 rounded-xl object-cover border-4 border-background shadow-lg"
-              />
-            ) : (
-              <div className="h-28 w-28 rounded-xl bg-primary flex items-center justify-center border-4 border-background shadow-lg">
-                <span className="text-3xl font-bold text-primary-foreground">
-                  {profile.displayName.charAt(0)}
-                </span>
-              </div>
-            )}
+            <img
+              src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
+              alt={profile.displayName}
+              className="h-28 w-28 rounded-xl object-cover border-4 border-background shadow-lg bg-muted"
+            />
             {profile.isVerified && (
               <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1">
                 <Award className="h-4 w-4 text-white" />
@@ -75,7 +67,7 @@ export default function ProfileBySlug() {
           </div>
           <div className="flex-1 pb-2">
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow sm:text-foreground">
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                 {profile.displayName}
               </h1>
               <Badge variant="secondary">

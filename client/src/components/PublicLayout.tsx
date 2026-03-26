@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   Menu, X, Music2, MapPin, BookOpen, Mic2, Briefcase,
@@ -71,6 +71,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2 h-9 px-2 rounded-lg">
                       <Avatar className="h-7 w-7">
+                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name ?? "")}`} alt={user.name ?? ""} />
                         <AvatarFallback
                           className="text-xs font-semibold"
                           style={{ background: "var(--o500)", color: "var(--n950)" }}

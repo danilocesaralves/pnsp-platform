@@ -27,14 +27,6 @@ const PROFILE_TYPE_OPTIONS = [
   { value: "parceiro", label: "Parceiro" },
 ];
 
-const AVATAR_COLORS = [
-  "var(--o500)", "var(--g500)", "#8b5cf6", "#3b82f6",
-  "#ef4444", "#f97316", "#ec4899", "#0891b2",
-];
-function getAvatarColor(id: number) {
-  return AVATAR_COLORS[id % AVATAR_COLORS.length];
-}
-
 function ProfileSkeleton() {
   return (
     <div className="pnsp-card p-5 animate-pulse">
@@ -172,23 +164,14 @@ export default function Profiles() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {profiles.map(profile => (
-                <Link key={profile.id} href={`/perfis/${profile.id}`}>
+                <Link key={profile.id} href={`/perfil/${profile.slug}`}>
                   <div className="pnsp-card p-5 cursor-pointer h-full flex flex-col">
                     <div className="flex items-start gap-3 mb-3">
-                      {profile.avatarUrl ? (
-                        <img
-                          src={profile.avatarUrl}
-                          alt={profile.displayName}
-                          className="w-14 h-14 rounded-full object-cover flex-shrink-0"
-                        />
-                      ) : (
-                        <div
-                          className="w-14 h-14 rounded-full flex items-center justify-center text-white font-display font-bold text-xl flex-shrink-0"
-                          style={{ background: getAvatarColor(profile.id) }}
-                        >
-                          {profile.displayName?.charAt(0)?.toUpperCase() ?? "?"}
-                        </div>
-                      )}
+                      <img
+                        src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
+                        alt={profile.displayName}
+                        className="w-14 h-14 rounded-full object-cover flex-shrink-0 bg-muted"
+                      />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-1">
                           <h3 className="font-body font-semibold text-foreground text-sm leading-tight line-clamp-2">
