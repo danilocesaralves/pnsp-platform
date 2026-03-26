@@ -1,5 +1,5 @@
-import { and, desc, eq, sql } from "drizzle-orm";
-import { users, InsertUser } from "../../drizzle/schema";
+import { desc, eq, sql } from "drizzle-orm";
+import { users, type InsertUser } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { ENV } from "../_core/env";
 
@@ -7,20 +7,23 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) throw new Error("User openId is required for upsert");
   const db = await getDb();
   if (!db) return;
+
   const values: InsertUser = { openId: user.openId };
-  const updateSet: Record<string, unknown> = {};
+  const updateSet: Partial<InsertUser> = {};
+
   const textFields = ["name", "email", "loginMethod"] as const;
   textFields.forEach((field) => {
     const value = user[field];
     if (value === undefined) return;
-    const normalized = value ?? null;
-    values[field] = normalized;
-    updateSet[field] = normalized;
+    (values as Record<string, unknown>)[field] = value ?? null;
+    (updateSet as Record<string, unknown>)[field] = value ?? null;
   });
+
   if (user.lastSignedIn !== undefined) {
     values.lastSignedIn = user.lastSignedIn;
     updateSet.lastSignedIn = user.lastSignedIn;
   }
+
   if (user.role !== undefined) {
     values.role = user.role;
     updateSet.role = user.role;
@@ -28,9 +31,14 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     values.role = "owner";
     updateSet.role = "owner";
   }
+
   if (!values.lastSignedIn) values.lastSignedIn = new Date();
   if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
-  await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
+
+  await db
+    .insert(users)
+    .values(values)
+    .onConflictDoUpdate({ target: users.openId, set: updateSet });
 }
 
 export async function getUserByOpenId(openId: string) {

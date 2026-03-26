@@ -1,8 +1,9 @@
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import type { Express, Request, Response } from "express";
-import * as db from "../db";
+import { upsertUser } from "../repositories/users.repo";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
+import { authLogger } from "../lib/logger";
 
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
@@ -28,7 +29,7 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
-      await db.upsertUser({
+      await upsertUser({
         openId: userInfo.openId,
         name: userInfo.name || null,
         email: userInfo.email ?? null,
@@ -46,7 +47,7 @@ export function registerOAuthRoutes(app: Express) {
 
       res.redirect(302, "/");
     } catch (error) {
-      console.error("[OAuth] Callback failed", error);
+      authLogger.error({ err: error }, "OAuth callback failed");
       res.status(500).json({ error: "OAuth callback failed" });
     }
   });
