@@ -27,7 +27,7 @@ function StrengthItemRow({ item }: { item: StrengthItem }) {
         {item.done && <span style={{ color: '#0A0A0A', fontSize: 10, fontWeight: 800 }}>✓</span>}
       </div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 13, fontWeight: item.done ? 500 : 600, color: item.done ? '#6B6B6B' : 'var(--creme)', textDecoration: item.done ? 'line-through' : undefined }}>
+        <div style={{ fontSize: 13, fontWeight: item.done ? 500 : 600, color: item.done ? '#6B6B6B' : '#EDECEA', textDecoration: item.done ? 'line-through' : undefined }}>
           {item.label}
         </div>
       </div>
@@ -68,14 +68,14 @@ export function ProfileStrength({ profile }: ProfileStrengthProps) {
   const circumference = 2 * Math.PI * 22;
 
   return (
-    <div style={{ background: 'var(--terra)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: 20, marginBottom: 20 }}>
+    <div style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: 20, marginBottom: 20 }}>
       {/* Header */}
       <div
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, cursor: 'pointer' }}
         onClick={() => setOpen(!open)}
       >
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--creme)', marginBottom: 2 }}>Força do Perfil</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#EDECEA', marginBottom: 2 }}>Força do Perfil</div>
           <div style={{ fontSize: 11, color: level.color, fontWeight: 700 }}>{level.name}</div>
         </div>
         <div style={{ position: 'relative', width: 52, height: 52 }}>
@@ -88,7 +88,7 @@ export function ProfileStrength({ profile }: ProfileStrengthProps) {
               style={{ transition: 'stroke-dashoffset 1s ease' }}
             />
           </svg>
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: 'var(--creme)' }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: '#EDECEA' }}>
             {pct}%
           </div>
         </div>
@@ -100,7 +100,7 @@ export function ProfileStrength({ profile }: ProfileStrengthProps) {
       </div>
 
       {pct < 100 && (
-        <div style={{ fontSize: 12, color: 'var(--creme-50)', marginBottom: 12 }}>
+        <div style={{ fontSize: 12, color: 'rgba(237,236,234,0.5)', marginBottom: 12 }}>
           Perfis completos aparecem{' '}
           <span style={{ color: level.color, fontWeight: 700 }}>40x mais</span>{' '}
           nas buscas de contratantes

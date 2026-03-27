@@ -49,20 +49,20 @@ function OppCard({ opp }: { opp: any }) {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 8 }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--creme)', marginBottom: 4, lineHeight: 1.3 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#EDECEA', marginBottom: 4, lineHeight: 1.3 }}>
               {opp.title}
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <TypeBadge type={opp.category} />
-              {opp.city && <span style={{ fontSize: 11, color: 'var(--creme-50)' }}>📍 {opp.city}</span>}
-              {opp.state && <span style={{ fontSize: 11, color: 'var(--creme-50)' }}>{opp.state}</span>}
+              {opp.city && <span style={{ fontSize: 11, color: 'rgba(237,236,234,0.5)' }}>📍 {opp.city}</span>}
+              {opp.state && <span style={{ fontSize: 11, color: 'rgba(237,236,234,0.5)' }}>{opp.state}</span>}
             </div>
           </div>
           {hov && <span style={{ fontSize: 12, color: '#00C4A0', fontWeight: 600, flexShrink: 0 }}>Ver →</span>}
         </div>
         {opp.description && (
           <p style={{
-            fontSize: 12, color: 'var(--creme-50)', lineHeight: 1.5,
+            fontSize: 12, color: 'rgba(237,236,234,0.5)', lineHeight: 1.5,
             display: '-webkit-box', WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: 8,
           }}>
@@ -90,12 +90,12 @@ export function OpportunityFeed() {
   const visible = filtered.slice(0, 10);
 
   return (
-    <div style={{ background: 'var(--terra)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, overflow: 'hidden' }}>
+    <div style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, overflow: 'hidden' }}>
       {/* Header */}
       <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--creme)' }}>Oportunidades</div>
-          <div style={{ fontSize: 11, color: 'var(--creme-50)', marginTop: 2 }}>Atualizando em tempo real</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#EDECEA' }}>Oportunidades</div>
+          <div style={{ fontSize: 11, color: 'rgba(237,236,234,0.5)', marginTop: 2 }}>Atualizando em tempo real</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 8px #22C55E' }} />
@@ -111,9 +111,9 @@ export function OpportunityFeed() {
             onClick={() => setFilter(f)}
             style={{
               padding: '4px 12px', borderRadius: 9999,
-              border: `1px solid ${filter === f ? 'rgba(0,196,160,0.4)' : 'var(--creme-10)'}`,
+              border: `1px solid ${filter === f ? 'rgba(0,196,160,0.4)' : 'rgba(237,236,234,0.06)'}`,
               background: filter === f ? 'rgba(0,196,160,0.1)' : 'transparent',
-              color: filter === f ? '#00C4A0' : 'var(--creme-50)',
+              color: filter === f ? '#00C4A0' : 'rgba(237,236,234,0.5)',
               fontSize: 11, fontWeight: 600, cursor: 'pointer',
               whiteSpace: 'nowrap', transition: 'all .15s',
               textTransform: 'capitalize',
@@ -138,7 +138,7 @@ export function OpportunityFeed() {
         ) : (
           <div style={{ padding: '32px 20px', textAlign: 'center' }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>🎯</div>
-            <div style={{ fontSize: 14, color: 'var(--creme-50)' }}>Nenhuma oportunidade ainda</div>
+            <div style={{ fontSize: 14, color: 'rgba(237,236,234,0.5)' }}>Nenhuma oportunidade ainda</div>
             <Link href="/criar-oportunidade">
               <span style={{ fontSize: 12, color: '#00C4A0', fontWeight: 600, marginTop: 8, display: 'inline-block' }}>
                 Publicar a primeira →

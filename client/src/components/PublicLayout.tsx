@@ -28,7 +28,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   const isActive = (href: string) => location.startsWith(href);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--preto)", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", background: "#0A0A0A", display: "flex", flexDirection: "column" }}>
 
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <header style={{
@@ -49,10 +49,10 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           {/* Logo */}
           <Link href="/">
             <span style={{
-              fontFamily: "var(--font-display)",
+              fontFamily: "'Syne',system-ui,sans-serif",
               fontSize: "1.5rem",
               fontWeight: 700,
-              color: "var(--ouro)",
+              color: "#00C4A0",
               cursor: "pointer",
               letterSpacing: "-0.02em",
               userSelect: "none",
@@ -81,33 +81,33 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   <button style={{
                     display: "flex", alignItems: "center", gap: 8,
                     padding: "6px 10px 6px 6px",
-                    borderRadius: "var(--radius-full)",
-                    border: "1px solid var(--creme-10)",
-                    background: "var(--terra)",
+                    borderRadius: "9999px",
+                    border: "1px solid rgba(237,236,234,0.06)",
+                    background: "#111111",
                     cursor: "pointer",
-                    transition: "var(--transition)",
-                    color: "var(--creme)",
-                    fontFamily: "var(--font-body)",
+                    transition: "all 0.25s ease",
+                    color: "#EDECEA",
+                    fontFamily: "'Inter',system-ui,sans-serif",
                   }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(212,146,10,0.35)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--creme-10)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(237,236,234,0.06)"; }}
                   >
                     <Avatar style={{ width: 28, height: 28 }}>
                       <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name ?? "")}`} alt={user.name ?? ""} />
-                      <AvatarFallback style={{ background: "var(--ouro)", color: "var(--preto)", fontSize: 12, fontWeight: 700 }}>
+                      <AvatarFallback style={{ background: "#00C4A0", color: "#0A0A0A", fontSize: 12, fontWeight: 700 }}>
                         {user.name?.charAt(0)?.toUpperCase() ?? "U"}
                       </AvatarFallback>
                     </Avatar>
-                    <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, maxWidth: 110, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span style={{ fontSize: "0.875rem", fontWeight: 500, maxWidth: 110, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {user.name}
                     </span>
-                    <span style={{ color: "var(--creme-50)", fontSize: 10 }}>▾</span>
+                    <span style={{ color: "rgba(237,236,234,0.5)", fontSize: 10 }}>▾</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" style={{ minWidth: 200 }}>
                   <div style={{ padding: "10px 14px" }}>
-                    <p style={{ fontSize: "var(--text-sm)", fontWeight: 600, fontFamily: "var(--font-body)" }}>{user.name}</p>
-                    <p style={{ fontSize: "var(--text-xs)", opacity: 0.6, overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</p>
+                    <p style={{ fontSize: "0.875rem", fontWeight: 600, fontFamily: "'Inter',system-ui,sans-serif" }}>{user.name}</p>
+                    <p style={{ fontSize: "0.75rem", opacity: 0.6, overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</p>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
@@ -136,7 +136,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     </>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => logout()} style={{ color: "var(--vermelho)" }}>
+                  <DropdownMenuItem onClick={() => logout()} style={{ color: "#EF4444" }}>
                     <LogOut style={{ width: 14, height: 14, marginRight: 8 }} />Sair
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -145,31 +145,31 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               <div style={{ display: "flex", gap: 8 }}>
                 <a href="/entrar" style={{
                   padding: "8px 18px",
-                  color: "var(--creme-80)",
-                  fontSize: "var(--text-sm)",
+                  color: "rgba(237,236,234,0.8)",
+                  fontSize: "0.875rem",
                   fontWeight: 500,
-                  fontFamily: "var(--font-body)",
+                  fontFamily: "'Inter',system-ui,sans-serif",
                   transition: "color 0.2s",
-                  borderRadius: "var(--radius-md)",
+                  borderRadius: "12px",
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--ouro)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-80)"; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#00C4A0"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(237,236,234,0.8)"; }}
                 >
                   Entrar
                 </a>
                 <a href="/entrar" style={{
                   padding: "8px 18px",
-                  background: "var(--ouro)",
-                  color: "var(--preto)",
-                  fontSize: "var(--text-sm)",
+                  background: "#00C4A0",
+                  color: "#0A0A0A",
+                  fontSize: "0.875rem",
                   fontWeight: 700,
-                  fontFamily: "var(--font-body)",
-                  borderRadius: "var(--radius-md)",
-                  transition: "var(--transition)",
+                  fontFamily: "'Inter',system-ui,sans-serif",
+                  borderRadius: "12px",
+                  transition: "all 0.25s ease",
                   whiteSpace: "nowrap",
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--ouro-claro)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--ouro)"; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#33D4B4"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#00C4A0"; }}
                 >
                   Cadastrar grátis
                 </a>
@@ -183,9 +183,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               style={{
                 display: "none",
                 padding: 8,
-                border: "1px solid var(--creme-10)",
-                borderRadius: "var(--radius-sm)",
-                color: "var(--creme)",
+                border: "1px solid rgba(237,236,234,0.06)",
+                borderRadius: "6px",
+                color: "#EDECEA",
                 background: "none",
                 cursor: "pointer",
               }}
@@ -204,7 +204,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           top: 68, left: 0, right: 0,
           background: "rgba(20,16,8,0.98)",
           backdropFilter: "blur(20px)",
-          borderBottom: "1px solid var(--creme-10)",
+          borderBottom: "1px solid rgba(237,236,234,0.06)",
           padding: "16px 24px 24px",
           zIndex: 49,
         }}>
@@ -214,15 +214,15 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 style={{
                   display: "flex", alignItems: "center", gap: 12,
                   padding: "12px 14px",
-                  borderRadius: "var(--radius-md)",
-                  fontSize: "var(--text-base)",
+                  borderRadius: "12px",
+                  fontSize: "1rem",
                   fontWeight: 500,
-                  fontFamily: "var(--font-body)",
+                  fontFamily: "'Inter',system-ui,sans-serif",
                   cursor: "pointer",
                   marginBottom: 4,
-                  color: isActive(href) ? "var(--ouro)" : "var(--creme-80)",
-                  background: isActive(href) ? "var(--ouro-sutil)" : "transparent",
-                  transition: "var(--transition)",
+                  color: isActive(href) ? "#00C4A0" : "rgba(237,236,234,0.8)",
+                  background: isActive(href) ? "rgba(0,196,160,0.1)" : "transparent",
+                  transition: "all 0.25s ease",
                 }}
                 onClick={() => setMobileOpen(false)}
               >
@@ -232,11 +232,11 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             </Link>
           ))}
           {!isAuthenticated && (
-            <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--creme-10)", display: "flex", gap: 8 }}>
-              <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", border: "1px solid var(--creme-20)", borderRadius: "var(--radius-md)", color: "var(--creme-80)", fontSize: "var(--text-sm)", fontWeight: 500, fontFamily: "var(--font-body)" }}>
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid rgba(237,236,234,0.06)", display: "flex", gap: 8 }}>
+              <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", border: "1px solid rgba(237,236,234,0.12)", borderRadius: "12px", color: "rgba(237,236,234,0.8)", fontSize: "0.875rem", fontWeight: 500, fontFamily: "'Inter',system-ui,sans-serif" }}>
                 Entrar
               </a>
-              <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", background: "var(--ouro)", borderRadius: "var(--radius-md)", color: "var(--preto)", fontSize: "var(--text-sm)", fontWeight: 700, fontFamily: "var(--font-body)" }}>
+              <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", background: "#00C4A0", borderRadius: "12px", color: "#0A0A0A", fontSize: "0.875rem", fontWeight: 700, fontFamily: "'Inter',system-ui,sans-serif" }}>
                 Cadastrar
               </a>
             </div>
