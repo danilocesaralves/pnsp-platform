@@ -4,6 +4,97 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { PROFILE_TYPES } from "@shared/pnsp";
 
+/* ─── Smart Search ──────────────────────────────────────────────────────────── */
+const SEARCH_TYPES = [
+  { value: "", label: "Todos" },
+  { value: "artista_solo", label: "Artista" },
+  { value: "grupo_banda", label: "Grupo" },
+  { value: "produtor", label: "Produtor" },
+  { value: "estudio", label: "Estúdio" },
+  { value: "contratante", label: "Contratante" },
+];
+
+function SmartSearch() {
+  const [q, setQ] = useState("");
+  const [type, setType] = useState("");
+  const [city, setCity] = useState("");
+  const [qFocus, setQFocus] = useState(false);
+  const [cityFocus, setCityFocus] = useState(false);
+
+  function handleSearch() {
+    const params = new URLSearchParams();
+    if (q.trim())    params.set("q",    q.trim());
+    if (type)        params.set("type", type);
+    if (city.trim()) params.set("city", city.trim());
+    window.location.href = `/perfis${params.toString() ? `?${params}` : ""}`;
+  }
+
+  const inputBase: React.CSSProperties = {
+    flex: 1,
+    padding: "12px 16px",
+    background: "var(--preto)",
+    border: "1px solid var(--creme-10)",
+    borderRadius: "var(--radius-md)",
+    color: "var(--creme)",
+    fontSize: "var(--text-sm)",
+    fontFamily: "var(--font-body)",
+    outline: "none",
+    transition: "border-color .2s",
+    minWidth: 0,
+  };
+
+  return (
+    <div style={{
+      background: "var(--terra)",
+      border: "1px solid var(--creme-10)",
+      borderRadius: 16,
+      padding: 8,
+      boxShadow: "0 8px 40px rgba(0,0,0,0.50)",
+      display: "flex",
+      gap: 8,
+      flexWrap: "wrap",
+      alignItems: "center",
+    }}>
+      {/* Query */}
+      <input
+        style={{ ...inputBase, borderColor: qFocus ? "var(--ouro)" : "var(--creme-10)", flex: "2 1 200px" }}
+        placeholder="Buscar artistas, produtores, estúdios..."
+        value={q}
+        onChange={e => setQ(e.target.value)}
+        onFocus={() => setQFocus(true)}
+        onBlur={() => setQFocus(false)}
+        onKeyDown={e => e.key === "Enter" && handleSearch()}
+      />
+      {/* Tipo */}
+      <select
+        style={{ ...inputBase, flex: "1 1 140px", cursor: "pointer" }}
+        value={type}
+        onChange={e => setType(e.target.value)}
+      >
+        {SEARCH_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+      </select>
+      {/* Cidade */}
+      <input
+        style={{ ...inputBase, borderColor: cityFocus ? "var(--ouro)" : "var(--creme-10)", flex: "1 1 140px" }}
+        placeholder="Cidade"
+        value={city}
+        onChange={e => setCity(e.target.value)}
+        onFocus={() => setCityFocus(true)}
+        onBlur={() => setCityFocus(false)}
+        onKeyDown={e => e.key === "Enter" && handleSearch()}
+      />
+      {/* Botão */}
+      <button
+        onClick={handleSearch}
+        className="pnsp-btn-primary"
+        style={{ padding: "12px 28px", whiteSpace: "nowrap", flex: "0 0 auto" }}
+      >
+        Buscar
+      </button>
+    </div>
+  );
+}
+
 /* ─── Counter hook ──────────────────────────────────────────────────────────── */
 function useCountUp(target: number, duration = 1200, enabled = false) {
   const [count, setCount] = useState(0);
@@ -306,6 +397,13 @@ export default function Home() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ═══ SMART SEARCH ═══ */}
+      <section style={{ padding: "0 24px", marginTop: -40, position: "relative", zIndex: 10 }}>
+        <div style={{ maxWidth: 860, margin: "0 auto" }}>
+          <SmartSearch />
         </div>
       </section>
 

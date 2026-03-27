@@ -245,7 +245,7 @@ export default function ProfileBySlug() {
                 </div>
               )}
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
               <span className="pnsp-badge">
                 {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
               </span>
@@ -255,6 +255,33 @@ export default function ProfileBySlug() {
                 </span>
               )}
             </div>
+            {/* Badges de qualidade */}
+            {(() => {
+              const isAllStar = !!(profile.avatarUrl && profile.bio && profile.city && profile.phone && profile.coverUrl);
+              if (!isAllStar && !profile.isVerified) return null;
+              return (
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {isAllStar && (
+                    <span style={{
+                      fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999,
+                      background: "rgba(27,107,58,0.20)", color: "var(--verde)",
+                      border: "1px solid rgba(27,107,58,0.40)",
+                    }}>
+                      ⭐ Perfil All-Star
+                    </span>
+                  )}
+                  {profile.isVerified && (
+                    <span style={{
+                      fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999,
+                      background: "rgba(37,99,235,0.20)", color: "#60A5FA",
+                      border: "1px solid rgba(37,99,235,0.40)",
+                    }}>
+                      ✓ Verificado
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Action buttons */}
