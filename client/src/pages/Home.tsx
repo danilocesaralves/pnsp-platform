@@ -32,12 +32,12 @@ function SmartSearch() {
   const inputBase: React.CSSProperties = {
     flex: 1,
     padding: "12px 16px",
-    background: "#0A0A0A",
-    border: "1px solid rgba(237,236,234,0.06)",
-    borderRadius: "12px",
-    color: "#EDECEA",
-    fontSize: "0.875rem",
-    fontFamily: "'Inter',system-ui,sans-serif",
+    background: "var(--preto)",
+    border: "1px solid var(--creme-10)",
+    borderRadius: "var(--radius-md)",
+    color: "var(--creme)",
+    fontSize: "var(--text-sm)",
+    fontFamily: "var(--font-body)",
     outline: "none",
     transition: "border-color .2s",
     minWidth: 0,
@@ -45,8 +45,8 @@ function SmartSearch() {
 
   return (
     <div style={{
-      background: "#111111",
-      border: "1px solid rgba(237,236,234,0.06)",
+      background: "var(--terra)",
+      border: "1px solid var(--creme-10)",
       borderRadius: 16,
       padding: 8,
       boxShadow: "0 8px 40px rgba(0,0,0,0.50)",
@@ -57,7 +57,7 @@ function SmartSearch() {
     }}>
       {/* Query */}
       <input
-        style={{ ...inputBase, borderColor: qFocus ? "#00C4A0" : "rgba(237,236,234,0.06)", flex: "2 1 200px" }}
+        style={{ ...inputBase, borderColor: qFocus ? "var(--ouro)" : "var(--creme-10)", flex: "2 1 200px" }}
         placeholder="Buscar artistas, produtores, estúdios..."
         value={q}
         onChange={e => setQ(e.target.value)}
@@ -75,7 +75,7 @@ function SmartSearch() {
       </select>
       {/* Cidade */}
       <input
-        style={{ ...inputBase, borderColor: cityFocus ? "#00C4A0" : "rgba(237,236,234,0.06)", flex: "1 1 140px" }}
+        style={{ ...inputBase, borderColor: cityFocus ? "var(--ouro)" : "var(--creme-10)", flex: "1 1 140px" }}
         placeholder="Cidade"
         value={city}
         onChange={e => setCity(e.target.value)}
@@ -116,7 +116,7 @@ function useCountUp(target: number, duration = 1200, enabled = false) {
 const S = {
   section: (bg?: string): React.CSSProperties => ({
     padding: "96px 24px",
-    background: bg ?? "#0A0A0A",
+    background: bg ?? "var(--preto)",
   }),
   maxW: (w = 1280): React.CSSProperties => ({
     maxWidth: w,
@@ -128,7 +128,7 @@ const S = {
     marginBottom: 56,
   }),
   h2: (): React.CSSProperties => ({
-    fontFamily: "'Syne',system-ui,sans-serif",
+    fontFamily: "var(--font-display)",
     fontSize: "clamp(2rem, 5vw, 3.5rem)",
     fontWeight: 700,
     marginBottom: 14,
@@ -136,8 +136,8 @@ const S = {
     letterSpacing: "-0.02em",
   }),
   sub: (): React.CSSProperties => ({
-    color: "rgba(237,236,234,0.5)",
-    fontSize: "1.125rem",
+    color: "var(--creme-50)",
+    fontSize: "var(--text-lg)",
     maxWidth: 480,
     margin: "0 auto",
     lineHeight: 1.65,
@@ -150,15 +150,15 @@ function StatItem({ num, label, enabled }: { num: number; label: string; enabled
   return (
     <div style={{ textAlign: "center" }}>
       <div style={{
-        fontFamily: "'Syne',system-ui,sans-serif",
+        fontFamily: "var(--font-display)",
         fontSize: "clamp(3rem, 6vw, 5rem)",
         fontWeight: 700,
-        color: "#0A0A0A",
+        color: "var(--preto)",
         lineHeight: 1,
       }}>
         {enabled && num > 0 ? `${count}+` : num > 0 ? `${num}+` : "—"}
       </div>
-      <div style={{ fontSize: "1rem", color: "rgba(12,10,8,0.65)", marginTop: 8, fontWeight: 500 }}>
+      <div style={{ fontSize: "var(--text-base)", color: "rgba(12,10,8,0.65)", marginTop: 8, fontWeight: 500 }}>
         {label}
       </div>
     </div>
@@ -173,11 +173,11 @@ function ProfileCard({ profile }: { profile: any }) {
       <div
         style={{
           display: "block",
-          background: "#111111",
-          border: `1px solid ${hovered ? "rgba(212,146,10,0.40)" : "rgba(237,236,234,0.06)"}`,
-          borderRadius: "20px",
+          background: "var(--terra)",
+          border: `1px solid ${hovered ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+          borderRadius: "var(--radius-lg)",
           overflow: "hidden",
-          transition: "all 0.4s ease",
+          transition: "var(--transition-slow)",
           transform: hovered ? "translateY(-8px)" : "translateY(0)",
           boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.7), 0 4px 32px rgba(212,146,10,0.25)" : "none",
           cursor: "pointer",
@@ -188,7 +188,7 @@ function ProfileCard({ profile }: { profile: any }) {
         {/* Avatar */}
         <div style={{
           aspectRatio: "4/3",
-          background: "linear-gradient(135deg, #0A0A0A, #181818)",
+          background: "linear-gradient(135deg, var(--terra-escura), var(--terra-clara))",
           overflow: "hidden",
           display: "flex",
           alignItems: "center",
@@ -204,9 +204,9 @@ function ProfileCard({ profile }: { profile: any }) {
           ) : (
             <div style={{
               width: 80, height: 80, borderRadius: "50%",
-              background: "linear-gradient(135deg, #00C4A0, #EF4444)",
+              background: "linear-gradient(135deg, var(--ouro), var(--vermelho))",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "'Syne',system-ui,sans-serif", fontSize: "2rem", fontWeight: 700, color: "#0A0A0A",
+              fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 700, color: "var(--preto)",
             }}>
               {profile.displayName?.[0]?.toUpperCase()}
             </div>
@@ -219,27 +219,27 @@ function ProfileCard({ profile }: { profile: any }) {
             transition: "opacity 0.3s ease",
             display: "flex", alignItems: "flex-end", padding: "16px",
           }}>
-            <span style={{ color: "#EDECEA", fontSize: "0.875rem", fontWeight: 600 }}>
+            <span style={{ color: "var(--creme)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
               Ver perfil →
             </span>
           </div>
         </div>
         {/* Info */}
         <div style={{ padding: "20px" }}>
-          <div style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.25rem", fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {profile.displayName}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
-            <span className="pnsp-badge" style={{ fontSize: "0.75rem" }}>
+            <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
               {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
             </span>
             {profile.city && (
-              <span style={{ color: "rgba(237,236,234,0.5)", fontSize: "0.75rem" }}>📍 {profile.city}</span>
+              <span style={{ color: "var(--creme-50)", fontSize: "var(--text-xs)" }}>📍 {profile.city}</span>
             )}
           </div>
           {profile.bio && (
             <p style={{
-              color: "rgba(237,236,234,0.5)", fontSize: "0.875rem", lineHeight: 1.5,
+              color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.5,
               display: "-webkit-box", WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical", overflow: "hidden",
             }}>
@@ -254,7 +254,7 @@ function ProfileCard({ profile }: { profile: any }) {
 
 function ProfileSkeleton() {
   return (
-    <div style={{ background: "#111111", borderRadius: "20px", overflow: "hidden", border: "1px solid rgba(237,236,234,0.06)" }}>
+    <div style={{ background: "var(--terra)", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--creme-10)" }}>
       <div className="skeleton" style={{ aspectRatio: "4/3" }} />
       <div style={{ padding: "20px" }}>
         <div className="skeleton" style={{ height: 22, width: "70%", marginBottom: 12 }} />
@@ -272,22 +272,22 @@ function HowItWorksCard({ step }: { step: { num: string; title: string; desc: st
   return (
     <div
       style={{
-        background: "#111111",
-        border: `1px solid ${h ? "rgba(212,146,10,0.35)" : "rgba(237,236,234,0.06)"}`,
-        borderRadius: "20px",
+        background: "var(--terra)",
+        border: `1px solid ${h ? "rgba(212,146,10,0.35)" : "var(--creme-10)"}`,
+        borderRadius: "var(--radius-lg)",
         padding: "40px 36px",
-        transition: "all 0.25s ease",
+        transition: "var(--transition)",
         transform: h ? "translateY(-8px)" : "translateY(0)",
-        boxShadow: h ? "0 4px 32px rgba(0,196,160,0.28)" : "none",
+        boxShadow: h ? "var(--shadow-ouro)" : "none",
       }}
       onMouseEnter={() => setH(true)}
       onMouseLeave={() => setH(false)}
     >
-      <div style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "5rem", fontWeight: 700, color: "rgba(0,196,160,0.1)", lineHeight: 1, marginBottom: 24, userSelect: "none" }}>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: "5rem", fontWeight: 700, color: "var(--ouro-sutil)", lineHeight: 1, marginBottom: 24, userSelect: "none" }}>
         {step.num}
       </div>
-      <h3 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.5rem", marginBottom: 12 }}>{step.title}</h3>
-      <p style={{ color: "rgba(237,236,234,0.5)", lineHeight: 1.65 }}>{step.desc}</p>
+      <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 12 }}>{step.title}</h3>
+      <p style={{ color: "var(--creme-50)", lineHeight: 1.65 }}>{step.desc}</p>
     </div>
   );
 }
@@ -305,14 +305,14 @@ function OfferingCard({ offering }: { offering: any }) {
     <Link href={`/ofertas/${offering.id}`}>
       <div
         style={{
-          background: "#111111",
-          border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "rgba(237,236,234,0.06)"}`,
-          borderRadius: "20px",
+          background: "var(--terra)",
+          border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+          borderRadius: "var(--radius-lg)",
           padding: 24,
           cursor: "pointer",
-          transition: "all 0.4s ease",
+          transition: "var(--transition-slow)",
           transform: h ? "translateY(-6px)" : "translateY(0)",
-          boxShadow: h ? "0 4px 32px rgba(0,196,160,0.28)" : "none",
+          boxShadow: h ? "var(--shadow-ouro)" : "none",
           display: "flex",
           flexDirection: "column",
           gap: 12,
@@ -321,20 +321,20 @@ function OfferingCard({ offering }: { offering: any }) {
         onMouseLeave={() => setH(false)}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span className="pnsp-badge" style={{ fontSize: "0.75rem" }}>
+          <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
             {offering.category?.replace(/_/g, " ")}
           </span>
           {offering.price && (
-            <span style={{ color: "#22C55E", fontSize: "0.875rem", fontWeight: 700 }}>
+            <span style={{ color: "var(--verde)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
               R$ {Number(offering.price).toLocaleString("pt-BR")}
             </span>
           )}
         </div>
-        <h3 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.25rem", fontWeight: 700, lineHeight: 1.2 }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, lineHeight: 1.2 }}>
           {offering.title}
         </h3>
         {offering.city && (
-          <span style={{ color: "rgba(237,236,234,0.5)", fontSize: "0.875rem" }}>
+          <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
             📍 {offering.city}, {offering.state}
           </span>
         )}
@@ -363,7 +363,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ background: "#0A0A0A", minHeight: "100vh" }}>
+    <div style={{ background: "var(--preto)", minHeight: "100vh" }}>
 
       {/* ═══ HERO ═══ */}
       <section style={{
@@ -398,7 +398,7 @@ export default function Home() {
         <svg style={{ position: "absolute", bottom: 0, left: 0, right: 0, width: "100%" }}
           viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
           <path d="M0 30 C360 60 720 0 1080 30 C1260 45 1350 40 1440 30 L1440 60 L0 60 Z"
-            fill="#0A0A0A" />
+            fill="var(--terra-escura)" />
         </svg>
 
         <div style={{ ...S.maxW(), display: "grid", gridTemplateColumns: "1fr", gap: 80, alignItems: "center", position: "relative", zIndex: 1 }}>
@@ -411,25 +411,25 @@ export default function Home() {
 
             {/* H1 */}
             <h1 className="animate-fade-up delay-1" style={{
-              fontSize: "clamp(3rem,8vw,6rem)",
-              fontFamily: "'Syne',system-ui,sans-serif",
+              fontSize: "var(--text-hero)",
+              fontFamily: "var(--font-display)",
               fontWeight: 700,
               lineHeight: 1.0,
               marginBottom: 28,
               letterSpacing: "-0.03em",
-              color: "#EDECEA",
+              color: "var(--creme)",
             }}>
               O ecossistema digital do{" "}
-              <em style={{ color: "#00C4A0", fontStyle: "italic" }}>samba</em>
+              <em style={{ color: "var(--ouro)", fontStyle: "italic" }}>samba</em>
               {" "}e do{" "}
-              <em style={{ color: "#22C55E", fontStyle: "italic" }}>pagode</em>
+              <em style={{ color: "var(--verde)", fontStyle: "italic" }}>pagode</em>
               {" "}brasileiro
             </h1>
 
             {/* Sub */}
             <p className="animate-fade-up delay-2" style={{
-              fontSize: "1.25rem",
-              color: "rgba(237,236,234,0.5)",
+              fontSize: "var(--text-xl)",
+              color: "var(--creme-50)",
               maxWidth: 560,
               lineHeight: 1.65,
               marginBottom: 44,
@@ -457,7 +457,7 @@ export default function Home() {
             <div className="animate-fade-up delay-4" style={{
               display: "flex", gap: 40, flexWrap: "wrap",
               paddingTop: 32,
-              borderTop: "1px solid rgba(237,236,234,0.06)",
+              borderTop: "1px solid var(--creme-10)",
             }}>
               {[
                 { num: stats?.profileCount ?? 0, label: "Artistas" },
@@ -466,10 +466,10 @@ export default function Home() {
                 { num: stats?.cityCount ?? 0, label: "Cidades" },
               ].map(s => (
                 <div key={s.label}>
-                  <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#00C4A0", fontFamily: "'Syne',system-ui,sans-serif" }}>
+                  <div style={{ fontSize: "var(--text-2xl)", fontWeight: 700, color: "var(--ouro)", fontFamily: "var(--font-display)" }}>
                     {s.num > 0 ? `${s.num}+` : "—"}
                   </div>
-                  <div style={{ fontSize: "0.875rem", color: "rgba(237,236,234,0.5)", marginTop: 2 }}>{s.label}</div>
+                  <div style={{ fontSize: "var(--text-sm)", color: "var(--creme-50)", marginTop: 2 }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -485,7 +485,7 @@ export default function Home() {
       </section>
 
       {/* ═══ COMO FUNCIONA ═══ */}
-      <section style={{ ...S.section("#0A0A0A") }}>
+      <section style={{ ...S.section("var(--terra-escura)") }}>
         <div style={S.maxW(1100)}>
           <div style={S.sectionHead()}>
             <div className="section-tag" style={{ display: "inline-flex", marginBottom: 20 }}>
@@ -509,10 +509,10 @@ export default function Home() {
                 <span className="section-tag-dot" /><span className="section-tag-text">Destaques</span>
               </div>
               <h2 style={{ ...S.h2(), marginBottom: 8 }}>Quem está transformando o samba</h2>
-              <p style={{ color: "rgba(237,236,234,0.5)", marginTop: 8 }}>Artistas, produtores e estúdios do ecossistema nacional</p>
+              <p style={{ color: "var(--creme-50)", marginTop: 8 }}>Artistas, produtores e estúdios do ecossistema nacional</p>
             </div>
             <Link href="/perfis">
-              <span style={{ color: "#00C4A0", fontSize: "0.875rem", fontWeight: 600, borderBottom: "1px solid rgba(212,146,10,0.4)", paddingBottom: 2 }}>
+              <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600, borderBottom: "1px solid rgba(212,146,10,0.4)", paddingBottom: 2 }}>
                 Ver todos os perfis →
               </span>
             </Link>
@@ -523,7 +523,7 @@ export default function Home() {
               : featuredProfiles?.length
               ? featuredProfiles.map(p => <ProfileCard key={p.id} profile={p} />)
               : (
-                <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "48px 0", color: "rgba(237,236,234,0.5)" }}>
+                <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "48px 0", color: "var(--creme-50)" }}>
                   Nenhum perfil em destaque ainda.
                 </div>
               )}
@@ -533,7 +533,7 @@ export default function Home() {
 
       {/* ═══ OFERTAS ═══ */}
       {(loadingOfferings || (recentOfferings && recentOfferings.length > 0)) && (
-        <section style={{ ...S.section("#0A0A0A") }}>
+        <section style={{ ...S.section("var(--terra-escura)") }}>
           <div style={S.maxW()}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
               <div>
@@ -541,10 +541,10 @@ export default function Home() {
                   <span className="section-tag-dot" /><span className="section-tag-text">Marketplace</span>
                 </div>
                 <h2 style={{ ...S.h2(), marginBottom: 8 }}>Ofertas recentes</h2>
-                <p style={{ color: "rgba(237,236,234,0.5)" }}>Serviços disponíveis no ecossistema</p>
+                <p style={{ color: "var(--creme-50)" }}>Serviços disponíveis no ecossistema</p>
               </div>
               <Link href="/ofertas">
-                <span style={{ color: "#00C4A0", fontSize: "0.875rem", fontWeight: 600, borderBottom: "1px solid rgba(212,146,10,0.4)", paddingBottom: 2 }}>
+                <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600, borderBottom: "1px solid rgba(212,146,10,0.4)", paddingBottom: 2 }}>
                   Ver todas →
                 </span>
               </Link>
@@ -552,7 +552,7 @@ export default function Home() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
               {loadingOfferings
                 ? Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} style={{ background: "#111111", borderRadius: "20px", border: "1px solid rgba(237,236,234,0.06)", padding: 24 }}>
+                    <div key={i} style={{ background: "var(--terra)", borderRadius: "var(--radius-lg)", border: "1px solid var(--creme-10)", padding: 24 }}>
                       {[80, 60, 40, 32].map((h, j) => (
                         <div key={j} className="skeleton" style={{ height: h, marginBottom: 12, borderRadius: 8 }} />
                       ))}
@@ -567,7 +567,7 @@ export default function Home() {
       {/* ═══ STATS — fundo ouro ═══ */}
       <section ref={statsRef} style={{
         padding: "64px 24px",
-        background: "linear-gradient(135deg, #00C4A0 0%, #8B6110 100%)",
+        background: "linear-gradient(135deg, var(--ouro) 0%, #8B6110 100%)",
       }}>
         <div style={{ ...S.maxW(1100), display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 40, textAlign: "center" }}>
           <StatItem num={stats?.profileCount ?? 0} label="Artistas cadastrados" enabled={counted} />
@@ -594,21 +594,21 @@ export default function Home() {
           <p style={{ ...S.sub(), maxWidth: "none", marginBottom: 44 }}>
             Mais de 50 artistas e profissionais já estão no ecossistema. Venha você também.
           </p>
-          <a href="/entrar" className="pnsp-btn-primary" style={{ animation: "pulse-ring 3s ease-out infinite", fontSize: "1.125rem", padding: "20px 48px" }}>
+          <a href="/entrar" className="pnsp-btn-primary" style={{ animation: "pulse-ring 3s ease-out infinite", fontSize: "var(--text-lg)", padding: "20px 48px" }}>
             Criar perfil grátis agora →
           </a>
         </div>
       </section>
 
       {/* ═══ FOOTER ═══ */}
-      <footer style={{ background: "#0A0A0A", borderTop: "1px solid rgba(237,236,234,0.06)", padding: "56px 24px 32px" }}>
+      <footer style={{ background: "var(--terra-escura)", borderTop: "1px solid var(--creme-10)", padding: "56px 24px 32px" }}>
         <div style={S.maxW()}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 40, marginBottom: 48 }}>
             <div style={{ gridColumn: "span 2" }}>
-              <div style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.5rem", fontWeight: 700, color: "#00C4A0", marginBottom: 12 }}>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", fontWeight: 700, color: "var(--ouro)", marginBottom: 12 }}>
                 PNSP
               </div>
-              <p style={{ color: "rgba(237,236,234,0.5)", fontSize: "0.875rem", lineHeight: 1.6, maxWidth: 260 }}>
+              <p style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.6, maxWidth: 260 }}>
                 Plataforma Nacional do Samba e do Pagode — o ecossistema digital que conecta toda a cadeia do samba brasileiro.
               </p>
             </div>
@@ -618,15 +618,15 @@ export default function Home() {
               { title: "Conta", links: [["Entrar", "/entrar"], ["Dashboard", "/dashboard"]] },
             ].map(col => (
               <div key={col.title}>
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#00C4A0", marginBottom: 16 }}>
+                <div style={{ fontSize: "var(--text-xs)", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ouro)", marginBottom: 16 }}>
                   {col.title}
                 </div>
                 {col.links.map(([label, href]) => (
                   <div key={label} style={{ marginBottom: 10 }}>
                     <Link href={href}>
-                      <span style={{ color: "rgba(237,236,234,0.5)", fontSize: "0.875rem", cursor: "pointer", transition: "color 0.2s" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#EDECEA"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(237,236,234,0.5)"; }}
+                      <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", cursor: "pointer", transition: "color 0.2s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
                       >{label}</span>
                     </Link>
                   </div>
@@ -634,11 +634,11 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <div style={{ borderTop: "1px solid rgba(237,236,234,0.06)", paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-            <span style={{ color: "rgba(237,236,234,0.5)", fontSize: "0.875rem" }}>
+          <div style={{ borderTop: "1px solid var(--creme-10)", paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+            <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
               © 2025 PNSP — Plataforma Nacional do Samba e do Pagode
             </span>
-            <span style={{ color: "#00C4A0", fontSize: "0.875rem", fontWeight: 600 }}>
+            <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
               Feito com 🥁 no Brasil
             </span>
           </div>

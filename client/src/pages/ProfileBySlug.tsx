@@ -46,7 +46,7 @@ const coverGradient = (type?: string | null) => ({
   estudio:         "linear-gradient(135deg, #001a0a 0%, #003d1a 100%)",
   luthier:         "linear-gradient(135deg, #1a0e00 0%, #3d2200 100%)",
   contratante:     "linear-gradient(135deg, #001a22 0%, #003344 100%)",
-}[type ?? ""] ?? "linear-gradient(135deg, #0A0A0A, #181818)");
+}[type ?? ""] ?? "linear-gradient(135deg, var(--terra-escura), var(--terra-clara))");
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
@@ -64,16 +64,16 @@ function ActionBtn({ href, children, primary }: { href?: string; children: React
   const base: React.CSSProperties = {
     display: "inline-flex", alignItems: "center", gap: 6,
     padding: "9px 20px",
-    borderRadius: "12px",
-    fontSize: "0.875rem",
+    borderRadius: "var(--radius-md)",
+    fontSize: "var(--text-sm)",
     fontWeight: 600,
-    fontFamily: "'Inter',system-ui,sans-serif",
+    fontFamily: "var(--font-body)",
     cursor: "pointer",
-    transition: "all 0.25s ease",
+    transition: "var(--transition)",
     textDecoration: "none",
     ...(primary
-      ? { background: h ? "#33D4B4" : "#00C4A0", color: "#0A0A0A", boxShadow: h ? "0 6px 24px rgba(212,146,10,0.40)" : "0 4px 32px rgba(0,196,160,0.28)", transform: h ? "translateY(-1px)" : "none" }
-      : { background: "none", border: "1px solid rgba(237,236,234,0.12)", color: h ? "#00C4A0" : "rgba(237,236,234,0.8)", borderColor: h ? "rgba(212,146,10,0.40)" : "rgba(237,236,234,0.12)" }),
+      ? { background: h ? "var(--ouro-claro)" : "var(--ouro)", color: "var(--preto)", boxShadow: h ? "0 6px 24px rgba(212,146,10,0.40)" : "var(--shadow-ouro)", transform: h ? "translateY(-1px)" : "none" }
+      : { background: "none", border: "1px solid var(--creme-20)", color: h ? "var(--ouro)" : "var(--creme-80)", borderColor: h ? "rgba(212,146,10,0.40)" : "var(--creme-20)" }),
   };
   if (href) return <a href={href} style={base} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{children}</a>;
   return <button type="button" style={base} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{children}</button>;
@@ -122,7 +122,7 @@ export default function ProfileBySlug() {
         <div className="skeleton" style={{ height: 280 }} />
         <div style={{ padding: "0 24px", maxWidth: 1280, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-end", gap: 24, marginTop: -56, marginBottom: 32 }}>
-            <div className="skeleton" style={{ width: 112, height: 112, borderRadius: "20px", flexShrink: 0 }} />
+            <div className="skeleton" style={{ width: 112, height: 112, borderRadius: "var(--radius-lg)", flexShrink: 0 }} />
             <div style={{ flex: 1, paddingBottom: 8 }}>
               <div className="skeleton" style={{ height: 36, width: 280, marginBottom: 12 }} />
               <div className="skeleton" style={{ height: 22, width: 120, borderRadius: 9999 }} />
@@ -137,8 +137,8 @@ export default function ProfileBySlug() {
     return (
       <PublicLayout>
         <div style={{ textAlign: "center", padding: "96px 24px" }}>
-          <div style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.875rem", marginBottom: 12 }}>Perfil não encontrado</div>
-          <p style={{ color: "rgba(237,236,234,0.5)", marginBottom: 28 }}>O perfil que você procura não existe ou foi removido.</p>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-3xl)", marginBottom: 12 }}>Perfil não encontrado</div>
+          <p style={{ color: "var(--creme-50)", marginBottom: 28 }}>O perfil que você procura não existe ou foi removido.</p>
           <a href="/perfis" className="pnsp-btn-ghost" style={{ padding: "10px 24px" }}>← Ver todos os perfis</a>
         </div>
       </PublicLayout>
@@ -178,14 +178,14 @@ export default function ProfileBySlug() {
               padding: "7px 14px",
               background: "rgba(12,10,8,0.70)",
               backdropFilter: "blur(8px)",
-              border: "1px solid rgba(237,236,234,0.12)",
-              borderRadius: "9999px",
-              color: "rgba(237,236,234,0.8)",
-              fontSize: "0.75rem",
+              border: "1px solid var(--creme-20)",
+              borderRadius: "var(--radius-full)",
+              color: "var(--creme-80)",
+              fontSize: "var(--text-xs)",
               fontWeight: 600,
-              fontFamily: "'Inter',system-ui,sans-serif",
+              fontFamily: "var(--font-body)",
               cursor: "pointer",
-              transition: "all 0.25s ease",
+              transition: "var(--transition)",
             }}
           >
             {uploadingCover ? <Loader2 style={{ width: 13, height: 13, animation: "spin 1s linear infinite" }} /> : <ImagePlus style={{ width: 13, height: 13 }} />}
@@ -206,11 +206,11 @@ export default function ProfileBySlug() {
               alt={profile.displayName}
               style={{
                 width: 112, height: 112,
-                borderRadius: "20px",
+                borderRadius: "var(--radius-lg)",
                 objectFit: "cover",
-                border: `3px solid ${profile.isVerified ? "#00C4A0" : "rgba(245,237,216,0.20)"}`,
+                border: `3px solid ${profile.isVerified ? "var(--ouro)" : "rgba(245,237,216,0.20)"}`,
                 boxShadow: profile.isVerified ? "0 0 0 4px rgba(212,146,10,0.20)" : "none",
-                background: "#111111",
+                background: "var(--terra)",
               }}
             />
             {isOwner && (
@@ -221,7 +221,7 @@ export default function ProfileBySlug() {
                 style={{
                   position: "absolute", bottom: -6, right: -6,
                   width: 28, height: 28, borderRadius: "50%",
-                  background: "#00C4A0", color: "#0A0A0A",
+                  background: "var(--ouro)", color: "var(--preto)",
                   border: "none", display: "flex", alignItems: "center", justifyContent: "center",
                   boxShadow: "var(--shadow-md)", cursor: "pointer",
                 }}
@@ -236,11 +236,11 @@ export default function ProfileBySlug() {
           {/* Name & meta */}
           <div style={{ flex: 1, minWidth: 0, paddingBottom: 4 }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 8 }}>
-              <h1 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 700, lineHeight: 1.1, color: "#EDECEA" }}>
+              <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 700, lineHeight: 1.1, color: "var(--creme)" }}>
                 {profile.displayName}
               </h1>
               {profile.isVerified && (
-                <div style={{ background: "#22C55E", borderRadius: "50%", padding: 4, flexShrink: 0 }}>
+                <div style={{ background: "var(--verde)", borderRadius: "50%", padding: 4, flexShrink: 0 }}>
                   <Award style={{ width: 14, height: 14, color: "white" }} />
                 </div>
               )}
@@ -250,7 +250,7 @@ export default function ProfileBySlug() {
                 {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
               </span>
               {profile.city && (
-                <span style={{ color: "rgba(237,236,234,0.5)", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: 4 }}>
+                <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", display: "flex", alignItems: "center", gap: 4 }}>
                   <MapPin style={{ width: 13, height: 13 }} />{profile.city}, {profile.state}
                 </span>
               )}
@@ -264,7 +264,7 @@ export default function ProfileBySlug() {
                   {isAllStar && (
                     <span style={{
                       fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999,
-                      background: "rgba(27,107,58,0.20)", color: "#22C55E",
+                      background: "rgba(27,107,58,0.20)", color: "var(--verde)",
                       border: "1px solid rgba(27,107,58,0.40)",
                     }}>
                       ⭐ Perfil All-Star
@@ -322,19 +322,19 @@ export default function ProfileBySlug() {
           {/* Main */}
           <div style={{ minWidth: 0 }}>
             {profile.bio && (
-              <div style={{ background: "#111111", border: "1px solid rgba(237,236,234,0.06)", borderRadius: "20px", padding: "28px 28px", marginBottom: 20 }}>
-                <h2 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.25rem", fontWeight: 700, marginBottom: 14, color: "#00C4A0" }}>
+              <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "28px 28px", marginBottom: 20 }}>
+                <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 14, color: "var(--ouro)" }}>
                   Sobre
                 </h2>
-                <p style={{ color: "rgba(237,236,234,0.8)", lineHeight: 1.7, whiteSpace: "pre-wrap", fontSize: "1rem" }}>
+                <p style={{ color: "var(--creme-80)", lineHeight: 1.7, whiteSpace: "pre-wrap", fontSize: "var(--text-base)" }}>
                   {profile.bio}
                 </p>
               </div>
             )}
 
             {portfolio.length > 0 && (
-              <div style={{ background: "#111111", border: "1px solid rgba(237,236,234,0.06)", borderRadius: "20px", padding: "28px", marginBottom: 20 }}>
-                <h2 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.25rem", fontWeight: 700, marginBottom: 16, color: "#00C4A0" }}>
+              <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "28px", marginBottom: 20 }}>
+                <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 16, color: "var(--ouro)" }}>
                   Portfólio
                 </h2>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
@@ -342,15 +342,15 @@ export default function ProfileBySlug() {
                     const [h, setH] = useState(false);
                     return (
                       <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer"
-                        style={{ display: "block", aspectRatio: "1/1", borderRadius: "12px", overflow: "hidden", border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "rgba(237,236,234,0.06)"}`, background: "#0A0A0A", position: "relative", transition: "all 0.25s ease" }}
+                        style={{ display: "block", aspectRatio: "1/1", borderRadius: "var(--radius-md)", overflow: "hidden", border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`, background: "var(--terra-escura)", position: "relative", transition: "var(--transition)" }}
                         onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
                       >
                         {item.mediaType === "image" ? (
                           <img src={item.url} alt={item.title ?? ""} style={{ width: "100%", height: "100%", objectFit: "cover", transform: h ? "scale(1.06)" : "scale(1)", transition: "transform 0.4s ease" }} />
                         ) : (
                           <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6, padding: 10 }}>
-                            <Music style={{ width: 28, height: 28, color: "#00C4A0" }} />
-                            <span style={{ fontSize: "0.75rem", color: "rgba(237,236,234,0.5)", textAlign: "center", lineHeight: 1.3 }}>{item.title}</span>
+                            <Music style={{ width: 28, height: 28, color: "var(--ouro)" }} />
+                            <span style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)", textAlign: "center", lineHeight: 1.3 }}>{item.title}</span>
                           </div>
                         )}
                         {h && (
@@ -370,26 +370,26 @@ export default function ProfileBySlug() {
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
             {/* Stats */}
-            <div style={{ background: "#111111", border: "1px solid rgba(237,236,234,0.06)", borderRadius: "20px", padding: "20px" }}>
-              <h3 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.125rem", fontWeight: 700, marginBottom: 16, color: "#EDECEA" }}>Resumo</h3>
+            <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "20px" }}>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-lg)", fontWeight: 700, marginBottom: 16, color: "var(--creme)" }}>Resumo</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {memberYear && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(237,236,234,0.5)", fontSize: "0.875rem" }}>
-                    <Calendar style={{ width: 14, height: 14, flexShrink: 0, color: "#00C4A0" }} />
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
+                    <Calendar style={{ width: 14, height: 14, flexShrink: 0, color: "var(--ouro)" }} />
                     Membro desde {memberYear}
                   </div>
                 )}
                 {profile.city && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(237,236,234,0.5)", fontSize: "0.875rem" }}>
-                    <MapPin style={{ width: 14, height: 14, flexShrink: 0, color: "#00C4A0" }} />
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
+                    <MapPin style={{ width: 14, height: 14, flexShrink: 0, color: "var(--ouro)" }} />
                     {profile.city}, {profile.state}
                   </div>
                 )}
                 {profile.spotifyUrl && (
                   <a href={profile.spotifyUrl} target="_blank" rel="noopener noreferrer"
-                    style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(237,236,234,0.5)", fontSize: "0.875rem", transition: "color 0.2s" }}
+                    style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--creme-50)", fontSize: "var(--text-sm)", transition: "color 0.2s" }}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#1DB954"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(237,236,234,0.5)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
                   >
                     <Music style={{ width: 14, height: 14, flexShrink: 0, color: "#1DB954" }} />
                     Ouvir no Spotify
@@ -397,11 +397,11 @@ export default function ProfileBySlug() {
                 )}
                 {profile.phone && (
                   <a href={phoneHref(profile.phone)}
-                    style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(237,236,234,0.5)", fontSize: "0.875rem", transition: "color 0.2s" }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#00C4A0"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(237,236,234,0.5)"; }}
+                    style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--creme-50)", fontSize: "var(--text-sm)", transition: "color 0.2s" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--ouro)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
                   >
-                    <Phone style={{ width: 14, height: 14, flexShrink: 0, color: "#00C4A0" }} />
+                    <Phone style={{ width: 14, height: 14, flexShrink: 0, color: "var(--ouro)" }} />
                     {profile.phone}
                   </a>
                 )}
@@ -410,31 +410,31 @@ export default function ProfileBySlug() {
 
             {/* Tags */}
             {(specialties.length > 0 || instruments.length > 0 || genres.length > 0) && (
-              <div style={{ background: "#111111", border: "1px solid rgba(237,236,234,0.06)", borderRadius: "20px", padding: "20px", display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "20px", display: "flex", flexDirection: "column", gap: 16 }}>
                 {genres.length > 0 && (
                   <div>
-                    <h4 style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#00C4A0", marginBottom: 10 }}>Gêneros</h4>
+                    <h4 style={{ fontSize: "var(--text-xs)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ouro)", marginBottom: 10 }}>Gêneros</h4>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                      {genres.map(g => <span key={g} className="pnsp-badge" style={{ fontSize: "0.75rem" }}>{g}</span>)}
+                      {genres.map(g => <span key={g} className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>{g}</span>)}
                     </div>
                   </div>
                 )}
                 {instruments.length > 0 && (
                   <div>
-                    <h4 style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(237,236,234,0.5)", marginBottom: 10 }}>Instrumentos</h4>
+                    <h4 style={{ fontSize: "var(--text-xs)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--creme-50)", marginBottom: 10 }}>Instrumentos</h4>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                       {instruments.map(i => (
-                        <span key={i} style={{ padding: "3px 10px", borderRadius: "9999px", fontSize: "0.75rem", border: "1px solid rgba(237,236,234,0.12)", color: "rgba(237,236,234,0.8)", fontFamily: "'Inter',system-ui,sans-serif" }}>{i}</span>
+                        <span key={i} style={{ padding: "3px 10px", borderRadius: "var(--radius-full)", fontSize: "var(--text-xs)", border: "1px solid var(--creme-20)", color: "var(--creme-80)", fontFamily: "var(--font-body)" }}>{i}</span>
                       ))}
                     </div>
                   </div>
                 )}
                 {specialties.length > 0 && (
                   <div>
-                    <h4 style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(237,236,234,0.5)", marginBottom: 10 }}>Especialidades</h4>
+                    <h4 style={{ fontSize: "var(--text-xs)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--creme-50)", marginBottom: 10 }}>Especialidades</h4>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                       {specialties.map(s => (
-                        <span key={s} style={{ padding: "3px 10px", borderRadius: "9999px", fontSize: "0.75rem", border: "1px solid rgba(237,236,234,0.12)", color: "rgba(237,236,234,0.8)", fontFamily: "'Inter',system-ui,sans-serif" }}>{s}</span>
+                        <span key={s} style={{ padding: "3px 10px", borderRadius: "var(--radius-full)", fontSize: "var(--text-xs)", border: "1px solid var(--creme-20)", color: "var(--creme-80)", fontFamily: "var(--font-body)" }}>{s}</span>
                       ))}
                     </div>
                   </div>

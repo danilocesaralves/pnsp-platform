@@ -25,7 +25,7 @@ function ProfileCard({ profile }: { profile: any }) {
       <div
         className="profile-card"
         style={{
-          borderColor: hovered ? "rgba(212,146,10,0.40)" : "rgba(237,236,234,0.06)",
+          borderColor: hovered ? "rgba(212,146,10,0.40)" : "var(--creme-10)",
           transform: hovered ? "translateY(-8px)" : "translateY(0)",
           boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.70), 0 4px 32px rgba(212,146,10,0.25)" : "none",
         }}
@@ -35,7 +35,7 @@ function ProfileCard({ profile }: { profile: any }) {
         {/* Avatar — 1:1 */}
         <div style={{
           aspectRatio: "1/1",
-          background: "linear-gradient(135deg, #0A0A0A, #181818)",
+          background: "linear-gradient(135deg, var(--terra-escura), var(--terra-clara))",
           overflow: "hidden",
           display: "flex",
           alignItems: "center",
@@ -55,7 +55,7 @@ function ProfileCard({ profile }: { profile: any }) {
             transition: "opacity 0.3s ease",
             display: "flex", alignItems: "flex-end", padding: "14px",
           }}>
-            <span style={{ color: "#EDECEA", fontSize: "0.875rem", fontWeight: 600 }}>
+            <span style={{ color: "var(--creme)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
               Ver perfil →
             </span>
           </div>
@@ -69,7 +69,7 @@ function ProfileCard({ profile }: { profile: any }) {
               )}
               {profile.isFeatured && (
                 <div style={{ background: "rgba(0,0,0,0.55)", borderRadius: "50%", padding: 4, backdropFilter: "blur(4px)" }}>
-                  <Star style={{ width: 12, height: 12, color: "#00C4A0" }} />
+                  <Star style={{ width: 12, height: 12, color: "var(--ouro)" }} />
                 </div>
               )}
             </div>
@@ -78,16 +78,16 @@ function ProfileCard({ profile }: { profile: any }) {
 
         {/* Info */}
         <div style={{ padding: "18px" }}>
-          <div style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.25rem", fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {profile.displayName}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
-            <span className="pnsp-badge" style={{ fontSize: "0.75rem" }}>
+            <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
               {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
             </span>
           </div>
           {profile.city && (
-            <div style={{ display: "flex", alignItems: "center", gap: 4, color: "rgba(237,236,234,0.5)", fontSize: "0.75rem", marginBottom: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--creme-50)", fontSize: "var(--text-xs)", marginBottom: 8 }}>
               <MapPin style={{ width: 11, height: 11, flexShrink: 0 }} />
               <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {profile.city}, {profile.state}
@@ -96,7 +96,7 @@ function ProfileCard({ profile }: { profile: any }) {
           )}
           {profile.bio && (
             <p style={{
-              color: "rgba(237,236,234,0.5)", fontSize: "0.875rem", lineHeight: 1.5,
+              color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.5,
               display: "-webkit-box", WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical", overflow: "hidden",
             }}>
@@ -111,7 +111,7 @@ function ProfileCard({ profile }: { profile: any }) {
 
 function ProfileSkeleton() {
   return (
-    <div style={{ background: "#111111", borderRadius: "20px", overflow: "hidden", border: "1px solid rgba(237,236,234,0.06)" }}>
+    <div style={{ background: "var(--terra)", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--creme-10)" }}>
       <div className="skeleton" style={{ aspectRatio: "1/1" }} />
       <div style={{ padding: "18px" }}>
         <div className="skeleton" style={{ height: 22, width: "70%", marginBottom: 10 }} />
@@ -171,16 +171,16 @@ export default function Profiles() {
           <div className="section-tag" style={{ display: "inline-flex", marginBottom: 20 }}>
             <span className="section-tag-dot" /><span className="section-tag-text">Diretório</span>
           </div>
-          <h1 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 700, marginBottom: 12, lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 700, marginBottom: 12, lineHeight: 1.1, letterSpacing: "-0.02em" }}>
             Perfis &amp; Vitrines
           </h1>
-          <p style={{ color: "rgba(237,236,234,0.5)", fontSize: "1.125rem", marginBottom: 32, maxWidth: 520 }}>
+          <p style={{ color: "var(--creme-50)", fontSize: "var(--text-lg)", marginBottom: 32, maxWidth: 520 }}>
             Descubra artistas, grupos, produtores, professores e parceiros do ecossistema nacional
           </p>
           {/* Search */}
           <form onSubmit={handleSearch} style={{ display: "flex", gap: 12, maxWidth: 560 }}>
             <div style={{ position: "relative", flex: 1 }}>
-              <Search style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: "rgba(237,236,234,0.5)" }} />
+              <Search style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: "var(--creme-50)" }} />
               <input
                 className="search-input"
                 placeholder="Buscar por nome, cidade, estilo..."
@@ -221,12 +221,12 @@ export default function Profiles() {
                 onChange={e => { setState(e.target.value); setOffset(0); }}
                 style={{
                   padding: "8px 14px",
-                  background: "#111111",
-                  border: "1px solid rgba(237,236,234,0.06)",
-                  borderRadius: "12px",
-                  color: "#EDECEA",
-                  fontSize: "0.875rem",
-                  fontFamily: "'Inter',system-ui,sans-serif",
+                  background: "var(--terra)",
+                  border: "1px solid var(--creme-10)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--creme)",
+                  fontSize: "var(--text-sm)",
+                  fontFamily: "var(--font-body)",
                   cursor: "pointer",
                   outline: "none",
                 }}
@@ -244,23 +244,23 @@ export default function Profiles() {
                   style={{
                     display: "flex", alignItems: "center", gap: 6,
                     padding: "8px 14px",
-                    border: "1px solid rgba(237,236,234,0.06)",
-                    borderRadius: "12px",
-                    color: "rgba(237,236,234,0.5)",
-                    fontSize: "0.875rem",
-                    fontFamily: "'Inter',system-ui,sans-serif",
+                    border: "1px solid var(--creme-10)",
+                    borderRadius: "var(--radius-md)",
+                    color: "var(--creme-50)",
+                    fontSize: "var(--text-sm)",
+                    fontFamily: "var(--font-body)",
                     background: "none",
                     cursor: "pointer",
-                    transition: "all 0.25s ease",
+                    transition: "var(--transition)",
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#EDECEA"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(237,236,234,0.5)"; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
                 >
                   <X style={{ width: 13, height: 13 }} /> Limpar
                 </button>
               )}
 
-              <span style={{ marginLeft: "auto", color: "rgba(237,236,234,0.5)", fontSize: "0.875rem" }}>
+              <span style={{ marginLeft: "auto", color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
                 {isLoading ? "Carregando..." : `${profiles?.length ?? 0} perfis`}
               </span>
             </div>
@@ -293,11 +293,11 @@ export default function Profiles() {
             </>
           ) : isError ? (
             <div style={{ textAlign: "center", padding: "80px 0" }}>
-              <div style={{ width: 64, height: 64, borderRadius: "20px", background: "#111111", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
-                <AlertCircle style={{ width: 28, height: 28, color: "#00C4A0" }} />
+              <div style={{ width: 64, height: 64, borderRadius: "var(--radius-lg)", background: "var(--terra)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+                <AlertCircle style={{ width: 28, height: 28, color: "var(--ouro)" }} />
               </div>
-              <h3 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.5rem", marginBottom: 10 }}>Erro ao carregar perfis</h3>
-              <p style={{ color: "rgba(237,236,234,0.5)", marginBottom: 24 }}>Verifique sua conexão e tente novamente.</p>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 10 }}>Erro ao carregar perfis</h3>
+              <p style={{ color: "var(--creme-50)", marginBottom: 24 }}>Verifique sua conexão e tente novamente.</p>
               <button type="button" className="pnsp-btn-ghost" style={{ padding: "10px 24px" }}
                 onClick={() => window.location.reload()}>
                 Tentar novamente
@@ -305,13 +305,13 @@ export default function Profiles() {
             </div>
           ) : (
             <div style={{ textAlign: "center", padding: "80px 0" }}>
-              <div style={{ width: 72, height: 72, borderRadius: "20px", background: "#111111", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", border: "1px solid rgba(237,236,234,0.06)" }}>
-                <Users style={{ width: 32, height: 32, color: "#00C4A0" }} />
+              <div style={{ width: 72, height: 72, borderRadius: "var(--radius-lg)", background: "var(--terra)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", border: "1px solid var(--creme-10)" }}>
+                <Users style={{ width: 32, height: 32, color: "var(--ouro)" }} />
               </div>
-              <h3 style={{ fontFamily: "'Syne',system-ui,sans-serif", fontSize: "1.5rem", marginBottom: 10 }}>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 10 }}>
                 {hasFilters ? "Nenhum perfil encontrado" : "Seja o primeiro!"}
               </h3>
-              <p style={{ color: "rgba(237,236,234,0.5)", marginBottom: 28, maxWidth: 360, margin: "0 auto 28px" }}>
+              <p style={{ color: "var(--creme-50)", marginBottom: 28, maxWidth: 360, margin: "0 auto 28px" }}>
                 {hasFilters ? "Ajuste os filtros ou limpe a busca." : "Crie seu perfil e apareça para artistas e contratantes de todo o Brasil."}
               </p>
               {hasFilters ? (

@@ -29,7 +29,7 @@ function ToastMsg({ item, onRemove }: { item: ToastItem; onRemove: (id: number) 
     <div style={{
       display: 'flex', alignItems: 'center', gap: 12,
       padding: '12px 16px',
-      background: '#111111',
+      background: 'var(--terra)',
       border: `1px solid ${colors[item.type]}40`,
       borderLeft: `3px solid ${colors[item.type]}`,
       borderRadius: 12,
@@ -45,10 +45,10 @@ function ToastMsg({ item, onRemove }: { item: ToastItem; onRemove: (id: number) 
       }}>
         {icons[item.type]}
       </span>
-      <span style={{ fontSize: 13, color: '#EDECEA', lineHeight: 1.4 }}>{item.message}</span>
+      <span style={{ fontSize: 13, color: 'var(--creme)', lineHeight: 1.4 }}>{item.message}</span>
       <button
         onClick={() => onRemove(item.id)}
-        style={{ fontSize: 18, color: 'rgba(237,236,234,0.5)', cursor: 'pointer', marginLeft: 'auto', lineHeight: 1, background: 'none', border: 'none', padding: 0 }}
+        style={{ fontSize: 18, color: 'var(--creme-50)', cursor: 'pointer', marginLeft: 'auto', lineHeight: 1, background: 'none', border: 'none', padding: 0 }}
       >
         ×
       </button>
