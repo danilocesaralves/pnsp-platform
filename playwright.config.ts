@@ -1,14 +1,15 @@
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "./tests/e2e",
+  testDir: "./e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? "github" : "list",
+  timeout: 30000,
+  reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "html",
   use: {
-    baseURL: process.env.BASE_URL ?? "http://localhost:3000",
+    baseURL: process.env.BASE_URL ?? "https://pnsp-platform.vercel.app",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
@@ -20,10 +21,5 @@ export default defineConfig({
   ],
   webServer: process.env.CI
     ? undefined
-    : {
-        command: "pnpm dev",
-        url: "http://localhost:3000",
-        reuseExistingServer: true,
-        timeout: 120_000,
-      },
+    : undefined,
 });
