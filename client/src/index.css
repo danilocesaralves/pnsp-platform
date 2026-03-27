@@ -267,7 +267,101 @@
 .pnsp-shadow-md   { box-shadow: 0 4px 12px oklch(0 0 0 / 0.10), 0 2px 4px oklch(0 0 0 / 0.06); }
 .pnsp-shadow-lg   { box-shadow: 0 8px 24px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.06); }
 .pnsp-shadow-xl   { box-shadow: 0 16px 40px oklch(0 0 0 / 0.14), 0 8px 16px oklch(0 0 0 / 0.08); }
-.pnsp-shadow-gold { box-shadow: 0 4px 20px var(--o500, oklch(0.78 0.14 85) / 0.30); }
+.pnsp-shadow-gold { box-shadow: 0 4px 20px oklch(0.78 0.14 85 / 0.35), 0 2px 8px oklch(0.78 0.14 85 / 0.20); }
+.pnsp-shadow-gold-lg { box-shadow: 0 8px 32px oklch(0.78 0.14 85 / 0.30), 0 4px 12px oklch(0.78 0.14 85 / 0.15); }
+
+/* ─── PNSP SPACING SCALE (4px base) ─────────────────────────────────────────── */
+:root {
+  --space-1: 0.25rem;   /* 4px  */
+  --space-2: 0.5rem;    /* 8px  */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+
+  /* ── Typography scale ────────────────────────────────────────────────────── */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  2rem;       /* 32px */
+  --text-4xl:  2.5rem;     /* 40px */
+  --text-5xl:  3rem;       /* 48px */
+
+  /* ── Border radius ───────────────────────────────────────────────────────── */
+  --rounded-sm: 0.5rem;    /* 8px  */
+  --rounded-md: 0.75rem;   /* 12px */
+  --rounded-lg: 1rem;      /* 16px */
+  --rounded-xl: 1.5rem;    /* 24px */
+
+  /* ── Transitions ─────────────────────────────────────────────────────────── */
+  --transition-base: 200ms ease;
+  --transition-slow: 400ms ease;
+  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Z-index scale ───────────────────────────────────────────────────────── */
+  --z-base:    10;
+  --z-dropdown: 20;
+  --z-sticky:  30;
+  --z-overlay: 40;
+  --z-modal:   50;
+}
+
+/* ─── PNSP BADGE PROFILE TYPES ───────────────────────────────────────────────── */
+.pnsp-badge-artista   { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:var(--g100); color:var(--g900); }
+.pnsp-badge-produtor  { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#ede9fe; color:#5b21b6; }
+.pnsp-badge-estudio   { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#d1fae5; color:#065f46; }
+.pnsp-badge-professor { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#dbeafe; color:#1e40af; }
+.pnsp-badge-luthier   { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#ffedd5; color:#9a3412; }
+.pnsp-badge-contratante { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#cffafe; color:#155e75; }
+
+/* ─── PNSP NAV ACTIVE INDICATOR ──────────────────────────────────────────────── */
+.pnsp-nav-link {
+  position: relative;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  transition: color var(--transition-base);
+  cursor: pointer;
+  font-family: var(--font-dm-sans);
+}
+.pnsp-nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 80%;
+  height: 2px;
+  background: var(--o500);
+  border-radius: 9999px;
+  transition: transform var(--transition-base);
+}
+.pnsp-nav-link:hover { color: var(--foreground); }
+.pnsp-nav-link:hover::after { transform: translateX(-50%) scaleX(1); }
+.pnsp-nav-link.active { color: var(--foreground); font-weight: 600; }
+.pnsp-nav-link.active::after { transform: translateX(-50%) scaleX(1); }
+
+/* ─── PNSP PROFILE CARD HOVER ────────────────────────────────────────────────── */
+.pnsp-profile-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+  overflow: hidden;
+}
+.pnsp-profile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px oklch(0.78 0.14 85 / 0.18), 0 4px 12px oklch(0 0 0 / 0.08);
+  border-color: oklch(0.78 0.14 85 / 0.30);
+}
 
 /* ─── DARK MODE ──────────────────────────────────────────────────────────────── */
 .dark {

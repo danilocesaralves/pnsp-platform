@@ -17,6 +17,7 @@ import superjson from "superjson";
 import App from "./App";
 
 import "./index.css";
+import "./styles/animations.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {

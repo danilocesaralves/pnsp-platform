@@ -38,7 +38,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/60 shadow-sm">
         <div className="container">
           <div className="flex items-center justify-between h-[4.5rem]">
 
@@ -48,16 +48,10 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-0.5">
+            <nav className="hidden lg:flex items-center gap-1">
               {NAV_LINKS.map(({ href, label }) => (
                 <Link key={href} href={href}>
-                  <span
-                    className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-150 cursor-pointer font-body ${
-                      isActive(href)
-                        ? "text-foreground bg-accent/20 font-semibold"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                  >
+                  <span className={`pnsp-nav-link rounded-md ${isActive(href) ? "active" : ""}`}>
                     {label}
                   </span>
                 </Link>
@@ -171,16 +165,17 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
         {/* Mobile Nav */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-border bg-background/98 backdrop-blur-md">
+          <div className="lg:hidden border-t border-border/60 bg-background/98 backdrop-blur-xl animate-slide-up">
             <div className="container py-3 space-y-0.5">
               {NAV_LINKS.map(({ href, label, icon: Icon }) => (
                 <Link key={href} href={href}>
                   <span
-                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors cursor-pointer font-body ${
+                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all cursor-pointer font-body ${
                       isActive(href)
-                        ? "text-foreground bg-accent/20 font-semibold"
+                        ? "text-foreground font-semibold"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted"
                     }`}
+                    style={isActive(href) ? { background: "var(--o500)18", color: "var(--o700)" } : {}}
                     onClick={() => setMobileOpen(false)}
                   >
                     <Icon className="h-4 w-4" />
