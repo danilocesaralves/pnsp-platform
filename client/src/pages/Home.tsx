@@ -1,63 +1,16 @@
+import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
-import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-
-import { Button } from "@/components/ui/button";
-import { Badge, profileTypeBadgeVariant } from "@/components/ui/badge";
-import PublicLayout from "@/components/PublicLayout";
-import { PNSPLogo } from "@/components/PNSPLogo";
-import { CardSkeleton } from "@/components/ui/SkeletonLoader";
-import {
-  Music2, Users, MapPin, BookOpen, Mic2, Guitar, Star,
-  ArrowRight, Search, Briefcase, Target, Building2,
-  ChevronRight, TrendingUp, CheckCircle2, Zap, Globe,
-} from "lucide-react";
 import { PROFILE_TYPES } from "@shared/pnsp";
 
-/* ─── Data ──────────────────────────────────────────────────────────────────── */
-const PROFILE_TYPES_GRID = [
-  { label: "Artistas Solo",    icon: Mic2,      href: "/perfis?tipo=artista_solo", color: "var(--g500)" },
-  { label: "Grupos & Bandas",  icon: Users,     href: "/perfis?tipo=grupo_banda",  color: "var(--o500)" },
-  { label: "Produtores",       icon: Music2,    href: "/perfis?tipo=produtor",     color: "#8b5cf6" },
-  { label: "Professores",      icon: BookOpen,  href: "/perfis?tipo=professor",    color: "#3b82f6" },
-  { label: "Estúdios",         icon: Building2, href: "/estudios",                 color: "var(--g700)" },
-  { label: "Luthiers",         icon: Guitar,    href: "/perfis?tipo=luthier",      color: "#f97316" },
-  { label: "Contratantes",     icon: Briefcase, href: "/perfis?tipo=contratante",  color: "#0891b2" },
-  { label: "Oportunidades",    icon: Target,    href: "/oportunidades",            color: "#ec4899" },
-];
-
-const HOW_IT_WORKS = [
-  {
-    step: "01",
-    icon: Mic2,
-    title: "Crie seu perfil",
-    desc: "Monte sua vitrine profissional com bio, portfólio, vídeos e redes sociais. Grátis para sempre.",
-    color: "var(--o500)",
-  },
-  {
-    step: "02",
-    icon: Globe,
-    title: "Conecte-se ao ecossistema",
-    desc: "Encontre artistas, produtores, estúdios e contratantes em todo o Brasil. Uma rede inteira do samba.",
-    color: "var(--g500)",
-  },
-  {
-    step: "03",
-    icon: TrendingUp,
-    title: "Cresça no mercado",
-    desc: "Publique ofertas, candidate-se a oportunidades e expanda sua carreira no pagode nacional.",
-    color: "#8b5cf6",
-  },
-];
-
-/* ─── Animated Counter ──────────────────────────────────────────────────────── */
-function useCountUp(target: number, duration = 1500, enabled = false) {
+/* ─── Counter hook ──────────────────────────────────────────────────────────── */
+function useCountUp(target: number, duration = 1200, enabled = false) {
   const [count, setCount] = useState(0);
   useEffect(() => {
-    if (!enabled || target === 0) return;
+    if (!enabled || target === 0) { setCount(target); return; }
     let start = 0;
-    const step = Math.ceil(target / (duration / 16));
+    const step = Math.max(1, Math.ceil(target / (duration / 16)));
     const timer = setInterval(() => {
       start = Math.min(start + step, target);
       setCount(start);
@@ -68,69 +21,138 @@ function useCountUp(target: number, duration = 1500, enabled = false) {
   return count;
 }
 
-function AnimatedStat({ value, label, icon: Icon, color }: { value: number | string; label: string; icon: React.ElementType; color: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  const numericValue = typeof value === "number" ? value : parseInt(String(value)) || 0;
-  const count = useCountUp(numericValue, 1200, visible);
+/* ─── Inline style helpers ──────────────────────────────────────────────────── */
+const S = {
+  section: (bg?: string): React.CSSProperties => ({
+    padding: "96px 24px",
+    background: bg ?? "var(--preto)",
+  }),
+  maxW: (w = 1280): React.CSSProperties => ({
+    maxWidth: w,
+    margin: "0 auto",
+    width: "100%",
+  }),
+  sectionHead: (): React.CSSProperties => ({
+    textAlign: "center",
+    marginBottom: 56,
+  }),
+  h2: (): React.CSSProperties => ({
+    fontFamily: "var(--font-display)",
+    fontSize: "clamp(2rem, 5vw, 3.5rem)",
+    fontWeight: 700,
+    marginBottom: 14,
+    lineHeight: 1.1,
+    letterSpacing: "-0.02em",
+  }),
+  sub: (): React.CSSProperties => ({
+    color: "var(--creme-50)",
+    fontSize: "var(--text-lg)",
+    maxWidth: 480,
+    margin: "0 auto",
+    lineHeight: 1.65,
+  }),
+};
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.5 });
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
+/* ─── Stat item ─────────────────────────────────────────────────────────────── */
+function StatItem({ num, label, enabled }: { num: number; label: string; enabled: boolean }) {
+  const count = useCountUp(num, 1200, enabled);
   return (
-    <div ref={ref} className="text-center">
-      <Icon className="h-6 w-6 mx-auto mb-2" style={{ color }} />
-      <div
-        className="text-4xl lg:text-5xl font-display font-bold mb-1 tabular-nums"
-        style={{ color: "var(--n950)" }}
-      >
-        {visible ? (numericValue > 0 ? count : value) : 0}
-        {numericValue > 0 && <span className="text-2xl font-medium">+</span>}
+    <div style={{ textAlign: "center" }}>
+      <div style={{
+        fontFamily: "var(--font-display)",
+        fontSize: "clamp(3rem, 6vw, 5rem)",
+        fontWeight: 700,
+        color: "var(--preto)",
+        lineHeight: 1,
+      }}>
+        {enabled && num > 0 ? `${count}+` : num > 0 ? `${num}+` : "—"}
       </div>
-      <p className="text-sm font-body font-medium" style={{ color: "var(--n700, #374151)" }}>{label}</p>
+      <div style={{ fontSize: "var(--text-base)", color: "rgba(12,10,8,0.65)", marginTop: 8, fontWeight: 500 }}>
+        {label}
+      </div>
     </div>
   );
 }
 
-/* ─── Profile Card (Home featured) ─────────────────────────────────────────── */
-function FeaturedProfileCard({ profile }: { profile: any }) {
+/* ─── Profile card (home featured) ─────────────────────────────────────────── */
+function ProfileCard({ profile }: { profile: any }) {
+  const [hovered, setHovered] = useState(false);
   return (
     <Link href={`/perfil/${profile.slug?.toLowerCase()}`}>
-      <div className="pnsp-profile-card cursor-pointer group overflow-hidden">
-        {/* Avatar area */}
-        <div className="relative aspect-square overflow-hidden bg-muted">
-          <img
-            src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
-            alt={profile.displayName}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          {/* Hover overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-            <span className="text-white text-sm font-semibold font-body flex items-center gap-1.5">
-              Ver perfil <ArrowRight className="h-4 w-4" />
-            </span>
-          </div>
-          {profile.isFeatured && (
-            <div className="absolute top-2 right-2 bg-black/50 rounded-full p-1 backdrop-blur-sm">
-              <Star className="h-3.5 w-3.5" style={{ color: "var(--o500)" }} />
+      <div
+        style={{
+          display: "block",
+          background: "var(--terra)",
+          border: `1px solid ${hovered ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+          borderRadius: "var(--radius-lg)",
+          overflow: "hidden",
+          transition: "var(--transition-slow)",
+          transform: hovered ? "translateY(-8px)" : "translateY(0)",
+          boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.7), 0 4px 32px rgba(212,146,10,0.25)" : "none",
+          cursor: "pointer",
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {/* Avatar */}
+        <div style={{
+          aspectRatio: "4/3",
+          background: "linear-gradient(135deg, var(--terra-escura), var(--terra-clara))",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+        }}>
+          {profile.avatarUrl ? (
+            <img
+              src={profile.avatarUrl}
+              alt={profile.displayName}
+              style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease", transform: hovered ? "scale(1.06)" : "scale(1)" }}
+            />
+          ) : (
+            <div style={{
+              width: 80, height: 80, borderRadius: "50%",
+              background: "linear-gradient(135deg, var(--ouro), var(--vermelho))",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 700, color: "var(--preto)",
+            }}>
+              {profile.displayName?.[0]?.toUpperCase()}
             </div>
           )}
+          {/* hover overlay */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(0,0,0,0.75), transparent)",
+            opacity: hovered ? 1 : 0,
+            transition: "opacity 0.3s ease",
+            display: "flex", alignItems: "flex-end", padding: "16px",
+          }}>
+            <span style={{ color: "var(--creme)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+              Ver perfil →
+            </span>
+          </div>
         </div>
         {/* Info */}
-        <div className="p-4">
-          <h3 className="font-body font-semibold text-foreground truncate mb-1">{profile.displayName}</h3>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant={profileTypeBadgeVariant(profile.profileType)} className="text-xs">
-              {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
-            </Badge>
+        <div style={{ padding: "20px" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            {profile.displayName}
           </div>
-          {profile.city && (
-            <p className="text-xs text-muted-foreground font-body flex items-center gap-1">
-              <MapPin className="h-3 w-3 flex-shrink-0" />
-              <span className="truncate">{profile.city}, {profile.state}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
+            <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
+              {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
+            </span>
+            {profile.city && (
+              <span style={{ color: "var(--creme-50)", fontSize: "var(--text-xs)" }}>📍 {profile.city}</span>
+            )}
+          </div>
+          {profile.bio && (
+            <p style={{
+              color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.5,
+              display: "-webkit-box", WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical", overflow: "hidden",
+            }}>
+              {profile.bio}
             </p>
           )}
         </div>
@@ -139,15 +161,15 @@ function FeaturedProfileCard({ profile }: { profile: any }) {
   );
 }
 
-/* ─── Skeleton for featured profile ────────────────────────────────────────── */
-function FeaturedProfileSkeleton() {
+function ProfileSkeleton() {
   return (
-    <div className="pnsp-profile-card overflow-hidden animate-pulse">
-      <div className="aspect-square pnsp-skeleton" />
-      <div className="p-4 space-y-2">
-        <div className="pnsp-skeleton h-4 w-3/4" />
-        <div className="pnsp-skeleton h-5 w-24 rounded-full" />
-        <div className="pnsp-skeleton h-3 w-1/2" />
+    <div style={{ background: "var(--terra)", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--creme-10)" }}>
+      <div className="skeleton" style={{ aspectRatio: "4/3" }} />
+      <div style={{ padding: "20px" }}>
+        <div className="skeleton" style={{ height: 22, width: "70%", marginBottom: 12 }} />
+        <div className="skeleton" style={{ height: 16, width: "40%", borderRadius: 9999, marginBottom: 10 }} />
+        <div className="skeleton" style={{ height: 13, width: "90%", marginBottom: 6 }} />
+        <div className="skeleton" style={{ height: 13, width: "65%" }} />
       </div>
     </div>
   );
@@ -160,116 +182,126 @@ export default function Home() {
   const { data: featuredProfiles, isLoading: loadingProfiles } = trpc.profiles.listFeatured.useQuery({ limit: 6 });
   const { data: recentOfferings, isLoading: loadingOfferings } = trpc.offerings.listRecent.useQuery({ limit: 3 });
 
+  const statsRef = useRef<HTMLDivElement>(null);
+  const [counted, setCounted] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setCounted(true); },
+      { threshold: 0.3 }
+    );
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <PublicLayout>
+    <div style={{ background: "var(--preto)", minHeight: "100vh" }}>
 
-      {/* ─── HERO ─────────────────────────────────────────────────────────── */}
-      <section
-        className="relative overflow-hidden text-white animated-gradient"
-        style={{
-          background: "linear-gradient(135deg, #0A0A0A 0%, #0d1a00 30%, #1a1200 60%, #0A0A0A 100%)",
-          backgroundSize: "300% 300%",
-          minHeight: "90vh",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        {/* Decorative blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <div
-            className="absolute rounded-full blur-3xl opacity-25 animate-float"
-            style={{ width: "42rem", height: "42rem", top: "-12rem", right: "-10rem", background: "var(--o500)" }}
-          />
-          <div
-            className="absolute rounded-full blur-3xl opacity-12"
-            style={{ width: "32rem", height: "32rem", bottom: "-10rem", left: "-8rem", background: "var(--g500)" }}
-          />
-          <div
-            className="absolute rounded-full blur-2xl opacity-15"
-            style={{ width: "22rem", height: "22rem", top: "55%", left: "35%", background: "var(--o300)" }}
-          />
-          {/* Wave line decoration */}
-          <svg className="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-            <path d="M0 40 C360 80 720 0 1080 40 C1260 60 1350 50 1440 40 L1440 80 L0 80 Z" fill="var(--background)" />
-          </svg>
-        </div>
+      {/* ═══ HERO ═══ */}
+      <section style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        position: "relative",
+        overflow: "hidden",
+        padding: "120px 24px 80px",
+      }}>
+        {/* Blob ouro */}
+        <div className="float" style={{
+          position: "absolute", top: "10%", left: "-10%",
+          width: 700, height: 700,
+          background: "radial-gradient(circle, rgba(212,146,10,0.14) 0%, transparent 70%)",
+          filter: "blur(80px)", pointerEvents: "none",
+        }} />
+        {/* Blob vermelho */}
+        <div className="float-slow" style={{
+          position: "absolute", bottom: "5%", right: "-15%",
+          width: 600, height: 600,
+          background: "radial-gradient(circle, rgba(184,50,50,0.10) 0%, transparent 70%)",
+          filter: "blur(100px)", pointerEvents: "none",
+        }} />
+        {/* Linha decorativa */}
+        <div style={{
+          position: "absolute", top: "50%", left: 0, right: 0, height: 1,
+          background: "linear-gradient(90deg, transparent, rgba(212,146,10,0.15), transparent)",
+          pointerEvents: "none",
+        }} />
+        {/* Wave bottom */}
+        <svg style={{ position: "absolute", bottom: 0, left: 0, right: 0, width: "100%" }}
+          viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M0 30 C360 60 720 0 1080 30 C1260 45 1350 40 1440 30 L1440 60 L0 60 Z"
+            fill="var(--terra-escura)" />
+        </svg>
 
-        <div className="container relative z-10 py-24 lg:py-32">
-          <div className="max-w-4xl">
-            <div className="mb-10 animate-slide-up">
-              <PNSPLogo variant="full" size="2xl" theme="dark" className="drop-shadow-2xl" />
+        <div style={{ ...S.maxW(), display: "grid", gridTemplateColumns: "1fr", gap: 80, alignItems: "center", position: "relative", zIndex: 1 }}>
+          <div>
+            {/* Tag */}
+            <div className="animate-fade-up section-tag" style={{ marginBottom: 32 }}>
+              <span className="section-tag-dot" />
+              <span className="section-tag-text">A revolução digital do samba brasileiro</span>
             </div>
 
-            <h1
-              className="pnsp-hero-text mb-6 animate-slide-up animate-delay-100"
-              style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 1.05 }}
-            >
+            {/* H1 */}
+            <h1 className="animate-fade-up delay-1" style={{
+              fontSize: "var(--text-hero)",
+              fontFamily: "var(--font-display)",
+              fontWeight: 700,
+              lineHeight: 1.0,
+              marginBottom: 28,
+              letterSpacing: "-0.03em",
+              color: "var(--creme)",
+            }}>
               O ecossistema digital do{" "}
-              <span className="pnsp-text-gradient">samba</span>
-              <br />e do{" "}
-              <span style={{ color: "var(--g500)" }}>pagode</span>{" "}
-              brasileiro
+              <em style={{ color: "var(--ouro)", fontStyle: "italic" }}>samba</em>
+              {" "}e do{" "}
+              <em style={{ color: "var(--verde)", fontStyle: "italic" }}>pagode</em>
+              {" "}brasileiro
             </h1>
 
-            <p
-              className="text-lg lg:text-xl font-body mb-10 max-w-2xl leading-relaxed animate-slide-up animate-delay-200"
-              style={{ color: "var(--n200)" }}
-            >
-              Conectamos artistas, produtores, estúdios, contratantes e toda a cadeia do samba nacional. Uma rede para crescer, colaborar e se apresentar ao Brasil.
+            {/* Sub */}
+            <p className="animate-fade-up delay-2" style={{
+              fontSize: "var(--text-xl)",
+              color: "var(--creme-50)",
+              maxWidth: 560,
+              lineHeight: 1.65,
+              marginBottom: 44,
+            }}>
+              Conectamos artistas, grupos, produtores, estúdios, contratantes e toda a cadeia do samba nacional em uma única plataforma.
             </p>
 
-            <div className="flex flex-wrap gap-4 mb-16 animate-slide-up animate-delay-300">
+            {/* CTAs */}
+            <div className="animate-fade-up delay-3" style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 56 }}>
               {isAuthenticated ? (
-                <Button
-                  size="lg"
-                  variant="gold"
-                  className="h-12 px-8 text-base font-body font-semibold rounded-xl"
-                  style={{ background: "var(--o500)", color: "var(--n950)" }}
-                  asChild
-                >
-                  <Link href="/dashboard">
-                    Acessar Dashboard <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              ) : (
-                <Button
-                  size="lg"
-                  variant="gold"
-                  className="h-12 px-8 text-base font-body font-semibold rounded-xl"
-                  style={{ background: "var(--o500)", color: "var(--n950)" }}
-                  asChild
-                >
-                  <a href="/entrar">
-                    Criar meu perfil grátis <ArrowRight className="h-4 w-4" />
-                  </a>
-                </Button>
-              )}
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-12 px-8 text-base font-body font-semibold rounded-xl border-white/20 text-white hover:bg-white/10"
-                asChild
-              >
-                <Link href="/perfis">
-                  <Search className="h-4 w-4" /> Explorar a plataforma
+                <Link href="/dashboard">
+                  <span className="pnsp-btn-primary">Acessar Dashboard →</span>
                 </Link>
-              </Button>
+              ) : (
+                <a href="/entrar" className="pnsp-btn-primary">
+                  Criar meu perfil grátis →
+                </a>
+              )}
+              <Link href="/perfis">
+                <span className="pnsp-btn-ghost">Explorar a plataforma</span>
+              </Link>
             </div>
 
             {/* Stats strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 animate-slide-up animate-delay-400">
+            <div className="animate-fade-up delay-4" style={{
+              display: "flex", gap: 40, flexWrap: "wrap",
+              paddingTop: 32,
+              borderTop: "1px solid var(--creme-10)",
+            }}>
               {[
-                { label: "Artistas", value: stats?.profileCount ?? 0, icon: Users, color: "var(--o500)" },
-                { label: "Oportunidades", value: stats?.opportunityCount ?? 0, icon: Target, color: "var(--g500)" },
-                { label: "Cidades", value: stats?.cityCount ?? 0, icon: MapPin, color: "#8b5cf6" },
-                { label: "Estúdios", value: stats?.studioCount ?? 0, icon: Building2, color: "#3b82f6" },
-              ].map(({ label, value, icon: Icon, color }) => (
-                <div key={label} className="pnsp-glass rounded-xl p-4 text-center">
-                  <Icon className="h-4 w-4 mx-auto mb-1" style={{ color }} />
-                  <span className="text-xl font-display font-semibold" style={{ color }}>
-                    {typeof value === "number" && value > 0 ? `${value}+` : value || "—"}
-                  </span>
-                  <p className="text-xs font-body mt-0.5" style={{ color: "var(--n400)" }}>{label}</p>
+                { num: stats?.profileCount ?? 0, label: "Artistas" },
+                { num: stats?.studioCount ?? 0, label: "Estúdios" },
+                { num: stats?.opportunityCount ?? 0, label: "Oportunidades" },
+                { num: stats?.cityCount ?? 0, label: "Cidades" },
+              ].map(s => (
+                <div key={s.label}>
+                  <div style={{ fontSize: "var(--text-2xl)", fontWeight: 700, color: "var(--ouro)", fontFamily: "var(--font-display)" }}>
+                    {s.num > 0 ? `${s.num}+` : "—"}
+                  </div>
+                  <div style={{ fontSize: "var(--text-sm)", color: "var(--creme-50)", marginTop: 2 }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -277,267 +309,235 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── COMO FUNCIONA ────────────────────────────────────────────────── */}
-      <section className="py-20 bg-background">
-        <div className="container">
-          <div className="text-center mb-14">
-            <div className="pnsp-divider mx-auto mb-4" />
-            <h2 className="pnsp-section-title text-3xl lg:text-4xl text-foreground mb-3">
-              Como funciona
-            </h2>
-            <p className="text-muted-foreground font-body max-w-lg mx-auto">
-              Em três passos simples você está conectado ao maior ecossistema do samba nacional
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {HOW_IT_WORKS.map(({ step, icon: Icon, title, desc, color }, i) => (
-              <div
-                key={step}
-                className={`text-center animate-slide-up animate-delay-${(i + 1) * 200}`}
-              >
-                <div
-                  className="relative w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg"
-                  style={{ background: `${color}18`, border: `1px solid ${color}30` }}
-                >
-                  <Icon className="h-9 w-9" style={{ color }} />
-                  <span
-                    className="absolute -top-3 -right-3 w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center font-body shadow-sm"
-                    style={{ background: color, color: "#fff" }}
-                  >
-                    {step}
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-xl text-foreground mb-2">{title}</h3>
-                <p className="text-muted-foreground font-body text-sm leading-relaxed max-w-xs mx-auto">{desc}</p>
-                {i < HOW_IT_WORKS.length - 1 && (
-                  <div className="hidden md:block absolute top-10 right-0 translate-x-1/2">
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── EXPLORE POR CATEGORIA ────────────────────────────────────────── */}
-      <section className="py-16" style={{ background: "var(--n50)" }}>
-        <div className="container">
-          <div className="text-center mb-10">
-            <div className="pnsp-divider mx-auto mb-4" />
-            <h2 className="pnsp-section-title text-3xl text-foreground mb-3">Explore por categoria</h2>
-            <p className="text-muted-foreground font-body max-w-xl mx-auto">
-              Encontre o que você precisa no ecossistema completo do samba e pagode
-            </p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {PROFILE_TYPES_GRID.map(({ label, icon: Icon, href, color }) => (
-              <Link key={href} href={href}>
-                <div className="pnsp-card p-5 text-center cursor-pointer group hover-lift">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 transition-transform group-hover:scale-110 duration-300"
-                    style={{ background: `${color}18` }}
-                  >
-                    <Icon className="h-6 w-6" style={{ color }} />
-                  </div>
-                  <p className="text-sm font-body font-semibold text-foreground">{label}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── QUEM ESTÁ NA PNSP ────────────────────────────────────────────── */}
-      <section className="py-20 bg-background">
-        <div className="container">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <div className="pnsp-divider mb-4" />
-              <h2 className="pnsp-section-title text-3xl lg:text-4xl text-foreground mb-2">
-                Conheça quem está transformando o samba
-              </h2>
-              <p className="text-muted-foreground font-body">Artistas e profissionais em destaque</p>
+      {/* ═══ COMO FUNCIONA ═══ */}
+      <section style={{ ...S.section("var(--terra-escura)") }}>
+        <div style={S.maxW(1100)}>
+          <div style={S.sectionHead()}>
+            <div className="section-tag" style={{ display: "inline-flex", marginBottom: 20 }}>
+              <span className="section-tag-dot" /><span className="section-tag-text">Como funciona</span>
             </div>
-            <Button variant="ghost" className="font-body hidden sm:flex flex-shrink-0" asChild>
-              <Link href="/perfis">Ver todos <ChevronRight className="h-4 w-4" /></Link>
-            </Button>
+            <h2 style={S.h2()}>Três passos para o ecossistema</h2>
+            <p style={S.sub()}>Da criação do perfil às oportunidades reais — simples e direto.</p>
           </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+            {[
+              { num: "01", title: "Crie seu perfil", desc: "Monte sua vitrine profissional em minutos. Artista, produtor, estúdio ou contratante — todos têm espaço aqui." },
+              { num: "02", title: "Conecte-se", desc: "Descubra oportunidades, publique ofertas e conecte-se com todo o ecossistema do samba nacional." },
+              { num: "03", title: "Cresça", desc: "Feche contratos, agende shows, encontre músicos, estúdios e parceiros. Tudo em um só lugar." },
+            ].map((step, i) => {
+              const [h, setH] = useState(false);
+              return (
+                <div key={i}
+                  style={{
+                    background: "var(--terra)",
+                    border: `1px solid ${h ? "rgba(212,146,10,0.35)" : "var(--creme-10)"}`,
+                    borderRadius: "var(--radius-lg)",
+                    padding: "40px 36px",
+                    transition: "var(--transition)",
+                    transform: h ? "translateY(-8px)" : "translateY(0)",
+                    boxShadow: h ? "var(--shadow-ouro)" : "none",
+                  }}
+                  onMouseEnter={() => setH(true)}
+                  onMouseLeave={() => setH(false)}
+                >
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "5rem", fontWeight: 700, color: "var(--ouro-sutil)", lineHeight: 1, marginBottom: 24, userSelect: "none" }}>
+                    {step.num}
+                  </div>
+                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 12 }}>{step.title}</h3>
+                  <p style={{ color: "var(--creme-50)", lineHeight: 1.65 }}>{step.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      {/* ═══ PERFIS EM DESTAQUE ═══ */}
+      <section style={S.section()}>
+        <div style={S.maxW()}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <div className="section-tag" style={{ display: "inline-flex", marginBottom: 16 }}>
+                <span className="section-tag-dot" /><span className="section-tag-text">Destaques</span>
+              </div>
+              <h2 style={{ ...S.h2(), marginBottom: 8 }}>Quem está transformando o samba</h2>
+              <p style={{ color: "var(--creme-50)", marginTop: 8 }}>Artistas, produtores e estúdios do ecossistema nacional</p>
+            </div>
+            <Link href="/perfis">
+              <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600, borderBottom: "1px solid rgba(212,146,10,0.4)", paddingBottom: 2 }}>
+                Ver todos os perfis →
+              </span>
+            </Link>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
             {loadingProfiles
-              ? Array.from({ length: 6 }).map((_, i) => <FeaturedProfileSkeleton key={i} />)
+              ? Array.from({ length: 6 }).map((_, i) => <ProfileSkeleton key={i} />)
               : featuredProfiles?.length
-              ? featuredProfiles.map(p => <FeaturedProfileCard key={p.id} profile={p} />)
+              ? featuredProfiles.map(p => <ProfileCard key={p.id} profile={p} />)
               : (
-                <div className="col-span-6 text-center py-12 text-muted-foreground font-body">
+                <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "48px 0", color: "var(--creme-50)" }}>
                   Nenhum perfil em destaque ainda.
                 </div>
               )}
           </div>
-
-          <div className="text-center mt-8 sm:hidden">
-            <Button variant="outline" className="font-body" asChild>
-              <Link href="/perfis">Ver todos os perfis</Link>
-            </Button>
-          </div>
         </div>
       </section>
 
-      {/* ─── OPORTUNIDADES EM DESTAQUE ────────────────────────────────────── */}
+      {/* ═══ OFERTAS ═══ */}
       {(loadingOfferings || (recentOfferings && recentOfferings.length > 0)) && (
-        <section className="py-16" style={{ background: "var(--n50)" }}>
-          <div className="container">
-            <div className="flex items-end justify-between mb-10">
+        <section style={{ ...S.section("var(--terra-escura)") }}>
+          <div style={S.maxW()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
               <div>
-                <div className="pnsp-divider mb-4" />
-                <h2 className="pnsp-section-title text-3xl text-foreground mb-2">Ofertas recentes</h2>
-                <p className="text-muted-foreground font-body">Serviços disponíveis no ecossistema</p>
+                <div className="section-tag" style={{ display: "inline-flex", marginBottom: 16 }}>
+                  <span className="section-tag-dot" /><span className="section-tag-text">Marketplace</span>
+                </div>
+                <h2 style={{ ...S.h2(), marginBottom: 8 }}>Ofertas recentes</h2>
+                <p style={{ color: "var(--creme-50)" }}>Serviços disponíveis no ecossistema</p>
               </div>
-              <Button variant="ghost" className="font-body hidden sm:flex flex-shrink-0" asChild>
-                <Link href="/ofertas">Ver todas <ChevronRight className="h-4 w-4" /></Link>
-              </Button>
+              <Link href="/ofertas">
+                <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600, borderBottom: "1px solid rgba(212,146,10,0.4)", paddingBottom: 2 }}>
+                  Ver todas →
+                </span>
+              </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
               {loadingOfferings
-                ? Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)
-                : recentOfferings?.map((offering) => (
-                    <Link key={offering.id} href={`/ofertas/${offering.id}`}>
-                      <div
-                        className="pnsp-profile-card p-6 cursor-pointer h-full flex flex-col"
-                        style={{ background: "var(--card)" }}
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <Badge variant="green" className="text-xs capitalize">
-                            {offering.category?.replace(/_/g, " ")}
-                          </Badge>
-                          {offering.price && (
-                            <span className="text-sm font-semibold font-body" style={{ color: "var(--g700)" }}>
-                              R$ {Number(offering.price).toLocaleString("pt-BR")}
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} style={{ background: "var(--terra)", borderRadius: "var(--radius-lg)", border: "1px solid var(--creme-10)", padding: 24 }}>
+                      {[80, 60, 40, 32].map((h, j) => (
+                        <div key={j} className="skeleton" style={{ height: h, marginBottom: 12, borderRadius: 8 }} />
+                      ))}
+                    </div>
+                  ))
+                : recentOfferings?.map(offering => {
+                    const [h, setH] = useState(false);
+                    return (
+                      <Link key={offering.id} href={`/ofertas/${offering.id}`}>
+                        <div
+                          style={{
+                            background: "var(--terra)",
+                            border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+                            borderRadius: "var(--radius-lg)",
+                            padding: 24,
+                            cursor: "pointer",
+                            transition: "var(--transition-slow)",
+                            transform: h ? "translateY(-6px)" : "translateY(0)",
+                            boxShadow: h ? "var(--shadow-ouro)" : "none",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 12,
+                          }}
+                          onMouseEnter={() => setH(true)}
+                          onMouseLeave={() => setH(false)}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
+                              {offering.category?.replace(/_/g, " ")}
+                            </span>
+                            {offering.price && (
+                              <span style={{ color: "var(--verde)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
+                                R$ {Number(offering.price).toLocaleString("pt-BR")}
+                              </span>
+                            )}
+                          </div>
+                          <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, lineHeight: 1.2 }}>
+                            {offering.title}
+                          </h3>
+                          {offering.city && (
+                            <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
+                              📍 {offering.city}, {offering.state}
                             </span>
                           )}
                         </div>
-                        <h3 className="font-body font-semibold text-foreground mb-2 line-clamp-2 flex-1">
-                          {offering.title}
-                        </h3>
-                        {offering.city && (
-                          <p className="text-xs text-muted-foreground font-body flex items-center gap-1 mt-auto pt-3">
-                            <MapPin className="h-3 w-3" />
-                            {offering.city}, {offering.state}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
             </div>
           </div>
         </section>
       )}
 
-      {/* ─── NÚMEROS QUE IMPORTAM ─────────────────────────────────────────── */}
-      <section className="py-20" style={{ background: "var(--o500)" }}>
-        <div className="container">
-          <div className="text-center mb-14">
-            <h2 className="pnsp-section-title text-3xl lg:text-4xl font-bold mb-3" style={{ color: "var(--n950)" }}>
-              Números que importam
-            </h2>
-            <p className="font-body text-lg" style={{ color: "var(--n800, #1f2937)" }}>
-              A PNSP cresce junto com o samba e o pagode brasileiro
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <AnimatedStat value={stats?.profileCount ?? 0} label="Artistas cadastrados" icon={Users} color="var(--n950)" />
-            <AnimatedStat value={stats?.studioCount ?? 0} label="Estúdios parceiros" icon={Building2} color="var(--n950)" />
-            <AnimatedStat value={stats?.opportunityCount ?? 0} label="Oportunidades abertas" icon={Target} color="var(--n950)" />
-            <AnimatedStat value={stats?.cityCount ?? 0} label="Cidades cobertas" icon={MapPin} color="var(--n950)" />
-          </div>
+      {/* ═══ STATS — fundo ouro ═══ */}
+      <section ref={statsRef} style={{
+        padding: "64px 24px",
+        background: "linear-gradient(135deg, var(--ouro) 0%, #8B6110 100%)",
+      }}>
+        <div style={{ ...S.maxW(1100), display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 40, textAlign: "center" }}>
+          <StatItem num={stats?.profileCount ?? 0} label="Artistas cadastrados" enabled={counted} />
+          <StatItem num={stats?.studioCount ?? 0} label="Estúdios parceiros" enabled={counted} />
+          <StatItem num={stats?.opportunityCount ?? 0} label="Oportunidades abertas" enabled={counted} />
+          <StatItem num={stats?.cityCount ?? 0} label="Cidades cobertas" enabled={counted} />
         </div>
       </section>
 
-      {/* ─── POR QUE A PNSP ───────────────────────────────────────────────── */}
-      <section className="py-20 bg-background">
-        <div className="container">
-          <div className="text-center mb-12">
-            <div className="pnsp-divider mx-auto mb-4" />
-            <h2 className="pnsp-section-title text-3xl text-foreground mb-3">Tudo que o ecossistema precisa</h2>
-            <p className="text-muted-foreground font-body max-w-xl mx-auto">
-              Uma infraestrutura digital completa para artistas, profissionais e parceiros
-            </p>
+      {/* ═══ CTA FINAL ═══ */}
+      <section style={{ ...S.section(), textAlign: "center", position: "relative", overflow: "hidden" }}>
+        <div style={{
+          position: "absolute", top: "50%", left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 600, height: 600,
+          background: "radial-gradient(circle, rgba(212,146,10,0.12) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
+        <div style={{ ...S.maxW(680), position: "relative" }}>
+          <div className="section-tag" style={{ display: "inline-flex", marginBottom: 24 }}>
+            <span className="section-tag-dot" /><span className="section-tag-text">100% gratuito</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <h2 style={S.h2()}>Faça parte da maior plataforma do samba</h2>
+          <p style={{ ...S.sub(), maxWidth: "none", marginBottom: 44 }}>
+            Mais de 50 artistas e profissionais já estão no ecossistema. Venha você também.
+          </p>
+          <a href="/entrar" className="pnsp-btn-primary" style={{ animation: "pulse-ring 3s ease-out infinite", fontSize: "var(--text-lg)", padding: "20px 48px" }}>
+            Criar perfil grátis agora →
+          </a>
+        </div>
+      </section>
+
+      {/* ═══ FOOTER ═══ */}
+      <footer style={{ background: "var(--terra-escura)", borderTop: "1px solid var(--creme-10)", padding: "56px 24px 32px" }}>
+        <div style={S.maxW()}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 40, marginBottom: 48 }}>
+            <div style={{ gridColumn: "span 2" }}>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", fontWeight: 700, color: "var(--ouro)", marginBottom: 12 }}>
+                PNSP
+              </div>
+              <p style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.6, maxWidth: 260 }}>
+                Plataforma Nacional do Samba e do Pagode — o ecossistema digital que conecta toda a cadeia do samba brasileiro.
+              </p>
+            </div>
             {[
-              { icon: Users, title: "Vitrines Profissionais", desc: "Perfis completos com bio, portfólio, vídeos, áudio e redes sociais.", color: "var(--o500)" },
-              { icon: Briefcase, title: "Motor de Ofertas", desc: "Publique e encontre serviços: shows, aulas, instrumentos, produção musical.", color: "var(--g500)" },
-              { icon: Target, title: "Motor de Oportunidades", desc: "Vagas em grupos, projetos culturais, eventos e colaborações.", color: "#8b5cf6" },
-              { icon: MapPin, title: "Mapa Vivo Nacional", desc: "Visualize artistas, grupos, estúdios e eventos em todo o Brasil.", color: "#ef4444" },
-              { icon: BookOpen, title: "Academia Digital", desc: "Biblioteca de conteúdo educacional sobre samba e pagode.", color: "#3b82f6" },
-              { icon: Building2, title: "Hub de Estúdios", desc: "Encontre estúdios de gravação e ensaio com preços e reservas.", color: "var(--g700)" },
-            ].map(({ icon: Icon, title, desc, color }) => (
-              <div key={title} className="pnsp-card p-6 group hover-lift">
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-300"
-                  style={{ background: `${color}18` }}
-                >
-                  <Icon className="h-5 w-5" style={{ color }} />
+              { title: "Plataforma", links: [["Perfis", "/perfis"], ["Ofertas", "/ofertas"], ["Oportunidades", "/oportunidades"], ["Estúdios", "/estudios"]] },
+              { title: "Conteúdo", links: [["Academia", "/academia"], ["Mapa Vivo", "/mapa"]] },
+              { title: "Conta", links: [["Entrar", "/entrar"], ["Dashboard", "/dashboard"]] },
+            ].map(col => (
+              <div key={col.title}>
+                <div style={{ fontSize: "var(--text-xs)", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ouro)", marginBottom: 16 }}>
+                  {col.title}
                 </div>
-                <h3 className="font-display font-semibold text-foreground mb-2">{title}</h3>
-                <p className="text-sm text-muted-foreground font-body leading-relaxed">{desc}</p>
+                {col.links.map(([label, href]) => (
+                  <div key={label} style={{ marginBottom: 10 }}>
+                    <Link href={href}>
+                      <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", cursor: "pointer", transition: "color 0.2s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
+                      >{label}</span>
+                    </Link>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ─── CTA FINAL ────────────────────────────────────────────────────── */}
-      <section
-        className="py-24"
-        style={{ background: "linear-gradient(135deg, #0A0A0A 0%, var(--n900) 100%)" }}
-      >
-        <div className="container text-center">
-          <div className="max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <CheckCircle2 className="h-6 w-6" style={{ color: "var(--g500)" }} />
-              <span className="text-sm font-body font-medium" style={{ color: "var(--g500)" }}>
-                100% gratuito para artistas
-              </span>
-            </div>
-            <h2
-              className="pnsp-section-title text-3xl lg:text-5xl mb-5"
-              style={{ color: "var(--n50)" }}
-            >
-              Faça parte do movimento
-            </h2>
-            <p className="font-body mb-10 text-lg leading-relaxed" style={{ color: "var(--n400)" }}>
-              Crie seu perfil gratuito, publique ofertas, candidate-se a oportunidades
-              e conecte-se com o ecossistema nacional do samba e pagode.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button
-                size="lg"
-                variant="gold"
-                className="h-13 px-10 font-body font-semibold rounded-xl text-base"
-                style={{ background: "var(--o500)", color: "var(--n950)" }}
-                asChild
-              >
-                <a href="/entrar">
-                  Começar agora — é grátis <ArrowRight className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-13 px-10 font-body font-semibold rounded-xl text-base border-white/20 text-white hover:bg-white/10"
-                asChild
-              >
-                <Link href="/mapa">
-                  <MapPin className="h-4 w-4" /> Ver mapa nacional
-                </Link>
-              </Button>
-            </div>
+          <div style={{ borderTop: "1px solid var(--creme-10)", paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+            <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
+              © 2025 PNSP — Plataforma Nacional do Samba e do Pagode
+            </span>
+            <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+              Feito com 🥁 no Brasil
+            </span>
           </div>
         </div>
-      </section>
-
-    </PublicLayout>
+      </footer>
+    </div>
   );
 }

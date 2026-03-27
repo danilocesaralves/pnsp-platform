@@ -1,111 +1,14 @@
-/* ─── PNSP ANIMATIONS ────────────────────────────────────────────────────────── */
+/* animations.css — Noite de Samba (aliases para compatibilidade) */
+/* As animações principais estão em index.css */
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
+.animate-slide-up       { animation: fadeUp 0.5s var(--ease, ease) both; }
+.animate-slide-in-left  { animation: fadeUp 0.5s var(--ease, ease) both; }
+.animate-fade-in        { animation: scaleIn 0.4s var(--ease, ease) both; }
+.animate-scale-in       { animation: scaleIn 0.3s var(--ease, ease) both; }
+.animate-float          { animation: float 7s ease-in-out infinite; }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-24px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(24px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes pnsp-pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
-}
-
-@keyframes pnsp-shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
-
-@keyframes pnsp-gradient-shift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes pnsp-float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-8px); }
-}
-
-@keyframes pnsp-spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-@keyframes pnsp-count-up {
-  from { transform: translateY(12px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-
-/* ─── ANIMATION UTILITIES ────────────────────────────────────────────────────── */
-
-.animate-fade-in        { animation: fadeIn 0.4s ease both; }
-.animate-slide-up       { animation: slideUp 0.5s ease both; }
-.animate-slide-in-left  { animation: slideInLeft 0.5s ease both; }
-.animate-slide-in-right { animation: slideInRight 0.5s ease both; }
-.animate-scale-in       { animation: scaleIn 0.3s ease both; }
-.animate-float          { animation: pnsp-float 3s ease-in-out infinite; }
-
-.animate-delay-100 { animation-delay: 100ms; }
-.animate-delay-200 { animation-delay: 200ms; }
-.animate-delay-300 { animation-delay: 300ms; }
-.animate-delay-400 { animation-delay: 400ms; }
-.animate-delay-500 { animation-delay: 500ms; }
-.animate-delay-600 { animation-delay: 600ms; }
-
-/* ─── HOVER LIFT ─────────────────────────────────────────────────────────────── */
-.hover-lift {
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-.hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px oklch(0 0 0 / 0.15);
-}
-
-/* ─── SHIMMER LOADING ────────────────────────────────────────────────────────── */
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--n100, #f0f0f0) 25%,
-    var(--n50,  #fafafa) 50%,
-    var(--n100, #f0f0f0) 75%
-  );
-  background-size: 200% 100%;
-  animation: pnsp-shimmer 1.5s infinite;
-}
-
-/* ─── ANIMATED GRADIENT BACKGROUND ──────────────────────────────────────────── */
-.animated-gradient {
-  background-size: 200% 200%;
-  animation: pnsp-gradient-shift 8s ease infinite;
-}
-
-/* ─── REDUCED MOTION OVERRIDES ───────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+.animate-delay-100 { animation-delay: 0.10s; }
+.animate-delay-200 { animation-delay: 0.20s; }
+.animate-delay-300 { animation-delay: 0.30s; }
+.animate-delay-400 { animation-delay: 0.40s; }
+.animate-delay-500 { animation-delay: 0.50s; }

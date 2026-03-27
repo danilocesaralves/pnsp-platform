@@ -1,31 +1,23 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-
-import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
-  Menu, X, Music2, MapPin, BookOpen, Mic2, Briefcase,
-  LayoutDashboard, LogOut, User, Settings, ChevronDown,
-  Shield, Star,
+  Menu, X, User, Briefcase, Music2, MapPin, BookOpen,
+  Mic2, LayoutDashboard, LogOut, Settings, Shield,
 } from "lucide-react";
-import { PNSPLogo } from "@/components/PNSPLogo";
 
 const NAV_LINKS = [
-  { href: "/perfis", label: "Perfis", icon: User },
-  { href: "/ofertas", label: "Ofertas", icon: Briefcase },
-  { href: "/oportunidades", label: "Oportunidades", icon: Music2 },
-  { href: "/mapa", label: "Mapa Vivo", icon: MapPin },
-  { href: "/academia", label: "Academia", icon: BookOpen },
-  { href: "/estudios", label: "Estúdios", icon: Mic2 },
+  { href: "/perfis",       label: "Perfis",        icon: User },
+  { href: "/ofertas",      label: "Ofertas",        icon: Briefcase },
+  { href: "/oportunidades",label: "Oportunidades",  icon: Music2 },
+  { href: "/mapa",         label: "Mapa Vivo",      icon: MapPin },
+  { href: "/academia",     label: "Academia",       icon: BookOpen },
+  { href: "/estudios",     label: "Estúdios",       icon: Mic2 },
 ];
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -36,261 +28,226 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   const isActive = (href: string) => location.startsWith(href);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/60 shadow-sm">
-        <div className="container">
-          <div className="flex items-center justify-between h-[4.5rem]">
+    <div style={{ minHeight: "100vh", background: "var(--preto)", display: "flex", flexDirection: "column" }}>
 
-            {/* Logo */}
-            <Link href="/">
-              <PNSPLogo variant="full" size="lg" theme="light" className="cursor-pointer" />
-            </Link>
+      {/* ── Header ────────────────────────────────────────────────────────── */}
+      <header style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 50,
+        background: "rgba(12,10,8,0.92)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(212,146,10,0.12)",
+        height: 68,
+        display: "flex",
+        alignItems: "center",
+        padding: "0 24px",
+      }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32 }}>
 
-            {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {NAV_LINKS.map(({ href, label }) => (
-                <Link key={href} href={href}>
-                  <span className={`pnsp-nav-link rounded-md ${isActive(href) ? "active" : ""}`}>
-                    {label}
-                  </span>
-                </Link>
-              ))}
-            </nav>
+          {/* Logo */}
+          <Link href="/">
+            <span style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "1.5rem",
+              fontWeight: 700,
+              color: "var(--ouro)",
+              cursor: "pointer",
+              letterSpacing: "-0.02em",
+              userSelect: "none",
+            }}>
+              PNSP
+            </span>
+          </Link>
 
-            {/* Auth Actions */}
-            <div className="flex items-center gap-2">
-              {isAuthenticated && user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center gap-2 h-9 px-2 rounded-lg">
-                      <Avatar className="h-7 w-7">
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name ?? "")}`} alt={user.name ?? ""} />
-                        <AvatarFallback
-                          className="text-xs font-semibold"
-                          style={{ background: "var(--o500)", color: "var(--n950)" }}
-                        >
-                          {user.name?.charAt(0)?.toUpperCase() ?? "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="hidden sm:block text-sm font-medium max-w-[120px] truncate font-body">
-                        {user.name}
-                      </span>
-                      <ChevronDown className="h-3 w-3 text-muted-foreground" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <div className="px-3 py-2">
-                      <p className="text-sm font-semibold font-body">{user.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                      {(user.role === "admin" || user.role === "owner") && (
-                        <Badge
-                          variant="secondary"
-                          className="mt-1.5 text-xs pnsp-badge-gold border-0"
-                        >
-                          <Star className="h-3 w-3 mr-1" />
-                          {user.role === "owner" ? "Proprietário" : "Admin"}
-                        </Badge>
-                      )}
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/minha-conta">
-                        <User className="h-4 w-4 mr-2" />
-                        Meu Perfil
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard">
-                        <LayoutDashboard className="h-4 w-4 mr-2" />
-                        Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                    {(user.role === "admin" || user.role === "owner") && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href="/admin">
-                            <Shield className="h-4 w-4 mr-2" />
-                            Painel Admin
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href="/proprietario">
-                            <Settings className="h-4 w-4 mr-2" />
-                            Dashboard Proprietário
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      onClick={() => logout()}
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Sair
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" asChild className="font-body">
-                    <a href={"/entrar"}>Entrar</a>
-                  </Button>
-                  <Button
-                    size="sm"
-                    asChild
-                    className="hidden sm:flex font-body font-semibold"
-                    style={{ background: "var(--o500)", color: "var(--n950)" }}
+          {/* Desktop Nav */}
+          <nav style={{ display: "flex", alignItems: "center", gap: 4, flex: 1, justifyContent: "center" }}
+            className="hidden-mobile">
+            {NAV_LINKS.map(({ href, label }) => (
+              <Link key={href} href={href}>
+                <span className={`nav-link ${isActive(href) ? "active" : ""}`}>
+                  {label}
+                </span>
+              </Link>
+            ))}
+          </nav>
+
+          {/* Auth */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {isAuthenticated && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "6px 10px 6px 6px",
+                    borderRadius: "var(--radius-full)",
+                    border: "1px solid var(--creme-10)",
+                    background: "var(--terra)",
+                    cursor: "pointer",
+                    transition: "var(--transition)",
+                    color: "var(--creme)",
+                    fontFamily: "var(--font-body)",
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(212,146,10,0.35)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--creme-10)"; }}
                   >
-                    <a href={"/entrar"}>Cadastrar grátis</a>
-                  </Button>
-                </div>
-              )}
+                    <Avatar style={{ width: 28, height: 28 }}>
+                      <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name ?? "")}`} alt={user.name ?? ""} />
+                      <AvatarFallback style={{ background: "var(--ouro)", color: "var(--preto)", fontSize: 12, fontWeight: 700 }}>
+                        {user.name?.charAt(0)?.toUpperCase() ?? "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span style={{ fontSize: "var(--text-sm)", fontWeight: 500, maxWidth: 110, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {user.name}
+                    </span>
+                    <span style={{ color: "var(--creme-50)", fontSize: 10 }}>▾</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" style={{ minWidth: 200 }}>
+                  <div style={{ padding: "10px 14px" }}>
+                    <p style={{ fontSize: "var(--text-sm)", fontWeight: 600, fontFamily: "var(--font-body)" }}>{user.name}</p>
+                    <p style={{ fontSize: "var(--text-xs)", opacity: 0.6, overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</p>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/minha-conta">
+                      <User style={{ width: 14, height: 14, marginRight: 8 }} />Meu Perfil
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard">
+                      <LayoutDashboard style={{ width: 14, height: 14, marginRight: 8 }} />Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  {(user.role === "admin" || user.role === "owner") && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin">
+                          <Shield style={{ width: 14, height: 14, marginRight: 8 }} />Painel Admin
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/proprietario">
+                          <Settings style={{ width: 14, height: 14, marginRight: 8 }} />Proprietário
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => logout()} style={{ color: "var(--vermelho)" }}>
+                    <LogOut style={{ width: 14, height: 14, marginRight: 8 }} />Sair
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div style={{ display: "flex", gap: 8 }}>
+                <a href="/entrar" style={{
+                  padding: "8px 18px",
+                  color: "var(--creme-80)",
+                  fontSize: "var(--text-sm)",
+                  fontWeight: 500,
+                  fontFamily: "var(--font-body)",
+                  transition: "color 0.2s",
+                  borderRadius: "var(--radius-md)",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--ouro)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-80)"; }}
+                >
+                  Entrar
+                </a>
+                <a href="/entrar" style={{
+                  padding: "8px 18px",
+                  background: "var(--ouro)",
+                  color: "var(--preto)",
+                  fontSize: "var(--text-sm)",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-body)",
+                  borderRadius: "var(--radius-md)",
+                  transition: "var(--transition)",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--ouro-claro)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--ouro)"; }}
+                >
+                  Cadastrar grátis
+                </a>
+              </div>
+            )}
 
-              {/* Mobile Menu Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
-                onClick={() => setMobileOpen(!mobileOpen)}
-                aria-label="Menu"
-              >
-                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
+            {/* Hamburger */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Menu"
+              style={{
+                display: "none",
+                padding: 8,
+                border: "1px solid var(--creme-10)",
+                borderRadius: "var(--radius-sm)",
+                color: "var(--creme)",
+                background: "none",
+                cursor: "pointer",
+              }}
+              className="show-mobile"
+            >
+              {mobileOpen ? <X style={{ width: 20, height: 20 }} /> : <Menu style={{ width: 20, height: 20 }} />}
+            </button>
           </div>
         </div>
-
-        {/* Mobile Nav */}
-        {mobileOpen && (
-          <div className="lg:hidden border-t border-border/60 bg-background/98 backdrop-blur-xl animate-slide-up">
-            <div className="container py-3 space-y-0.5">
-              {NAV_LINKS.map(({ href, label, icon: Icon }) => (
-                <Link key={href} href={href}>
-                  <span
-                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all cursor-pointer font-body ${
-                      isActive(href)
-                        ? "text-foreground font-semibold"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                    style={isActive(href) ? { background: "var(--o500)18", color: "var(--o700)" } : {}}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </span>
-                </Link>
-              ))}
-              {!isAuthenticated && (
-                <div className="pt-3 border-t border-border flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1 font-body" asChild>
-                    <a href={"/entrar"}>Entrar</a>
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="flex-1 font-body font-semibold"
-                    style={{ background: "var(--o500)", color: "var(--n950)" }}
-                    asChild
-                  >
-                    <a href={"/entrar"}>Cadastrar</a>
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </header>
 
-      {/* ── Main Content ─────────────────────────────────────────────────────── */}
-      <main className="flex-1">
+      {/* Mobile Nav */}
+      {mobileOpen && (
+        <div className="animate-slide-down" style={{
+          position: "fixed",
+          top: 68, left: 0, right: 0,
+          background: "rgba(20,16,8,0.98)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid var(--creme-10)",
+          padding: "16px 24px 24px",
+          zIndex: 49,
+        }}>
+          {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+            <Link key={href} href={href}>
+              <span
+                style={{
+                  display: "flex", alignItems: "center", gap: 12,
+                  padding: "12px 14px",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "var(--text-base)",
+                  fontWeight: 500,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  marginBottom: 4,
+                  color: isActive(href) ? "var(--ouro)" : "var(--creme-80)",
+                  background: isActive(href) ? "var(--ouro-sutil)" : "transparent",
+                  transition: "var(--transition)",
+                }}
+                onClick={() => setMobileOpen(false)}
+              >
+                <Icon style={{ width: 16, height: 16 }} />
+                {label}
+              </span>
+            </Link>
+          ))}
+          {!isAuthenticated && (
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--creme-10)", display: "flex", gap: 8 }}>
+              <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", border: "1px solid var(--creme-20)", borderRadius: "var(--radius-md)", color: "var(--creme-80)", fontSize: "var(--text-sm)", fontWeight: 500, fontFamily: "var(--font-body)" }}>
+                Entrar
+              </a>
+              <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", background: "var(--ouro)", borderRadius: "var(--radius-md)", color: "var(--preto)", fontSize: "var(--text-sm)", fontWeight: 700, fontFamily: "var(--font-body)" }}>
+                Cadastrar
+              </a>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Main */}
+      <main style={{ flex: 1 }}>
         {children}
       </main>
-
-      {/* ── Footer ───────────────────────────────────────────────────────────── */}
-      <footer style={{ background: "var(--n950)", color: "var(--n50)" }}>
-        <div className="container py-14">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-            <div className="md:col-span-2">
-              <PNSPLogo variant="full" size="lg" theme="dark" className="mb-5" />
-              <p className="text-sm leading-relaxed font-body" style={{ color: "var(--n400)" }}>
-                A infraestrutura digital nacional para o ecossistema do samba e do pagode.
-                Conectando artistas, grupos, estúdios e parceiros em todo o Brasil.
-              </p>
-              <div className="flex gap-3 mt-5">
-                <div className="pnsp-badge-gold text-xs">
-                  <Star className="h-3 w-3" />
-                  Plataforma Nacional
-                </div>
-                <div className="pnsp-badge-green text-xs">
-                  Cultura Brasileira
-                </div>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm mb-4 font-display" style={{ color: "var(--o300)" }}>
-                Plataforma
-              </h4>
-              <ul className="space-y-2.5">
-                {NAV_LINKS.map(({ href, label }) => (
-                  <li key={href}>
-                    <Link href={href}>
-                      <span
-                        className="text-sm font-body transition-colors cursor-pointer"
-                        style={{ color: "var(--n400)" }}
-                        onMouseEnter={e => (e.currentTarget.style.color = "var(--n50)")}
-                        onMouseLeave={e => (e.currentTarget.style.color = "var(--n400)")}
-                      >
-                        {label}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm mb-4 font-display" style={{ color: "var(--o300)" }}>
-                Institucional
-              </h4>
-              <ul className="space-y-2.5">
-                {[
-                  { href: "/sobre", label: "Sobre a PNSP" },
-                  { href: "/para-artistas", label: "Para Artistas" },
-                  { href: "/para-contratantes", label: "Para Contratantes" },
-                  { href: "/academia", label: "Academia" },
-                  { href: "/contato", label: "Contato" },
-                ].map(({ href, label }) => (
-                  <li key={href}>
-                    <Link href={href}>
-                      <span
-                        className="text-sm font-body transition-colors cursor-pointer"
-                        style={{ color: "var(--n400)" }}
-                        onMouseEnter={e => (e.currentTarget.style.color = "var(--n50)")}
-                        onMouseLeave={e => (e.currentTarget.style.color = "var(--n400)")}
-                      >
-                        {label}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div
-            className="mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3"
-            style={{ borderTop: "1px solid var(--n800)" }}
-          >
-            <p className="text-xs font-body" style={{ color: "var(--n600)" }}>
-              © 2025 PNSP — Plataforma Nacional de Samba e Pagode. Todos os direitos reservados.
-            </p>
-            <p className="text-xs font-body" style={{ color: "var(--n600)" }}>
-              Feito com amor pelo samba brasileiro 🇧🇷
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

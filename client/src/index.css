@@ -1,489 +1,499 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PNSP — NOITE DE SAMBA
+   Paleta: Preto profundo · Ouro quente · Creme · Verde samba · Vermelho
+═══════════════════════════════════════════════════════════════════════════════ */
+
 @custom-variant dark (&:is(.dark *));
 
+:root {
+  /* ── Paleta Noite de Samba ─────────────────────────────────────────────── */
+  --preto:          #0C0A08;
+  --terra-escura:   #141008;
+  --terra:          #1C160C;
+  --terra-clara:    #261E10;
+  --ouro:           #D4920A;
+  --ouro-claro:     #F0B429;
+  --ouro-brilho:    rgba(212, 146, 10, 0.25);
+  --ouro-sutil:     rgba(212, 146, 10, 0.10);
+  --vermelho:       #B83232;
+  --verde:          #1B6B3A;
+  --creme:          #F5EDD8;
+  --creme-80:       rgba(245, 237, 216, 0.80);
+  --creme-50:       rgba(245, 237, 216, 0.50);
+  --creme-20:       rgba(245, 237, 216, 0.12);
+  --creme-10:       rgba(245, 237, 216, 0.06);
+
+  /* ── Tipografia ────────────────────────────────────────────────────────── */
+  --font-display:   'Cormorant Garamond', Georgia, serif;
+  --font-body:      'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* ── Escala tipográfica ────────────────────────────────────────────────── */
+  --text-xs:    0.75rem;
+  --text-sm:    0.875rem;
+  --text-base:  1rem;
+  --text-lg:    1.125rem;
+  --text-xl:    1.25rem;
+  --text-2xl:   1.5rem;
+  --text-3xl:   1.875rem;
+  --text-4xl:   2.25rem;
+  --text-5xl:   3rem;
+  --text-hero:  clamp(3rem, 8vw, 6rem);
+
+  /* ── Espaçamentos (base 4px) ───────────────────────────────────────────── */
+  --space-1:  4px;   --space-2:  8px;   --space-3:  12px;
+  --space-4:  16px;  --space-6:  24px;  --space-8:  32px;
+  --space-12: 48px;  --space-16: 64px;  --space-24: 96px;
+
+  /* ── Border radius ─────────────────────────────────────────────────────── */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-full: 9999px;
+
+  /* ── Sombras ───────────────────────────────────────────────────────────── */
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.40);
+  --shadow-md:   0 4px 24px rgba(0,0,0,0.60);
+  --shadow-lg:   0 8px 48px rgba(0,0,0,0.80);
+  --shadow-ouro: 0 4px 32px rgba(212,146,10,0.30);
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.50), inset 0 1px 0 rgba(245,237,216,0.04);
+
+  /* ── Transições ────────────────────────────────────────────────────────── */
+  --ease:            cubic-bezier(0.4, 0, 0.2, 1);
+  --transition:      all 0.25s var(--ease);
+  --transition-slow: all 0.40s var(--ease);
+
+  /* ── Z-index ───────────────────────────────────────────────────────────── */
+  --z-base:     10;
+  --z-dropdown: 20;
+  --z-sticky:   50;
+  --z-overlay:  60;
+  --z-modal:    70;
+
+  /* ── Shadcn/ui semantic tokens (mapeados à paleta Noite de Samba) ────── */
+  --radius:                   0.875rem;
+  --background:               #0C0A08;
+  --foreground:               #F5EDD8;
+  --card:                     #1C160C;
+  --card-foreground:          #F5EDD8;
+  --popover:                  #1C160C;
+  --popover-foreground:       #F5EDD8;
+  --primary:                  #D4920A;
+  --primary-foreground:       #0C0A08;
+  --secondary:                #261E10;
+  --secondary-foreground:     #F5EDD8;
+  --muted:                    #261E10;
+  --muted-foreground:         rgba(245,237,216,0.50);
+  --accent:                   rgba(212,146,10,0.15);
+  --accent-foreground:        #F0B429;
+  --destructive:              #B83232;
+  --destructive-foreground:   #F5EDD8;
+  --border:                   rgba(245,237,216,0.10);
+  --input:                    rgba(245,237,216,0.08);
+  --ring:                     #D4920A;
+  --sidebar:                  #141008;
+  --sidebar-foreground:       #F5EDD8;
+  --sidebar-primary:          #D4920A;
+  --sidebar-primary-foreground: #0C0A08;
+  --sidebar-accent:           #261E10;
+  --sidebar-accent-foreground:#F5EDD8;
+  --sidebar-border:           rgba(245,237,216,0.08);
+  --sidebar-ring:             #D4920A;
+  --chart-1: #D4920A;
+  --chart-2: #1B6B3A;
+  --chart-3: #B83232;
+  --chart-4: #8B6110;
+  --chart-5: #F0B429;
+}
+
+/* ── Shadcn @theme inline ────────────────────────────────────────────────── */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
+  --color-background:               var(--background);
+  --color-foreground:               var(--foreground);
+  --color-card:                     var(--card);
+  --color-card-foreground:          var(--card-foreground);
+  --color-popover:                  var(--popover);
+  --color-popover-foreground:       var(--popover-foreground);
+  --color-primary:                  var(--primary);
+  --color-primary-foreground:       var(--primary-foreground);
+  --color-secondary:                var(--secondary);
+  --color-secondary-foreground:     var(--secondary-foreground);
+  --color-muted:                    var(--muted);
+  --color-muted-foreground:         var(--muted-foreground);
+  --color-accent:                   var(--accent);
+  --color-accent-foreground:        var(--accent-foreground);
+  --color-destructive:              var(--destructive);
+  --color-destructive-foreground:   var(--destructive-foreground);
+  --color-border:                   var(--border);
+  --color-input:                    var(--input);
+  --color-ring:                     var(--ring);
+  --color-sidebar:                  var(--sidebar);
+  --color-sidebar-foreground:       var(--sidebar-foreground);
+  --color-sidebar-primary:          var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent:           var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-
-  /* PNSP Brand — g* verde samba */
-  --color-g50: var(--g50);
-  --color-g100: var(--g100);
-  --color-g200: var(--g200);
-  --color-g500: var(--g500);
-  --color-g700: var(--g700);
-  --color-g900: var(--g900);
-
-  /* PNSP Brand — o* ouro pagode */
-  --color-o50: var(--o50);
-  --color-o100: var(--o100);
-  --color-o300: var(--o300);
-  --color-o500: var(--o500);
-  --color-o700: var(--o700);
-  --color-o900: var(--o900);
-
-  /* PNSP Brand — n* noite */
-  --color-n50: var(--n50);
-  --color-n100: var(--n100);
-  --color-n200: var(--n200);
-  --color-n400: var(--n400);
-  --color-n600: var(--n600);
-  --color-n800: var(--n800);
-  --color-n900: var(--n900);
-  --color-n950: var(--n950);
-
-  /* Legacy PNSP Brand Colors */
-  --color-pnsp-gold: var(--pnsp-gold);
-  --color-pnsp-gold-dark: var(--pnsp-gold-dark);
-  --color-pnsp-gold-light: var(--pnsp-gold-light);
-  --color-pnsp-black: var(--pnsp-black);
-  --color-pnsp-dark: var(--pnsp-dark);
-  --color-pnsp-red: var(--pnsp-red);
-
-  /* Typography */
-  --font-display: var(--font-fraunces);
-  --font-body: var(--font-dm-sans);
+  --color-sidebar-border:           var(--sidebar-border);
+  --color-sidebar-ring:             var(--sidebar-ring);
+  --font-display:                   var(--font-display);
+  --font-body:                      var(--font-body);
 }
 
-:root {
-  /* ── Typography ─────────────────────────────────────────────────────────── */
-  --font-fraunces: 'Fraunces', Georgia, serif;
-  --font-dm-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE RESET
+═══════════════════════════════════════════════════════════════════════════ */
 
-  /* ── g* — verde samba (identidade cultural) ─────────────────────────────── */
-  --g50:  oklch(0.97 0.02 155);
-  --g100: oklch(0.92 0.05 155);
-  --g200: oklch(0.84 0.09 155);
-  --g500: oklch(0.55 0.16 155);
-  --g700: oklch(0.40 0.14 155);
-  --g900: oklch(0.25 0.10 155);
-
-  /* ── o* — ouro pagode (prestígio e calor) ───────────────────────────────── */
-  --o50:  oklch(0.98 0.02 85);
-  --o100: oklch(0.95 0.05 85);
-  --o300: oklch(0.88 0.10 85);
-  --o500: oklch(0.78 0.14 85);
-  --o700: oklch(0.62 0.14 78);
-  --o900: oklch(0.40 0.10 78);
-
-  /* ── n* — noite (profundidade e elegância) ──────────────────────────────── */
-  --n50:  oklch(0.97 0.003 260);
-  --n100: oklch(0.93 0.005 260);
-  --n200: oklch(0.87 0.006 260);
-  --n400: oklch(0.65 0.008 260);
-  --n600: oklch(0.42 0.008 260);
-  --n800: oklch(0.22 0.008 260);
-  --n900: oklch(0.16 0.008 260);
-  --n950: oklch(0.10 0.005 260);
-
-  /* ── Legacy PNSP Brand Colors ───────────────────────────────────────────── */
-  --pnsp-gold: oklch(0.78 0.14 85);
-  --pnsp-gold-dark: oklch(0.62 0.14 78);
-  --pnsp-gold-light: oklch(0.92 0.08 85);
-  --pnsp-black: oklch(0.12 0.005 260);
-  --pnsp-dark: oklch(0.16 0.008 260);
-  --pnsp-red: oklch(0.55 0.22 25);
-
-  /* ── Shadcn/ui semantic tokens ──────────────────────────────────────────── */
-  --primary: oklch(0.12 0.005 260);
-  --primary-foreground: oklch(0.99 0.002 85);
-  --sidebar-primary: oklch(0.12 0.005 260);
-  --sidebar-primary-foreground: oklch(0.99 0.002 85);
-  --chart-1: oklch(0.78 0.14 85);
-  --chart-2: oklch(0.55 0.16 155);
-  --chart-3: oklch(0.55 0.22 25);
-  --chart-4: oklch(0.45 0.15 160);
-  --chart-5: oklch(0.55 0.18 240);
-  --radius: 0.5rem;
-  --background: oklch(0.99 0.002 85);
-  --foreground: oklch(0.12 0.005 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.12 0.005 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0.005 260);
-  --secondary: oklch(0.96 0.006 85);
-  --secondary-foreground: oklch(0.22 0.008 260);
-  --muted: oklch(0.96 0.004 260);
-  --muted-foreground: oklch(0.52 0.01 260);
-  --accent: oklch(0.78 0.14 85);
-  --accent-foreground: oklch(0.12 0.005 260);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.004 260);
-  --input: oklch(0.9 0.004 260);
-  --ring: oklch(0.78 0.14 85);
-  --sidebar: oklch(0.12 0.005 260);
-  --sidebar-foreground: oklch(0.97 0.004 85);
-  --sidebar-accent: oklch(0.22 0.008 260);
-  --sidebar-accent-foreground: oklch(0.97 0.004 85);
-  --sidebar-border: oklch(0.28 0.008 260);
-  --sidebar-ring: oklch(0.78 0.14 85);
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-/* ─── PNSP TYPOGRAPHY UTILITIES ─────────────────────────────────────────────── */
-.font-display { font-family: var(--font-fraunces); }
-.font-body    { font-family: var(--font-dm-sans); }
+html {
+  scroll-behavior: smooth;
+}
 
-.pnsp-hero-text {
-  font-family: var(--font-fraunces);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+body {
+  background: var(--preto);
+  color: var(--creme);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Grain texture — atmosfera de clube noturno */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.028;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  font-weight: 700;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.pnsp-section-title {
-  font-family: var(--font-fraunces);
-  font-weight: 500;
-  letter-spacing: -0.01em;
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; font-family: inherit; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--preto); }
+::-webkit-scrollbar-thumb { background: var(--ouro); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ouro-claro); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMAÇÕES
+═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── PNSP COMPONENT UTILITIES ───────────────────────────────────────────────── */
-.pnsp-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px oklch(0 0 0 / 0.06);
-  transition: box-shadow 200ms ease, transform 200ms ease;
-}
-.pnsp-card:hover {
-  box-shadow: 0 4px 16px oklch(0 0 0 / 0.10);
-  transform: translateY(-1px);
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-18px) rotate(1deg); }
+  66%       { transform: translateY(-8px) rotate(-1deg); }
 }
 
-.pnsp-badge-gold {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.125rem 0.625rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  background: var(--o100);
-  color: var(--o900);
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 var(--ouro-brilho); }
+  70%  { box-shadow: 0 0 0 16px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
 }
 
-.pnsp-badge-green {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.125rem 0.625rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  background: var(--g100);
-  color: var(--g900);
-}
-
-/* ─── PNSP GRADIENT UTILITIES ────────────────────────────────────────────────── */
-.pnsp-gradient-hero {
-  background: linear-gradient(
-    135deg,
-    var(--n950) 0%,
-    var(--n900) 40%,
-    oklch(0.18 0.04 85) 100%
-  );
-}
-
-.pnsp-gradient-gold {
-  background: linear-gradient(135deg, var(--o500) 0%, var(--o700) 100%);
-}
-
-.pnsp-text-gradient {
-  background: linear-gradient(135deg, var(--o500), var(--o300));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.pnsp-glass {
-  backdrop-filter: blur(12px);
-  background: oklch(1 0 0 / 0.08);
-  border: 1px solid oklch(1 0 0 / 0.12);
-}
-
-.pnsp-divider {
-  width: 3rem;
-  height: 0.25rem;
-  border-radius: 9999px;
-  background: var(--o500);
-}
-
-/* ─── SKELETON ANIMATION ─────────────────────────────────────────────────────── */
-@keyframes pnsp-shimmer {
+@keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
 
-.pnsp-skeleton {
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Utilitários de animação ──────────────────────────────────────────────── */
+.animate-fade-up  { animation: fadeUp 0.65s var(--ease) both; }
+.animate-slide-down { animation: slideDown 0.3s var(--ease) both; }
+.animate-scale-in { animation: scaleIn 0.3s var(--ease) both; }
+
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.18s; }
+.delay-3 { animation-delay: 0.30s; }
+.delay-4 { animation-delay: 0.44s; }
+.delay-5 { animation-delay: 0.60s; }
+
+.float      { animation: float 7s ease-in-out infinite; }
+.float-slow { animation: float 11s ease-in-out infinite reverse; }
+
+/* ── Skeleton ─────────────────────────────────────────────────────────────── */
+.skeleton {
   background: linear-gradient(
     90deg,
-    var(--n100) 25%,
-    var(--n50)  50%,
-    var(--n100) 75%
+    var(--terra) 25%,
+    var(--terra-clara) 50%,
+    var(--terra) 75%
   );
   background-size: 200% 100%;
-  animation: pnsp-shimmer 1.5s infinite;
-  border-radius: 0.375rem;
+  animation: shimmer 1.6s infinite;
+  border-radius: var(--radius-sm);
 }
 
-/* ─── PNSP SHADOW TOKENS ─────────────────────────────────────────────────────── */
-.pnsp-shadow-xs   { box-shadow: 0 1px 2px oklch(0 0 0 / 0.06); }
-.pnsp-shadow-sm   { box-shadow: 0 1px 4px oklch(0 0 0 / 0.08), 0 1px 2px oklch(0 0 0 / 0.04); }
-.pnsp-shadow-md   { box-shadow: 0 4px 12px oklch(0 0 0 / 0.10), 0 2px 4px oklch(0 0 0 / 0.06); }
-.pnsp-shadow-lg   { box-shadow: 0 8px 24px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.06); }
-.pnsp-shadow-xl   { box-shadow: 0 16px 40px oklch(0 0 0 / 0.14), 0 8px 16px oklch(0 0 0 / 0.08); }
-.pnsp-shadow-gold { box-shadow: 0 4px 20px oklch(0.78 0.14 85 / 0.35), 0 2px 8px oklch(0.78 0.14 85 / 0.20); }
-.pnsp-shadow-gold-lg { box-shadow: 0 8px 32px oklch(0.78 0.14 85 / 0.30), 0 4px 12px oklch(0.78 0.14 85 / 0.15); }
-
-/* ─── PNSP SPACING SCALE (4px base) ─────────────────────────────────────────── */
-:root {
-  --space-1: 0.25rem;   /* 4px  */
-  --space-2: 0.5rem;    /* 8px  */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
-
-  /* ── Typography scale ────────────────────────────────────────────────────── */
-  --text-xs:   0.75rem;    /* 12px */
-  --text-sm:   0.875rem;   /* 14px */
-  --text-base: 1rem;       /* 16px */
-  --text-lg:   1.125rem;   /* 18px */
-  --text-xl:   1.25rem;    /* 20px */
-  --text-2xl:  1.5rem;     /* 24px */
-  --text-3xl:  2rem;       /* 32px */
-  --text-4xl:  2.5rem;     /* 40px */
-  --text-5xl:  3rem;       /* 48px */
-
-  /* ── Border radius ───────────────────────────────────────────────────────── */
-  --rounded-sm: 0.5rem;    /* 8px  */
-  --rounded-md: 0.75rem;   /* 12px */
-  --rounded-lg: 1rem;      /* 16px */
-  --rounded-xl: 1.5rem;    /* 24px */
-
-  /* ── Transitions ─────────────────────────────────────────────────────────── */
-  --transition-base: 200ms ease;
-  --transition-slow: 400ms ease;
-  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* ── Z-index scale ───────────────────────────────────────────────────────── */
-  --z-base:    10;
-  --z-dropdown: 20;
-  --z-sticky:  30;
-  --z-overlay: 40;
-  --z-modal:   50;
-}
-
-/* ─── PNSP BADGE PROFILE TYPES ───────────────────────────────────────────────── */
-.pnsp-badge-artista   { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:var(--g100); color:var(--g900); }
-.pnsp-badge-produtor  { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#ede9fe; color:#5b21b6; }
-.pnsp-badge-estudio   { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#d1fae5; color:#065f46; }
-.pnsp-badge-professor { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#dbeafe; color:#1e40af; }
-.pnsp-badge-luthier   { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#ffedd5; color:#9a3412; }
-.pnsp-badge-contratante { display:inline-flex; align-items:center; gap:.25rem; padding:.125rem .625rem; border-radius:9999px; font-size:.75rem; font-weight:500; background:#cffafe; color:#155e75; }
-
-/* ─── PNSP NAV ACTIVE INDICATOR ──────────────────────────────────────────────── */
-.pnsp-nav-link {
-  position: relative;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--muted-foreground);
-  transition: color var(--transition-base);
-  cursor: pointer;
-  font-family: var(--font-dm-sans);
-}
-.pnsp-nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  transform: translateX(-50%) scaleX(0);
-  width: 80%;
-  height: 2px;
-  background: var(--o500);
-  border-radius: 9999px;
-  transition: transform var(--transition-base);
-}
-.pnsp-nav-link:hover { color: var(--foreground); }
-.pnsp-nav-link:hover::after { transform: translateX(-50%) scaleX(1); }
-.pnsp-nav-link.active { color: var(--foreground); font-weight: 600; }
-.pnsp-nav-link.active::after { transform: translateX(-50%) scaleX(1); }
-
-/* ─── PNSP PROFILE CARD HOVER ────────────────────────────────────────────────── */
-.pnsp-profile-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
-  overflow: hidden;
-}
-.pnsp-profile-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 32px oklch(0.78 0.14 85 / 0.18), 0 4px 12px oklch(0 0 0 / 0.08);
-  border-color: oklch(0.78 0.14 85 / 0.30);
-}
-
-/* ─── DARK MODE ──────────────────────────────────────────────────────────────── */
-.dark {
-  /* g* dark overrides */
-  --g50:  oklch(0.20 0.04 155);
-  --g100: oklch(0.25 0.06 155);
-  --g200: oklch(0.32 0.08 155);
-  --g500: oklch(0.55 0.16 155);
-  --g700: oklch(0.70 0.14 155);
-  --g900: oklch(0.85 0.08 155);
-  /* o* dark overrides */
-  --o50:  oklch(0.20 0.04 85);
-  --o100: oklch(0.25 0.06 85);
-  --o300: oklch(0.55 0.12 85);
-  --o500: oklch(0.78 0.14 85);
-  --o700: oklch(0.88 0.10 85);
-  --o900: oklch(0.95 0.05 85);
-  /* n* dark overrides */
-  --n50:  oklch(0.22 0.008 260);
-  --n100: oklch(0.28 0.008 260);
-  --n200: oklch(0.35 0.008 260);
-  --n400: oklch(0.52 0.008 260);
-  --n600: oklch(0.68 0.008 260);
-  --n800: oklch(0.82 0.006 260);
-  --n900: oklch(0.92 0.004 260);
-  --n950: oklch(0.97 0.003 260);
-
-  --primary: oklch(0.78 0.14 85);
-  --primary-foreground: oklch(0.12 0.005 260);
-  --sidebar-primary: oklch(0.78 0.14 85);
-  --sidebar-primary-foreground: oklch(0.12 0.005 260);
-  --background: oklch(0.12 0.005 260);
-  --foreground: oklch(0.97 0.004 85);
-  --card: oklch(0.16 0.008 260);
-  --card-foreground: oklch(0.97 0.004 85);
-  --popover: oklch(0.16 0.008 260);
-  --popover-foreground: oklch(0.97 0.004 85);
-  --secondary: oklch(0.22 0.008 260);
-  --secondary-foreground: oklch(0.97 0.004 85);
-  --muted: oklch(0.22 0.008 260);
-  --muted-foreground: oklch(0.65 0.008 260);
-  --accent: oklch(0.78 0.14 85);
-  --accent-foreground: oklch(0.12 0.005 260);
-  --destructive: oklch(0.65 0.18 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.28 0.008 260);
-  --input: oklch(0.28 0.008 260);
-  --ring: oklch(0.78 0.14 85);
-  --chart-1: oklch(0.78 0.14 85);
-  --chart-2: oklch(0.55 0.16 155);
-  --chart-3: oklch(0.65 0.18 25);
-  --chart-4: oklch(0.55 0.15 160);
-  --chart-5: oklch(0.65 0.18 240);
-  --sidebar: oklch(0.10 0.005 260);
-  --sidebar-foreground: oklch(0.97 0.004 85);
-  --sidebar-accent: oklch(0.22 0.008 260);
-  --sidebar-accent-foreground: oklch(0.97 0.004 85);
-  --sidebar-border: oklch(0.28 0.008 260);
-  --sidebar-ring: oklch(0.78 0.14 85);
-}
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPONENTES BASE (Shadcn/ui layer)
+═══════════════════════════════════════════════════════════════════════════ */
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-dm-sans);
-    font-feature-settings: "kern" 1, "liga" 1;
-  }
-  h1, h2, h3 {
-    font-family: var(--font-fraunces);
-    letter-spacing: -0.01em;
-  }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
-  button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]),
-  [type="button"]:not(:disabled),
-  [type="submit"]:not(:disabled),
-  [type="reset"]:not(:disabled),
-  a[href],
-  select:not(:disabled),
-  input[type="checkbox"]:not(:disabled),
-  input[type="radio"]:not(:disabled) {
-    cursor: pointer;
   }
 }
 
+/* ── Container ────────────────────────────────────────────────────────────── */
 @layer components {
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
-
-  .flex {
-    min-height: 0;
-    min-width: 0;
+  @media (min-width: 1280px) {
+    .container { max-width: 1280px; padding-left: 2rem; padding-right: 2rem; }
   }
+}
 
-  @media (min-width: 640px) {
-    .container {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-  }
+/* ── Utilitários PNSP ─────────────────────────────────────────────────────── */
+.pnsp-card {
+  background: var(--terra);
+  border: 1px solid var(--creme-10);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-slow);
+}
+.pnsp-card:hover {
+  border-color: rgba(212,146,10,0.35);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-ouro), 0 20px 60px rgba(0,0,0,0.7);
+}
 
-  @media (min-width: 1024px) {
-    .container {
-      padding-left: 2rem;
-      padding-right: 2rem;
-      max-width: 1280px;
-    }
+.pnsp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  background: var(--ouro-sutil);
+  color: var(--ouro);
+  border: 1px solid rgba(212,146,10,0.25);
+}
+
+.pnsp-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: var(--ouro);
+  color: var(--preto);
+  font-weight: 700;
+  font-size: var(--text-base);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-ouro);
+  font-family: var(--font-body);
+  text-decoration: none;
+}
+.pnsp-btn-primary:hover {
+  background: var(--ouro-claro);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(212,146,10,0.45);
+}
+
+.pnsp-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border: 1px solid var(--creme-20);
+  color: var(--creme-80);
+  font-weight: 500;
+  font-size: var(--text-base);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-body);
+  background: none;
+  text-decoration: none;
+}
+.pnsp-btn-ghost:hover {
+  border-color: rgba(212,146,10,0.4);
+  color: var(--ouro);
+}
+
+/* ── Nav link underline animado ───────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  color: var(--creme-50);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: color 0.2s var(--ease);
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 70%;
+  height: 1.5px;
+  background: var(--ouro);
+  border-radius: 9999px;
+  transition: transform 0.2s var(--ease);
+}
+.nav-link:hover  { color: var(--ouro); }
+.nav-link:hover::after { transform: translateX(-50%) scaleX(1); }
+.nav-link.active { color: var(--ouro); }
+.nav-link.active::after { transform: translateX(-50%) scaleX(1); }
+
+/* ── Profile card hover ───────────────────────────────────────────────────── */
+.profile-card {
+  display: block;
+  background: var(--terra);
+  border: 1px solid var(--creme-10);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition-slow);
+  text-decoration: none;
+  color: inherit;
+}
+.profile-card:hover {
+  border-color: rgba(212,146,10,0.40);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.70), var(--shadow-ouro);
+}
+
+/* ── Pill filter ──────────────────────────────────────────────────────────── */
+.pill {
+  padding: 7px 18px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border: 1px solid var(--creme-10);
+  background: var(--terra);
+  color: var(--creme-50);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+.pill:hover {
+  border-color: rgba(212,146,10,0.30);
+  color: var(--creme);
+}
+.pill.active {
+  background: var(--ouro-sutil);
+  border-color: rgba(212,146,10,0.45);
+  color: var(--ouro);
+  font-weight: 600;
+}
+
+/* ── Search input ─────────────────────────────────────────────────────────── */
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  background: var(--terra);
+  border: 1px solid var(--creme-10);
+  border-radius: var(--radius-md);
+  color: var(--creme);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  outline: none;
+  transition: var(--transition);
+}
+.search-input::placeholder { color: var(--creme-50); }
+.search-input:focus {
+  border-color: rgba(212,146,10,0.50);
+  box-shadow: 0 0 0 3px rgba(212,146,10,0.12);
+}
+
+/* ── Section divider ──────────────────────────────────────────────────────── */
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  background: var(--ouro-sutil);
+  border: 1px solid rgba(212,146,10,0.25);
+  border-radius: var(--radius-full);
+  margin-bottom: 20px;
+}
+.section-tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ouro);
+  display: block;
+}
+.section-tag-text {
+  color: var(--ouro);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+}
+
+/* ── Responsive helpers ─────────────────────────────────────────────────────── */
+.hidden-mobile { display: flex !important; }
+.show-mobile   { display: none  !important; }
+
+@media (max-width: 1023px) {
+  .hidden-mobile { display: none  !important; }
+  .show-mobile   { display: flex  !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -2,58 +2,74 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import PublicLayout from "@/components/PublicLayout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge, profileTypeBadgeVariant } from "@/components/ui/badge";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
-import {
-  Search, MapPin, Star, Users, X, Award, AlertCircle, ArrowRight,
-} from "lucide-react";
 import { PROFILE_TYPES, BRAZIL_STATES } from "@shared/pnsp";
+import { Search, MapPin, Star, Award, AlertCircle, Users, X } from "lucide-react";
 
 const TYPE_PILLS = [
-  { value: "all",              label: "Todos" },
-  { value: "artista_solo",     label: "Artista" },
-  { value: "grupo_banda",      label: "Grupo" },
-  { value: "produtor",         label: "Produtor" },
-  { value: "estudio",          label: "Estúdio" },
-  { value: "professor",        label: "Professor" },
-  { value: "contratante",      label: "Contratante" },
-  { value: "luthier",          label: "Luthier" },
-  { value: "comunidade_roda",  label: "Comunidade" },
+  { value: "all",             label: "Todos" },
+  { value: "artista_solo",    label: "Artista" },
+  { value: "grupo_banda",     label: "Grupo" },
+  { value: "produtor",        label: "Produtor" },
+  { value: "estudio",         label: "Estúdio" },
+  { value: "professor",       label: "Professor" },
+  { value: "contratante",     label: "Contratante" },
+  { value: "luthier",         label: "Luthier" },
+  { value: "comunidade_roda", label: "Comunidade" },
 ];
 
 /* ─── Profile Card ──────────────────────────────────────────────────────────── */
 function ProfileCard({ profile }: { profile: any }) {
+  const [hovered, setHovered] = useState(false);
   return (
     <Link href={`/perfil/${profile.slug?.toLowerCase()}`}>
-      <div className="pnsp-profile-card cursor-pointer group overflow-hidden h-full flex flex-col">
-        {/* Avatar — aspect-ratio 1:1 */}
-        <div className="relative aspect-square overflow-hidden bg-muted flex-shrink-0">
+      <div
+        className="profile-card"
+        style={{
+          borderColor: hovered ? "rgba(212,146,10,0.40)" : "var(--creme-10)",
+          transform: hovered ? "translateY(-8px)" : "translateY(0)",
+          boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.70), 0 4px 32px rgba(212,146,10,0.25)" : "none",
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {/* Avatar — 1:1 */}
+        <div style={{
+          aspectRatio: "1/1",
+          background: "linear-gradient(135deg, var(--terra-escura), var(--terra-clara))",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+        }}>
           <img
             src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
             alt={profile.displayName}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease", transform: hovered ? "scale(1.06)" : "scale(1)" }}
           />
           {/* Hover overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-            <span className="text-white text-xs font-semibold font-body flex items-center gap-1">
-              Ver perfil <ArrowRight className="h-3.5 w-3.5" />
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(0,0,0,0.78), transparent)",
+            opacity: hovered ? 1 : 0,
+            transition: "opacity 0.3s ease",
+            display: "flex", alignItems: "flex-end", padding: "14px",
+          }}>
+            <span style={{ color: "var(--creme)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+              Ver perfil →
             </span>
           </div>
-          {/* Badges overlay */}
+          {/* Badges top-right */}
           {(profile.isFeatured || profile.isVerified) && (
-            <div className="absolute top-2 right-2 flex gap-1">
+            <div style={{ position: "absolute", top: 8, right: 8, display: "flex", gap: 4 }}>
               {profile.isVerified && (
-                <div className="rounded-full p-1 bg-black/50 backdrop-blur-sm" title="Verificado">
-                  <Award className="h-3 w-3 text-white" />
+                <div style={{ background: "rgba(0,0,0,0.55)", borderRadius: "50%", padding: 4, backdropFilter: "blur(4px)" }}>
+                  <Award style={{ width: 12, height: 12, color: "white" }} />
                 </div>
               )}
               {profile.isFeatured && (
-                <div className="rounded-full p-1 bg-black/50 backdrop-blur-sm">
-                  <Star className="h-3 w-3" style={{ color: "var(--o500)" }} />
+                <div style={{ background: "rgba(0,0,0,0.55)", borderRadius: "50%", padding: 4, backdropFilter: "blur(4px)" }}>
+                  <Star style={{ width: 12, height: 12, color: "var(--ouro)" }} />
                 </div>
               )}
             </div>
@@ -61,36 +77,31 @@ function ProfileCard({ profile }: { profile: any }) {
         </div>
 
         {/* Info */}
-        <div className="p-4 flex flex-col flex-1">
-          <h3 className="font-body font-bold text-foreground truncate mb-1 text-sm">
+        <div style={{ padding: "18px" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {profile.displayName}
-          </h3>
-          <Badge
-            variant={profileTypeBadgeVariant(profile.profileType)}
-            className="text-xs mb-2 w-fit"
-          >
-            {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
-          </Badge>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+            <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
+              {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
+            </span>
+          </div>
           {profile.city && (
-            <p className="text-xs text-muted-foreground font-body flex items-center gap-1 mb-2">
-              <MapPin className="h-3 w-3 flex-shrink-0" />
-              <span className="truncate">{profile.city}, {profile.state}</span>
-            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--creme-50)", fontSize: "var(--text-xs)", marginBottom: 8 }}>
+              <MapPin style={{ width: 11, height: 11, flexShrink: 0 }} />
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {profile.city}, {profile.state}
+              </span>
+            </div>
           )}
           {profile.bio && (
-            <p className="text-xs text-muted-foreground font-body line-clamp-2 leading-relaxed flex-1">
+            <p style={{
+              color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.5,
+              display: "-webkit-box", WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical", overflow: "hidden",
+            }}>
               {profile.bio}
             </p>
-          )}
-          {profile.genres && profile.genres.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-3">
-              {profile.genres.slice(0, 3).map((g: string) => (
-                <span key={g} className="pnsp-badge-gold text-xs">{g}</span>
-              ))}
-              {profile.genres.length > 3 && (
-                <span className="text-xs text-muted-foreground font-body">+{profile.genres.length - 3}</span>
-              )}
-            </div>
           )}
         </div>
       </div>
@@ -98,17 +109,16 @@ function ProfileCard({ profile }: { profile: any }) {
   );
 }
 
-/* ─── Profile Card Skeleton ─────────────────────────────────────────────────── */
 function ProfileSkeleton() {
   return (
-    <div className="pnsp-profile-card overflow-hidden animate-pulse">
-      <div className="aspect-square pnsp-skeleton" />
-      <div className="p-4 space-y-2">
-        <div className="pnsp-skeleton h-4 w-3/4" />
-        <div className="pnsp-skeleton h-5 w-24 rounded-full" />
-        <div className="pnsp-skeleton h-3 w-1/2" />
-        <div className="pnsp-skeleton h-3 w-full" />
-        <div className="pnsp-skeleton h-3 w-4/5" />
+    <div style={{ background: "var(--terra)", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--creme-10)" }}>
+      <div className="skeleton" style={{ aspectRatio: "1/1" }} />
+      <div style={{ padding: "18px" }}>
+        <div className="skeleton" style={{ height: 22, width: "70%", marginBottom: 10 }} />
+        <div className="skeleton" style={{ height: 16, width: "40%", borderRadius: 9999, marginBottom: 10 }} />
+        <div className="skeleton" style={{ height: 13, width: "55%", marginBottom: 6 }} />
+        <div className="skeleton" style={{ height: 13, width: "90%", marginBottom: 4 }} />
+        <div className="skeleton" style={{ height: 13, width: "70%" }} />
       </div>
     </div>
   );
@@ -131,170 +141,191 @@ export default function Profiles() {
     offset,
   });
 
-  const hasFilters = search || profileType !== "all" || state !== "all";
+  const hasFilters = !!(search || profileType !== "all" || state !== "all");
 
   function clearFilters() {
-    setSearch(""); setSearchInput("");
-    setProfileType("all"); setState("all");
-    setOffset(0);
+    setSearch(""); setSearchInput(""); setProfileType("all"); setState("all"); setOffset(0);
   }
-
   function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    setSearch(searchInput);
-    setOffset(0);
+    e.preventDefault(); setSearch(searchInput); setOffset(0);
   }
 
   return (
     <PublicLayout>
-      {/* ─── Header ─────────────────────────────────────────────────────── */}
-      <div
-        className="py-14 border-b border-border"
-        style={{ background: "linear-gradient(135deg, #0A0A0A 0%, #0d1a00 50%, #0A0A0A 100%)" }}
-      >
-        <div className="container">
-          <div className="max-w-2xl">
-            <div className="pnsp-divider mb-4" />
-            <h1 className="pnsp-section-title text-3xl lg:text-4xl mb-3 animate-slide-up" style={{ color: "var(--n50)" }}>
-              Perfis &amp; Vitrines
-            </h1>
-            <p className="font-body text-lg mb-8 animate-slide-up animate-delay-100" style={{ color: "var(--n400)" }}>
-              Descubra artistas, grupos, produtores, professores e parceiros do ecossistema nacional
-            </p>
-            <form onSubmit={handleSearch} className="flex gap-2 animate-slide-up animate-delay-200">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: "var(--n400)" }} />
-                <Input
-                  placeholder="Buscar por nome, cidade, estilo..."
-                  value={searchInput}
-                  onChange={e => setSearchInput(e.target.value)}
-                  className="pl-10 h-11 font-body bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 transition-colors"
-                />
-              </div>
-              <Button
-                type="submit"
-                size="lg"
-                className="h-11 px-6 font-body font-semibold"
-                style={{ background: "var(--o500)", color: "var(--n950)" }}
-              >
-                Buscar
-              </Button>
-            </form>
+      {/* Header */}
+      <div style={{
+        padding: "72px 24px 56px",
+        background: "linear-gradient(160deg, #0C0A08 0%, #1C160C 50%, #0C0A08 100%)",
+        borderBottom: "1px solid rgba(212,146,10,0.10)",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        {/* Blob */}
+        <div style={{
+          position: "absolute", top: "-30%", right: "-10%",
+          width: 500, height: 500,
+          background: "radial-gradient(circle, rgba(212,146,10,0.10) 0%, transparent 70%)",
+          filter: "blur(60px)", pointerEvents: "none",
+        }} />
+        <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 1 }}>
+          <div className="section-tag" style={{ display: "inline-flex", marginBottom: 20 }}>
+            <span className="section-tag-dot" /><span className="section-tag-text">Diretório</span>
           </div>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 700, marginBottom: 12, lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+            Perfis &amp; Vitrines
+          </h1>
+          <p style={{ color: "var(--creme-50)", fontSize: "var(--text-lg)", marginBottom: 32, maxWidth: 520 }}>
+            Descubra artistas, grupos, produtores, professores e parceiros do ecossistema nacional
+          </p>
+          {/* Search */}
+          <form onSubmit={handleSearch} style={{ display: "flex", gap: 12, maxWidth: 560 }}>
+            <div style={{ position: "relative", flex: 1 }}>
+              <Search style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: "var(--creme-50)" }} />
+              <input
+                className="search-input"
+                placeholder="Buscar por nome, cidade, estilo..."
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+              />
+            </div>
+            <button type="submit" className="pnsp-btn-primary" style={{ padding: "12px 24px", whiteSpace: "nowrap" }}>
+              Buscar
+            </button>
+          </form>
         </div>
       </div>
 
-      <div className="container py-8">
-        {/* ─── Filter Pills ────────────────────────────────────────────── */}
-        <div className="mb-6 space-y-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            {TYPE_PILLS.map(pill => (
-              <button
-                key={pill.value}
-                type="button"
-                onClick={() => { setProfileType(pill.value); setOffset(0); }}
-                className="px-4 py-1.5 rounded-full text-sm font-medium font-body transition-all"
-                style={
-                  profileType === pill.value
-                    ? { background: "var(--o500)", color: "var(--n950)", boxShadow: "0 2px 8px oklch(0.78 0.14 85 / 0.30)" }
-                    : { background: "var(--muted)", color: "var(--muted-foreground)" }
-                }
-              >
-                {pill.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3 flex-wrap">
-            <Select value={state} onValueChange={v => { setState(v); setOffset(0); }}>
-              <SelectTrigger className="w-44 h-9 font-body text-sm">
-                <SelectValue placeholder="Estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all" className="font-body">Todos os estados</SelectItem>
-                {BRAZIL_STATES.map(s => (
-                  <SelectItem key={s.value} value={s.value} className="font-body">{s.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {hasFilters && (
-              <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9 font-body text-muted-foreground gap-1">
-                <X className="h-3.5 w-3.5" /> Limpar filtros
-              </Button>
-            )}
-
-            <span className="ml-auto text-sm text-muted-foreground font-body">
-              {isLoading ? "Carregando..." : `${profiles?.length ?? 0} perfis`}
-            </span>
-          </div>
-        </div>
-
-        {/* ─── Grid ────────────────────────────────────────────────────── */}
-        {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {Array.from({ length: 15 }).map((_, i) => <ProfileSkeleton key={i} />)}
-          </div>
-        ) : profiles && profiles.length > 0 ? (
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {profiles.map(profile => (
-                <ProfileCard key={profile.id} profile={profile} />
+      {/* Body */}
+      <div style={{ padding: "40px 24px 80px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          {/* Pills + filters */}
+          <div style={{ marginBottom: 32 }}>
+            {/* Type pills */}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16, overflowX: "auto", paddingBottom: 4 }}>
+              {TYPE_PILLS.map(pill => (
+                <button
+                  key={pill.value}
+                  type="button"
+                  className={`pill ${profileType === pill.value ? "active" : ""}`}
+                  onClick={() => { setProfileType(pill.value); setOffset(0); }}
+                >
+                  {pill.label}
+                </button>
               ))}
             </div>
 
-            <div className="flex justify-center gap-3 mt-10">
-              {offset > 0 && (
-                <Button variant="outline" className="font-body" onClick={() => setOffset(o => Math.max(0, o - limit))}>
-                  ← Anterior
-                </Button>
+            {/* State + count */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+              <select
+                value={state}
+                onChange={e => { setState(e.target.value); setOffset(0); }}
+                style={{
+                  padding: "8px 14px",
+                  background: "var(--terra)",
+                  border: "1px solid var(--creme-10)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--creme)",
+                  fontSize: "var(--text-sm)",
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  outline: "none",
+                }}
+              >
+                <option value="all">Todos os estados</option>
+                {BRAZIL_STATES.map(s => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+
+              {hasFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    padding: "8px 14px",
+                    border: "1px solid var(--creme-10)",
+                    borderRadius: "var(--radius-md)",
+                    color: "var(--creme-50)",
+                    fontSize: "var(--text-sm)",
+                    fontFamily: "var(--font-body)",
+                    background: "none",
+                    cursor: "pointer",
+                    transition: "var(--transition)",
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
+                >
+                  <X style={{ width: 13, height: 13 }} /> Limpar
+                </button>
               )}
-              {profiles.length === limit && (
-                <Button variant="outline" className="font-body" onClick={() => setOffset(o => o + limit)}>
-                  Próxima →
-                </Button>
+
+              <span style={{ marginLeft: "auto", color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
+                {isLoading ? "Carregando..." : `${profiles?.length ?? 0} perfis`}
+              </span>
+            </div>
+          </div>
+
+          {/* Grid */}
+          {isLoading ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 20 }}>
+              {Array.from({ length: 12 }).map((_, i) => <ProfileSkeleton key={i} />)}
+            </div>
+          ) : profiles && profiles.length > 0 ? (
+            <>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 20 }}>
+                {profiles.map(p => <ProfileCard key={p.id} profile={p} />)}
+              </div>
+              <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 48 }}>
+                {offset > 0 && (
+                  <button type="button" className="pnsp-btn-ghost" style={{ padding: "10px 24px" }}
+                    onClick={() => setOffset(o => Math.max(0, o - limit))}>
+                    ← Anterior
+                  </button>
+                )}
+                {profiles.length === limit && (
+                  <button type="button" className="pnsp-btn-ghost" style={{ padding: "10px 24px" }}
+                    onClick={() => setOffset(o => o + limit)}>
+                    Próxima →
+                  </button>
+                )}
+              </div>
+            </>
+          ) : isError ? (
+            <div style={{ textAlign: "center", padding: "80px 0" }}>
+              <div style={{ width: 64, height: 64, borderRadius: "var(--radius-lg)", background: "var(--terra)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+                <AlertCircle style={{ width: 28, height: 28, color: "var(--ouro)" }} />
+              </div>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 10 }}>Erro ao carregar perfis</h3>
+              <p style={{ color: "var(--creme-50)", marginBottom: 24 }}>Verifique sua conexão e tente novamente.</p>
+              <button type="button" className="pnsp-btn-ghost" style={{ padding: "10px 24px" }}
+                onClick={() => window.location.reload()}>
+                Tentar novamente
+              </button>
+            </div>
+          ) : (
+            <div style={{ textAlign: "center", padding: "80px 0" }}>
+              <div style={{ width: 72, height: 72, borderRadius: "var(--radius-lg)", background: "var(--terra)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", border: "1px solid var(--creme-10)" }}>
+                <Users style={{ width: 32, height: 32, color: "var(--ouro)" }} />
+              </div>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 10 }}>
+                {hasFilters ? "Nenhum perfil encontrado" : "Seja o primeiro!"}
+              </h3>
+              <p style={{ color: "var(--creme-50)", marginBottom: 28, maxWidth: 360, margin: "0 auto 28px" }}>
+                {hasFilters ? "Ajuste os filtros ou limpe a busca." : "Crie seu perfil e apareça para artistas e contratantes de todo o Brasil."}
+              </p>
+              {hasFilters ? (
+                <button type="button" className="pnsp-btn-ghost" style={{ padding: "10px 24px" }} onClick={clearFilters}>
+                  <X style={{ width: 14, height: 14 }} /> Limpar filtros
+                </button>
+              ) : (
+                <Link href="/criar-perfil">
+                  <span className="pnsp-btn-primary">Criar meu perfil</span>
+                </Link>
               )}
             </div>
-          </>
-        ) : isError ? (
-          <div className="text-center py-24">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--o100)" }}>
-              <AlertCircle className="h-8 w-8" style={{ color: "var(--o500)" }} />
-            </div>
-            <h3 className="font-display font-semibold text-xl text-foreground mb-2">Erro ao carregar perfis</h3>
-            <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">
-              Não foi possível carregar os perfis. Verifique sua conexão e tente novamente.
-            </p>
-            <Button onClick={() => window.location.reload()} variant="outline" className="font-body">
-              Tentar novamente
-            </Button>
-          </div>
-        ) : (
-          <div className="text-center py-24">
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: "var(--o100)" }}>
-              <Users className="h-10 w-10" style={{ color: "var(--o500)" }} />
-            </div>
-            <h3 className="font-display font-semibold text-xl text-foreground mb-2">
-              {hasFilters ? "Nenhum perfil encontrado" : "Seja o primeiro!"}
-            </h3>
-            <p className="text-muted-foreground font-body mb-6 max-w-sm mx-auto">
-              {hasFilters
-                ? "Ajuste os filtros ou limpe a busca para ver mais resultados."
-                : "Crie seu perfil e apareça para artistas e contratantes de todo o Brasil."}
-            </p>
-            {hasFilters ? (
-              <Button onClick={clearFilters} variant="outline" className="font-body">
-                <X className="h-4 w-4 mr-2" /> Limpar filtros
-              </Button>
-            ) : (
-              <Link href="/criar-perfil">
-                <Button className="font-body" style={{ background: "var(--o500)", color: "var(--n950)" }}>
-                  Criar meu perfil
-                </Button>
-              </Link>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </PublicLayout>
   );
