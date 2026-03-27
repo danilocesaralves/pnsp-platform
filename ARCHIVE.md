@@ -25,10 +25,10 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - FONTE DISPLAY: Syne 700/800
 - FONTE BODY: Inter 400/500/600
 
-## Problema Atual (resolver na próxima sessão)
-- CSS quebrado no commit 72f690b — precisa restaurar com: git revert 72f690b --no-edit
-- Após restaurar: o visual volta ao estado funcional (7/10)
-- Próximo objetivo: elevar para 10/10 com redesign cirúrgico único
+## Estado do CSS (commit 44be0b2)
+- CSS turquesa definitivo aplicado — shadcn/ui mapeado corretamente via @theme inline + :root
+- Tema "Noite de Samba" (dourado/sépia) removido definitivamente
+- Próximo objetivo: refinamentos visuais 10/10 nas páginas
 
 ## Funcionalidades Implementadas
 - ProfileStrength (força do perfil estilo LinkedIn)
