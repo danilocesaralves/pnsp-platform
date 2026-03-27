@@ -605,9 +605,7 @@ export default function Home() {
         <div style={S.maxW()}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 40, marginBottom: 48 }}>
             <div style={{ gridColumn: "span 2" }}>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", fontWeight: 700, color: "var(--ouro)", marginBottom: 12 }}>
-                PNSP
-              </div>
+              <img src="/logo-pnsp.svg" alt="PNSP" style={{ height: 48, width: "auto", marginBottom: 12 }} />
               <p style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.6, maxWidth: 260 }}>
                 Plataforma Nacional do Samba e do Pagode — o ecossistema digital que conecta toda a cadeia do samba brasileiro.
               </p>

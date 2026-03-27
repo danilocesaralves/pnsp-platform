@@ -51,7 +51,9 @@ export default function EntrarPage() {
       <div className="min-h-[70vh] flex items-center justify-center px-4">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold font-display">Entrar na PNSP</h1>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+              <img src="/logo-pnsp.svg" alt="PNSP" style={{ height: 64, width: "auto" }} />
+            </div>
             <p className="text-muted-foreground font-body">
               Acesse sua conta para continuar
             </p>

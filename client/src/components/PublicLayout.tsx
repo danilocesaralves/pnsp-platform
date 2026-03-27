@@ -48,17 +48,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
           {/* Logo */}
           <Link href="/">
-            <span style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "1.5rem",
-              fontWeight: 700,
-              color: "var(--ouro)",
-              cursor: "pointer",
-              letterSpacing: "-0.02em",
-              userSelect: "none",
-            }}>
-              PNSP
-            </span>
+            <img src="/logo-pnsp.svg" alt="PNSP" style={{ height: 52, width: "auto", cursor: "pointer", display: "block" }} />
           </Link>
 
           {/* Desktop Nav */}
