@@ -266,6 +266,83 @@ function ProfileSkeleton() {
   );
 }
 
+/* ─── HowItWorksCard ────────────────────────────────────────────────────────── */
+function HowItWorksCard({ step }: { step: { num: string; title: string; desc: string } }) {
+  const [h, setH] = useState(false);
+  return (
+    <div
+      style={{
+        background: "var(--terra)",
+        border: `1px solid ${h ? "rgba(212,146,10,0.35)" : "var(--creme-10)"}`,
+        borderRadius: "var(--radius-lg)",
+        padding: "40px 36px",
+        transition: "var(--transition)",
+        transform: h ? "translateY(-8px)" : "translateY(0)",
+        boxShadow: h ? "var(--shadow-ouro)" : "none",
+      }}
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+    >
+      <div style={{ fontFamily: "var(--font-display)", fontSize: "5rem", fontWeight: 700, color: "var(--ouro-sutil)", lineHeight: 1, marginBottom: 24, userSelect: "none" }}>
+        {step.num}
+      </div>
+      <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 12 }}>{step.title}</h3>
+      <p style={{ color: "var(--creme-50)", lineHeight: 1.65 }}>{step.desc}</p>
+    </div>
+  );
+}
+
+const HOW_IT_WORKS = [
+  { num: "01", title: "Crie seu perfil",   desc: "Monte sua vitrine profissional em minutos. Artista, produtor, estúdio ou contratante — todos têm espaço aqui." },
+  { num: "02", title: "Conecte-se",        desc: "Descubra oportunidades, publique ofertas e conecte-se com todo o ecossistema do samba nacional." },
+  { num: "03", title: "Cresça",            desc: "Feche contratos, agende shows, encontre músicos, estúdios e parceiros. Tudo em um só lugar." },
+];
+
+/* ─── OfferingCard ──────────────────────────────────────────────────────────── */
+function OfferingCard({ offering }: { offering: any }) {
+  const [h, setH] = useState(false);
+  return (
+    <Link href={`/ofertas/${offering.id}`}>
+      <div
+        style={{
+          background: "var(--terra)",
+          border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+          borderRadius: "var(--radius-lg)",
+          padding: 24,
+          cursor: "pointer",
+          transition: "var(--transition-slow)",
+          transform: h ? "translateY(-6px)" : "translateY(0)",
+          boxShadow: h ? "var(--shadow-ouro)" : "none",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+        onMouseEnter={() => setH(true)}
+        onMouseLeave={() => setH(false)}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
+            {offering.category?.replace(/_/g, " ")}
+          </span>
+          {offering.price && (
+            <span style={{ color: "var(--verde)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
+              R$ {Number(offering.price).toLocaleString("pt-BR")}
+            </span>
+          )}
+        </div>
+        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, lineHeight: 1.2 }}>
+          {offering.title}
+        </h3>
+        {offering.city && (
+          <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
+            📍 {offering.city}, {offering.state}
+          </span>
+        )}
+      </div>
+    </Link>
+  );
+}
+
 /* ─── Home ──────────────────────────────────────────────────────────────────── */
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -418,34 +495,7 @@ export default function Home() {
             <p style={S.sub()}>Da criação do perfil às oportunidades reais — simples e direto.</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-            {[
-              { num: "01", title: "Crie seu perfil", desc: "Monte sua vitrine profissional em minutos. Artista, produtor, estúdio ou contratante — todos têm espaço aqui." },
-              { num: "02", title: "Conecte-se", desc: "Descubra oportunidades, publique ofertas e conecte-se com todo o ecossistema do samba nacional." },
-              { num: "03", title: "Cresça", desc: "Feche contratos, agende shows, encontre músicos, estúdios e parceiros. Tudo em um só lugar." },
-            ].map((step, i) => {
-              const [h, setH] = useState(false);
-              return (
-                <div key={i}
-                  style={{
-                    background: "var(--terra)",
-                    border: `1px solid ${h ? "rgba(212,146,10,0.35)" : "var(--creme-10)"}`,
-                    borderRadius: "var(--radius-lg)",
-                    padding: "40px 36px",
-                    transition: "var(--transition)",
-                    transform: h ? "translateY(-8px)" : "translateY(0)",
-                    boxShadow: h ? "var(--shadow-ouro)" : "none",
-                  }}
-                  onMouseEnter={() => setH(true)}
-                  onMouseLeave={() => setH(false)}
-                >
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "5rem", fontWeight: 700, color: "var(--ouro-sutil)", lineHeight: 1, marginBottom: 24, userSelect: "none" }}>
-                    {step.num}
-                  </div>
-                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 12 }}>{step.title}</h3>
-                  <p style={{ color: "var(--creme-50)", lineHeight: 1.65 }}>{step.desc}</p>
-                </div>
-              );
-            })}
+            {HOW_IT_WORKS.map(step => <HowItWorksCard key={step.num} step={step} />)}
           </div>
         </div>
       </section>
@@ -508,49 +558,7 @@ export default function Home() {
                       ))}
                     </div>
                   ))
-                : recentOfferings?.map(offering => {
-                    const [h, setH] = useState(false);
-                    return (
-                      <Link key={offering.id} href={`/ofertas/${offering.id}`}>
-                        <div
-                          style={{
-                            background: "var(--terra)",
-                            border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
-                            borderRadius: "var(--radius-lg)",
-                            padding: 24,
-                            cursor: "pointer",
-                            transition: "var(--transition-slow)",
-                            transform: h ? "translateY(-6px)" : "translateY(0)",
-                            boxShadow: h ? "var(--shadow-ouro)" : "none",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 12,
-                          }}
-                          onMouseEnter={() => setH(true)}
-                          onMouseLeave={() => setH(false)}
-                        >
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
-                              {offering.category?.replace(/_/g, " ")}
-                            </span>
-                            {offering.price && (
-                              <span style={{ color: "var(--verde)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
-                                R$ {Number(offering.price).toLocaleString("pt-BR")}
-                              </span>
-                            )}
-                          </div>
-                          <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, lineHeight: 1.2 }}>
-                            {offering.title}
-                          </h3>
-                          {offering.city && (
-                            <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
-                              📍 {offering.city}, {offering.state}
-                            </span>
-                          )}
-                        </div>
-                      </Link>
-                    );
-                  })}
+                : recentOfferings?.map(offering => <OfferingCard key={offering.id} offering={offering} />)}
             </div>
           </div>
         </section>
