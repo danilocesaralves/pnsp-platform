@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+:root { --p: #00C4A0 !important; --pd: #009980 !important; }
+
 /* ═══════════════════════════════════════════════════════════════════════════════
    PNSP — NOITE DE SAMBA
    Paleta: Preto profundo · Ouro quente · Creme · Verde samba · Vermelho
@@ -107,6 +109,9 @@
   --chart-3: #B83232;
   --chart-4: #8B6110;
   --chart-5: #F0B429;
+
+  /* ── Cor de ação turquesa (componentes interativos: ProfileStrength, Feed) ── */
+  --p: #00C4A0;
 }
 
 /* ── Shadcn @theme inline ────────────────────────────────────────────────── */
