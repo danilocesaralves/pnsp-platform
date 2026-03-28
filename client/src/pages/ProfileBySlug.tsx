@@ -288,14 +288,28 @@ export default function ProfileBySlug() {
               </ActionBtn>
             )}
             {profile.phone && (
-              <ActionBtn href={phoneHref(profile.phone)}>
-                <Phone style={{ width: 13, height: 13 }} /> Contato
-              </ActionBtn>
+              <a
+                href={`https://wa.me/55${profile.phone.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 10, background: "#25D366", color: "white", fontWeight: 700, fontSize: "var(--text-sm)", fontFamily: "var(--font-body)", textDecoration: "none", transition: "opacity 0.2s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+              >
+                📱 WhatsApp
+              </a>
             )}
             {profile.instagramUrl && (
-              <ActionBtn href={instagramHref(profile.instagramUrl)}>
-                <InstagramIcon size={14} />
-              </ActionBtn>
+              <a
+                href={instagramHref(profile.instagramUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 10, background: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", color: "white", fontWeight: 700, fontSize: "var(--text-sm)", fontFamily: "var(--font-body)", textDecoration: "none", transition: "opacity 0.2s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+              >
+                📷 Instagram
+              </a>
             )}
             {profile.youtubeUrl && (
               <ActionBtn href={profile.youtubeUrl}>
