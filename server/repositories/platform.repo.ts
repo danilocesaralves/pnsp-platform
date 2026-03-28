@@ -206,6 +206,79 @@ export async function getProfilesByState() {
     .limit(10);
 }
 
+export async function getAdminStats() {
+  const db = await getDb();
+  if (!db) return {
+    totalProfiles: 0, totalUsers: 0, totalOpportunities: 0, totalOfferings: 0,
+    totalStudios: 0, totalCities: 0, verifiedProfiles: 0, activeProfiles: 0,
+  };
+  const [base, extraResult] = await Promise.all([
+    getPlatformStats(),
+    db
+      .select({
+        verifiedProfiles: sql<number>`COUNT(*) FILTER (WHERE ${profiles.isVerified} = true)::int`,
+        totalCities: sql<number>`COUNT(DISTINCT ${profiles.city}) FILTER (WHERE ${profiles.city} IS NOT NULL AND ${profiles.city} != '')::int`,
+      })
+      .from(profiles)
+      .where(eq(profiles.isActive, true)),
+  ]);
+  const extra = extraResult[0] ?? { verifiedProfiles: 0, totalCities: 0 };
+  return {
+    totalProfiles: base.profileCount,
+    totalUsers: base.userCount,
+    totalOpportunities: base.opportunityCount,
+    totalOfferings: base.offeringCount,
+    totalStudios: base.studioCount,
+    totalCities: Number(extra.totalCities),
+    verifiedProfiles: Number(extra.verifiedProfiles),
+    activeProfiles: base.profileCount,
+  };
+}
+
+export async function getHealthMetrics() {
+  const db = await getDb();
+  if (!db) return { total: 0, withAvatar: 0, withBio: 0, withPhone: 0, withInstagram: 0, withCover: 0 };
+  const result = await db
+    .select({
+      total: sql<number>`COUNT(*)::int`,
+      withAvatar: sql<number>`COUNT(*) FILTER (WHERE ${profiles.avatarUrl} IS NOT NULL AND ${profiles.avatarUrl} != '')::int`,
+      withBio: sql<number>`COUNT(*) FILTER (WHERE ${profiles.bio} IS NOT NULL AND ${profiles.bio} != '')::int`,
+      withPhone: sql<number>`COUNT(*) FILTER (WHERE ${profiles.phone} IS NOT NULL AND ${profiles.phone} != '')::int`,
+      withInstagram: sql<number>`COUNT(*) FILTER (WHERE ${profiles.instagramUrl} IS NOT NULL AND ${profiles.instagramUrl} != '')::int`,
+      withCover: sql<number>`COUNT(*) FILTER (WHERE ${profiles.coverUrl} IS NOT NULL AND ${profiles.coverUrl} != '')::int`,
+    })
+    .from(profiles)
+    .where(eq(profiles.isActive, true));
+  const row = result[0] ?? { total: 0, withAvatar: 0, withBio: 0, withPhone: 0, withInstagram: 0, withCover: 0 };
+  return {
+    total: Number(row.total),
+    withAvatar: Number(row.withAvatar),
+    withBio: Number(row.withBio),
+    withPhone: Number(row.withPhone),
+    withInstagram: Number(row.withInstagram),
+    withCover: Number(row.withCover),
+  };
+}
+
+export async function getProfileGrowthData() {
+  const db = await getDb();
+  if (!db) return [];
+  try {
+    return db
+      .select({
+        month: sql<string>`TO_CHAR(${profiles.createdAt}, 'YYYY-MM')`,
+        count: sql<number>`COUNT(*)::int`,
+      })
+      .from(profiles)
+      .where(sql`${profiles.createdAt} >= NOW() - INTERVAL '6 months'`)
+      .groupBy(sql`TO_CHAR(${profiles.createdAt}, 'YYYY-MM')`)
+      .orderBy(sql`TO_CHAR(${profiles.createdAt}, 'YYYY-MM')`);
+  } catch (err) {
+    dbLogger.error({ err }, "getProfileGrowthData failed");
+    return [];
+  }
+}
+
 export async function getMonthlyGrowth() {
   const db = await getDb();
   if (!db) return [];

@@ -30,6 +30,7 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const CreateOffering = lazy(() => import("./pages/CreateOffering"));
 const CreateOpportunity = lazy(() => import("./pages/CreateOpportunity"));
 const ImageGenerator = lazy(() => import("./pages/ImageGenerator"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminPanel = lazy(() => import("./pages/admin/AdminPanel"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminOfferings = lazy(() => import("./pages/admin/AdminOfferings"));
@@ -83,7 +84,7 @@ function Router() {
         <Route path="/criar-imagem" component={ImageGenerator} />
 
         {/* Admin */}
-        <Route path="/admin" component={AdminPanel} />
+        <Route path="/admin" component={AdminDashboard} />
         <Route path="/admin/usuarios" component={AdminUsers} />
         <Route path="/admin/ofertas" component={AdminOfferings} />
         <Route path="/admin/oportunidades" component={AdminOpportunities} />

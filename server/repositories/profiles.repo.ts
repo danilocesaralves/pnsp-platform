@@ -117,3 +117,23 @@ export async function deletePortfolioItem(id: number) {
   if (!db) throw new Error("DB not available");
   return db.delete(portfolioItems).where(eq(portfolioItems.id, id));
 }
+
+export async function getRecentProfiles(limit = 10) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({
+      id: profiles.id,
+      displayName: profiles.displayName,
+      profileType: profiles.profileType,
+      city: profiles.city,
+      state: profiles.state,
+      createdAt: profiles.createdAt,
+      isVerified: profiles.isVerified,
+      avatarUrl: profiles.avatarUrl,
+    })
+    .from(profiles)
+    .where(eq(profiles.isActive, true))
+    .orderBy(desc(profiles.createdAt))
+    .limit(limit);
+}

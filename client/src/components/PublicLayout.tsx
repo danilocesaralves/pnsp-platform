@@ -119,7 +119,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                       <LayoutDashboard style={{ width: 14, height: 14, marginRight: 8 }} />Dashboard
                     </Link>
                   </DropdownMenuItem>
-                  {(user.role === "admin" || user.role === "owner") && (
+                  {(user.role === "admin" || user.role === "owner" || user.email === "composisamba@gmail.com") && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>

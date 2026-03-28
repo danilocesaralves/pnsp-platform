@@ -143,6 +143,36 @@ export const adminRouter = router({
       });
       return { success: true };
     }),
+
+  // ── Dashboard admin (Stripe-ready) ─────────────────────────────────────────
+  getStats: adminProcedure
+    .query(() => repo.getAdminStats()),
+
+  getRecentProfiles: adminProcedure
+    .query(() => repo.getRecentProfiles(10)),
+
+  getProfilesByType: adminProcedure
+    .query(() => repo.getProfileCountByType()),
+
+  getProfilesByState: adminProcedure
+    .query(() => repo.getProfilesByState()),
+
+  getHealthMetrics: adminProcedure
+    .query(() => repo.getHealthMetrics()),
+
+  getGrowthData: adminProcedure
+    .query(() => repo.getProfileGrowthData()),
+
+  getRevenueData: adminProcedure
+    .query(() => ({
+      mrr: 0,
+      arr: 0,
+      totalRevenue: 0,
+      totalTransactions: 0,
+      avgTicket: 0,
+      projectedRevenue: 0,
+      projectedArr: 0,
+    })),
 });
 
 // ─── OWNER DASHBOARD ─────────────────────────────────────────────────────────
