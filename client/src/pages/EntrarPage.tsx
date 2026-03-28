@@ -52,7 +52,7 @@ export default function EntrarPage() {
         <div className="w-full max-w-md space-y-6">
           <div className="text-center space-y-2">
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
-              <img src="/logo-pnsp.svg" alt="PNSP" style={{ height: 64, width: "auto" }} />
+              <img src="/logo-pnsp.jpg" alt="PNSP" style={{ height: 64, width: "auto", filter: "invert(1)" }} />
             </div>
             <p className="text-muted-foreground font-body">
               Acesse sua conta para continuar
