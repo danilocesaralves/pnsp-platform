@@ -42,9 +42,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         position: "sticky",
         top: 0,
         zIndex: 50,
-        background: "rgba(12,10,8,0.92)",
-        backdropFilter: "blur(24px) saturate(180%)",
-        WebkitBackdropFilter: "blur(24px) saturate(180%)",
+        background: "rgba(10,8,0,0.95)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
         borderBottom: "1px solid rgba(212,160,23,0.15)",
         height: 68,
         display: "flex",
@@ -57,9 +57,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
           {/* Logo */}
           <Link href="/">
-            <div style={{ padding: "10px 0" }}>
-              <img src="/logo-pnsp.jpg" alt="PNSP" title="PNSP - Plataforma Nacional do Samba e Pagode" style={{ height: 72, width: "auto", cursor: "pointer", display: "block", filter: "invert(1)" }} />
-            </div>
+            <img src="/logo-pnsp.jpg" alt="PNSP" title="PNSP - Plataforma Nacional do Samba e Pagode" style={{ height: 52, width: "auto", cursor: "pointer", display: "block", filter: "invert(1) brightness(1.2)" }} />
           </Link>
 
           {/* Desktop Nav */}

@@ -39,14 +39,14 @@ function instagramHref(url: string) {
 }
 
 const coverGradient = (type?: string | null) => ({
-  artista_solo:    "linear-gradient(135deg, #2d1a00, #1a0d00)",
-  grupo_banda:     "linear-gradient(135deg, #2d1a00, #1a0d00)",
+  artista_solo:    "linear-gradient(135deg, #2d1800, #1a0d00)",
+  grupo_banda:     "linear-gradient(135deg, #2d1800, #1a0d00)",
   produtor:        "linear-gradient(135deg, #0d0d2d, #060617)",
   professor:       "linear-gradient(135deg, #0d0d2d, #060617)",
   estudio:         "linear-gradient(135deg, #002d0d, #001a06)",
-  luthier:         "linear-gradient(135deg, #1a1400, #0d0a00)",
-  contratante:     "linear-gradient(135deg, #1a1400, #0d0a00)",
-}[type ?? ""] ?? "linear-gradient(135deg, #1a1400, #0d0a00)");
+  luthier:         "linear-gradient(135deg, #1a1400, #2d2000)",
+  contratante:     "linear-gradient(135deg, #1a1400, #2d2000)",
+}[type ?? ""] ?? "linear-gradient(135deg, #1a1400, #2d2000)");
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
@@ -154,11 +154,10 @@ export default function ProfileBySlug() {
   return (
     <PublicLayout>
 
-      {/* ─── COVER + AVATAR wrapper ─────────────────────────────────────────── */}
-      <div style={{ position: "relative" }}>
-        {/* Capa */}
+      {/* ─── CAPA + AVATAR ──────────────────────────────────────────────────── */}
+      <div style={{ position: "relative", overflow: "visible" }}>
         <div style={{
-          height: 280,
+          height: 240,
           position: "relative",
           overflow: "hidden",
           background: coverGradient(profile.profileType),
@@ -166,8 +165,7 @@ export default function ProfileBySlug() {
           {profile.coverUrl && (
             <img src={profile.coverUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           )}
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, rgba(12,10,8,0.90) 100%)" }} />
-
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, rgba(10,8,0,0.85) 100%)" }} />
           {isOwner && (
             <button
               type="button"
@@ -177,7 +175,7 @@ export default function ProfileBySlug() {
                 position: "absolute", top: 16, right: 16,
                 display: "flex", alignItems: "center", gap: 6,
                 padding: "7px 14px",
-                background: "rgba(12,10,8,0.70)",
+                background: "rgba(10,8,0,0.70)",
                 backdropFilter: "blur(8px)",
                 border: "1px solid var(--creme-20)",
                 borderRadius: "var(--radius-full)",
@@ -197,15 +195,15 @@ export default function ProfileBySlug() {
             onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f, "cover", setUploadingCover); e.target.value = ""; }} />
         </div>
 
-        {/* Avatar — sobrepõe a capa via bottom:-56px no wrapper */}
-        <div style={{ position: "absolute", bottom: -56, left: 32, zIndex: 3 }}>
+        {/* Avatar — bottom:-52px sobe sobre a capa */}
+        <div style={{ position: "absolute", bottom: -52, left: 32, zIndex: 3 }}>
           <div style={{ position: "relative" }}>
             <img
               src={profile.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=D4A017&textColor=0a0a0a&fontWeight=700&fontSize=40&radius=50`}
               alt={profile.displayName}
               style={{
-                width: 120, height: 120,
-                borderRadius: "var(--radius-lg)",
+                width: 104, height: 104,
+                borderRadius: 16,
                 objectFit: "cover",
                 border: "3px solid #D4A017",
                 boxShadow: profile.isVerified ? "0 0 0 4px rgba(212,146,10,0.20)" : "none",
@@ -237,8 +235,8 @@ export default function ProfileBySlug() {
       {/* ─── HEADER ─────────────────────────────────────────────────────────── */}
       <div style={{ padding: "0 24px", maxWidth: 1280, margin: "0 auto" }}>
 
-        {/* Name, meta & action buttons — paddingTop para dar espaço ao avatar */}
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 16, paddingTop: 72, paddingBottom: 16 }}>
+        {/* Name, meta & action buttons */}
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 16, paddingTop: 80, paddingBottom: 16 }}>
           {/* Name & meta */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 8 }}>
