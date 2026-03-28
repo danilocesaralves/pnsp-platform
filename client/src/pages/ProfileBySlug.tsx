@@ -159,6 +159,7 @@ export default function ProfileBySlug() {
       <div style={{ position: "relative", overflow: "visible" }}>
         <div style={{
           height: 240,
+          width: "100%",
           position: "relative",
           overflow: "hidden",
           background: coverGradient(profile.profileType),
@@ -204,7 +205,7 @@ export default function ProfileBySlug() {
               alt={profile.displayName}
               style={{
                 width: 104, height: 104,
-                borderRadius: 16,
+                borderRadius: "50%",
                 objectFit: "cover",
                 border: "3px solid #D4A017",
                 boxShadow: profile.isVerified ? "0 0 0 4px rgba(212,146,10,0.20)" : "none",
