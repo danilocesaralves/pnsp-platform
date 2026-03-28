@@ -149,8 +149,8 @@ export default function Profiles() {
   function clearFilters() {
     setSearch(""); setSearchInput(""); setProfileType("all"); setState("all"); setOffset(0);
   }
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault(); setSearch(searchInput); setOffset(0);
+  function handleSearch() {
+    setSearch(searchInput); setOffset(0);
   }
 
   return (
@@ -181,7 +181,7 @@ export default function Profiles() {
             Descubra artistas, grupos, produtores, professores e parceiros do ecossistema nacional
           </p>
           {/* Search */}
-          <form onSubmit={handleSearch} style={{ display: "flex", gap: 12, maxWidth: 560 }}>
+          <div style={{ display: "flex", gap: 12, maxWidth: 560 }}>
             <div style={{ position: "relative", flex: 1 }}>
               <Search style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: "var(--creme-50)" }} />
               <input
@@ -189,12 +189,13 @@ export default function Profiles() {
                 placeholder="Buscar por nome, cidade, estilo..."
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleSearch()}
               />
             </div>
-            <button type="submit" className="pnsp-btn-primary" style={{ padding: "12px 24px", whiteSpace: "nowrap" }}>
+            <button className="pnsp-btn-primary" style={{ padding: "12px 24px", whiteSpace: "nowrap" }} onClick={handleSearch}>
               Buscar
             </button>
-          </form>
+          </div>
         </div>
       </div>
 
