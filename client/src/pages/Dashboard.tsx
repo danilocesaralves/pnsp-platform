@@ -30,7 +30,13 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold">Meu Dashboard</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+              <h1 className="text-2xl font-bold">Meu Dashboard</h1>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 9999, background: "rgba(27,107,58,0.20)", border: "1px solid rgba(27,107,58,0.40)", color: "#4ade80", fontSize: 11, fontWeight: 700 }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", animation: "pulse 2s ease-in-out infinite" }} />
+                LIVE
+              </span>
+            </div>
             <p className="text-muted-foreground">Gerencie sua presença na PNSP</p>
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -56,12 +62,12 @@ export default function Dashboard() {
             { icon: Target,   label: "Oportunidades",  value: summary?.opportunitiesCount ?? 0,        color: "text-purple-600" },
             { icon: Bell,     label: "Notificações",   value: summary?.unreadNotifications ?? 0,       color: "text-red-600"    },
           ].map(({ icon: Icon, label, value, color }) => (
-            <div key={label} className="rounded-xl border border-border bg-card p-4">
+            <div key={label} style={{ borderRadius: 12, border: "1px solid rgba(212,160,23,0.2)", background: "#1a1200", padding: 16 }}>
               <div className="flex items-center gap-2 mb-2">
                 <Icon className={`h-5 w-5 ${color}`} />
                 <span className="text-sm text-muted-foreground">{label}</span>
               </div>
-              <p className={`text-2xl font-bold ${color}`}>{value}</p>
+              <p className={`text-2xl ${color}`} style={{ fontWeight: 800 }}>{value}</p>
             </div>
           ))}
         </div>

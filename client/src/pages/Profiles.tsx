@@ -28,6 +28,8 @@ function ProfileCard({ profile }: { profile: any }) {
           borderColor: hovered ? "rgba(212,146,10,0.40)" : "var(--creme-10)",
           transform: hovered ? "translateY(-8px)" : "translateY(0)",
           boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.70), 0 4px 32px rgba(212,146,10,0.25)" : "none",
+          transition: "all 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+          cursor: "pointer",
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -43,7 +45,7 @@ function ProfileCard({ profile }: { profile: any }) {
           position: "relative",
         }}>
           <img
-            src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
+            src={profile.avatarUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=transparent`}
             alt={profile.displayName}
             style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease", transform: hovered ? "scale(1.06)" : "scale(1)" }}
           />
@@ -78,11 +80,11 @@ function ProfileCard({ profile }: { profile: any }) {
 
         {/* Info */}
         <div style={{ padding: "18px" }}>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {profile.displayName}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
-            <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
+            <span style={{ fontSize: "var(--text-xs)", padding: "3px 10px", borderRadius: 9999, background: "rgba(212,160,23,0.15)", border: "1px solid rgba(212,160,23,0.4)", color: "#D4A017", fontFamily: "var(--font-body)", fontWeight: 600 }}>
               {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
             </span>
           </div>

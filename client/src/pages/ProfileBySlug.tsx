@@ -39,14 +39,14 @@ function instagramHref(url: string) {
 }
 
 const coverGradient = (type?: string | null) => ({
-  artista_solo:    "linear-gradient(135deg, #1a0a00 0%, #3d1f00 100%)",
+  artista_solo:    "linear-gradient(135deg, #1a0800 0%, #3d1500 100%)",
   grupo_banda:     "linear-gradient(135deg, #1a1200 0%, #3d2d00 100%)",
   produtor:        "linear-gradient(135deg, #0a0a1a 0%, #1a0a3d 100%)",
   professor:       "linear-gradient(135deg, #001525 0%, #003050 100%)",
-  estudio:         "linear-gradient(135deg, #001a0a 0%, #003d1a 100%)",
+  estudio:         "linear-gradient(135deg, #001a08 0%, #003d1a 100%)",
   luthier:         "linear-gradient(135deg, #1a0e00 0%, #3d2200 100%)",
   contratante:     "linear-gradient(135deg, #001a22 0%, #003344 100%)",
-}[type ?? ""] ?? "linear-gradient(135deg, var(--terra-escura), var(--terra-clara))");
+}[type ?? ""] ?? "linear-gradient(135deg, #1a1200, #2d1f00)");
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
@@ -72,7 +72,7 @@ function ActionBtn({ href, children, primary }: { href?: string; children: React
     transition: "var(--transition)",
     textDecoration: "none",
     ...(primary
-      ? { background: h ? "var(--ouro-claro)" : "var(--ouro)", color: "var(--preto)", boxShadow: h ? "0 6px 24px rgba(212,146,10,0.40)" : "var(--shadow-ouro)", transform: h ? "translateY(-1px)" : "none" }
+      ? { background: h ? "#c4910f" : "#D4A017", color: "var(--preto)", padding: "12px 28px", borderRadius: 10, boxShadow: h ? "0 6px 24px rgba(212,146,10,0.40)" : "var(--shadow-ouro)", transform: h ? "translateY(-1px)" : "none" }
       : { background: "none", border: "1px solid var(--creme-20)", color: h ? "var(--ouro)" : "var(--creme-80)", borderColor: h ? "rgba(212,146,10,0.40)" : "var(--creme-20)" }),
   };
   if (href) return <a href={href} style={base} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{children}</a>;
@@ -202,13 +202,13 @@ export default function ProfileBySlug() {
           {/* Avatar */}
           <div style={{ position: "relative", flexShrink: 0 }}>
             <img
-              src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.displayName)}`}
+              src={profile.avatarUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=transparent`}
               alt={profile.displayName}
               style={{
-                width: 112, height: 112,
+                width: 120, height: 120,
                 borderRadius: "var(--radius-lg)",
                 objectFit: "cover",
-                border: `3px solid ${profile.isVerified ? "var(--ouro)" : "rgba(245,237,216,0.20)"}`,
+                border: "3px solid #D4A017",
                 boxShadow: profile.isVerified ? "0 0 0 4px rgba(212,146,10,0.20)" : "none",
                 background: "var(--terra)",
               }}
@@ -236,7 +236,7 @@ export default function ProfileBySlug() {
           {/* Name & meta */}
           <div style={{ flex: 1, minWidth: 0, paddingBottom: 4 }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 8 }}>
-              <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 700, lineHeight: 1.1, color: "var(--creme)" }}>
+              <h1 style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 800, lineHeight: 1.1, color: "var(--creme)" }}>
                 {profile.displayName}
               </h1>
               {profile.isVerified && (

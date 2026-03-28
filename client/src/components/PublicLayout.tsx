@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
@@ -22,8 +22,15 @@ const NAV_LINKS = [
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
+
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
 
   const isActive = (href: string) => location.startsWith(href);
 
@@ -36,19 +43,23 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         top: 0,
         zIndex: 50,
         background: "rgba(12,10,8,0.92)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        borderBottom: "1px solid rgba(212,146,10,0.12)",
+        backdropFilter: "blur(24px) saturate(180%)",
+        WebkitBackdropFilter: "blur(24px) saturate(180%)",
+        borderBottom: "1px solid rgba(212,160,23,0.15)",
         height: 68,
         display: "flex",
         alignItems: "center",
         padding: "0 24px",
+        boxShadow: scrolled ? "0 4px 24px rgba(0,0,0,0.8)" : "none",
+        transition: "box-shadow 0.3s ease",
       }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32 }}>
 
           {/* Logo */}
           <Link href="/">
-            <img src="/logo-pnsp.jpg" alt="PNSP" style={{ height: 52, width: "auto", cursor: "pointer", display: "block", filter: "invert(1)" }} />
+            <div style={{ padding: "8px 0" }}>
+              <img src="/logo-pnsp.jpg" alt="PNSP" style={{ height: 56, width: "auto", cursor: "pointer", display: "block", filter: "invert(1)" }} />
+            </div>
           </Link>
 
           {/* Desktop Nav */}
@@ -83,7 +94,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--creme-10)"; }}
                   >
                     <Avatar style={{ width: 28, height: 28 }}>
-                      <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name ?? "")}`} alt={user.name ?? ""} />
+                      <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(user.name ?? "")}&backgroundColor=transparent`} alt={user.name ?? ""} />
                       <AvatarFallback style={{ background: "var(--ouro)", color: "var(--preto)", fontSize: 12, fontWeight: 700 }}>
                         {user.name?.charAt(0)?.toUpperCase() ?? "U"}
                       </AvatarFallback>
