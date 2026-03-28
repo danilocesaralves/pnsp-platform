@@ -46,17 +46,19 @@ function StrengthItemRow({ item }: { item: StrengthItem }) {
 export function ProfileStrength({ profile }: ProfileStrengthProps) {
   const [open, setOpen] = useState(false);
 
+  const editTo = profile?.id ? `/editar-perfil/${profile.id}` : '/dashboard';
+
   const items: StrengthItem[] = [
-    { id: 'photo',    label: 'Adicionar foto de perfil',    done: !!profile?.avatarUrl,                                   points: 20, action: 'Adicionar',  to: '/dashboard' },
-    { id: 'bio',      label: 'Escrever sobre você',         done: !!(profile?.bio && profile.bio.length > 20),            points: 15, action: 'Escrever',   to: '/dashboard' },
-    { id: 'city',     label: 'Informar sua cidade',         done: !!profile?.city,                                        points: 10, action: 'Informar',   to: '/dashboard' },
-    { id: 'phone',    label: 'Adicionar telefone de contato', done: !!profile?.phone,                                     points: 15, action: 'Adicionar',  to: '/dashboard' },
-    { id: 'cover',    label: 'Adicionar foto de capa',      done: !!profile?.coverUrl,                                    points: 10, action: 'Adicionar',  to: '/dashboard' },
-    { id: 'cache',       label: 'Informar cachê de apresentação', done: !!(profile?.priceMin),                                points: 15, action: 'Informar', to: '/dashboard' },
-    { id: 'duracao',     label: 'Informar duração de apresentação', done: !!(profile?.durationMin),                           points: 10, action: 'Informar', to: '/dashboard' },
-    { id: 'cidades',     label: 'Informar cidades onde atua',       done: !!(profile?.cities),                                points: 10, action: 'Informar', to: '/dashboard' },
-    { id: 'instrumentos',label: 'Informar instrumentos',            done: !!(profile?.instruments),                           points: 10, action: 'Informar', to: '/dashboard' },
-    { id: 'instagram',label: 'Conectar Instagram',          done: !!profile?.instagramUrl,                               points: 15, action: 'Conectar',   to: '/dashboard' },
+    { id: 'photo',       label: 'Adicionar foto de perfil',          done: !!profile?.avatarUrl,                            points: 20, action: 'Adicionar', to: editTo },
+    { id: 'bio',         label: 'Escrever sobre você',               done: !!(profile?.bio && profile.bio.length > 20),     points: 15, action: 'Escrever',  to: editTo },
+    { id: 'city',        label: 'Informar sua cidade',               done: !!profile?.city,                                 points: 10, action: 'Informar',  to: editTo },
+    { id: 'phone',       label: 'Adicionar telefone de contato',     done: !!profile?.phone,                                points: 15, action: 'Adicionar', to: editTo },
+    { id: 'cover',       label: 'Adicionar foto de capa',            done: !!profile?.coverUrl,                             points: 10, action: 'Adicionar', to: editTo },
+    { id: 'cache',       label: 'Informar cachê de apresentação',    done: !!(profile?.priceMin),                           points: 15, action: 'Informar',  to: editTo },
+    { id: 'duracao',     label: 'Informar duração de apresentação',  done: !!(profile?.durationMin),                        points: 10, action: 'Informar',  to: editTo },
+    { id: 'cidades',     label: 'Informar cidades onde atua',        done: !!(profile?.cities),                             points: 10, action: 'Informar',  to: editTo },
+    { id: 'instrumentos',label: 'Informar instrumentos',             done: !!(profile?.instruments),                        points: 10, action: 'Informar',  to: editTo },
+    { id: 'instagram',   label: 'Conectar Instagram',                done: !!profile?.instagramUrl,                        points: 15, action: 'Conectar',  to: editTo },
   ];
 
   const done = items.filter(i => i.done).length;
