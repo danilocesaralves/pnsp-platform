@@ -107,8 +107,8 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ─── StripeCard ───────────────────────────────────────────────────────────────
-function StripeCard({ label, value }: { label: string; value: string }) {
+// ─── RevenueCard ─────────────────────────────────────────────────────────────
+function RevenueCard({ label, value }: { label: string; value: string }) {
   return (
     <div style={{
       background: CARD,
@@ -136,7 +136,7 @@ function StripeCard({ label, value }: { label: string; value: string }) {
         fontWeight: 600,
         fontFamily: "Inter, var(--font-body)",
       }}>
-        Ativo quando Stripe integrado
+        Ativo quando pagamentos integrados
       </div>
     </div>
   );
@@ -552,13 +552,13 @@ export default function AdminDashboard() {
             <KpiCard icon={Star}      value={stats?.activeProfiles     ?? 0} label="Perfis Ativos" />
           </div>
 
-          {/* ── SEÇÃO 2 — FINANCEIRO (Stripe-ready) ────────────────────────── */}
-          <SectionTitle>Financeiro — Stripe Ready</SectionTitle>
+          {/* ── SEÇÃO 2 — FINANCEIRO ────────────────────────────────────────── */}
+          <SectionTitle>Financeiro — Pronto para pagamentos</SectionTitle>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16, marginBottom: 48 }}>
-            <StripeCard label="MRR — Receita Mensal Recorrente" value={fmtCurrency(revenueData?.mrr ?? 0)} />
-            <StripeCard label="ARR — Receita Anual"             value={fmtCurrency(revenueData?.arr ?? 0)} />
-            <StripeCard label="Ticket Médio"                    value={fmtCurrency(revenueData?.avgTicket ?? 0)} />
-            <StripeCard label="Projeção 12 meses"               value={fmtCurrency(revenueData?.projectedRevenue ?? 0)} />
+            <RevenueCard label="MRR — Receita Mensal Recorrente" value={fmtCurrency(revenueData?.mrr ?? 0)} />
+            <RevenueCard label="ARR — Receita Anual"             value={fmtCurrency(revenueData?.arr ?? 0)} />
+            <RevenueCard label="Ticket Médio"                    value={fmtCurrency(revenueData?.avgTicket ?? 0)} />
+            <RevenueCard label="Projeção 12 meses"               value={fmtCurrency(revenueData?.projectedRevenue ?? 0)} />
           </div>
 
           {/* ── SEÇÃO 3 — VALUATION ─────────────────────────────────────────── */}
@@ -592,8 +592,8 @@ export default function AdminDashboard() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(270px, 1fr))", gap: 16 }}>
             <StrategyCard
               icon="💳"
-              title="Ative o Stripe"
-              description="Configure o Stripe para começar a monetizar. Os dados financeiros deste painel serão populados automaticamente."
+              title="Ative os pagamentos"
+              description="Configure o módulo de pagamentos para começar a monetizar. Os dados financeiros deste painel serão populados automaticamente."
             />
             <StrategyCard
               icon="🎯"
