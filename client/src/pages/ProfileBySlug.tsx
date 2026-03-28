@@ -65,8 +65,6 @@ function ActionBtn({ href, children, primary }: { href?: string; children: React
   const [h, setH] = useState(false);
   const base: React.CSSProperties = {
     display: "inline-flex", alignItems: "center", gap: 6,
-    padding: "9px 20px",
-    borderRadius: "var(--radius-md)",
     fontSize: "var(--text-sm)",
     fontWeight: 600,
     fontFamily: "var(--font-body)",
@@ -75,7 +73,7 @@ function ActionBtn({ href, children, primary }: { href?: string; children: React
     textDecoration: "none",
     ...(primary
       ? { background: h ? "#c4910f" : "#D4A017", color: "var(--preto)", padding: "12px 28px", borderRadius: 10, boxShadow: h ? "0 6px 24px rgba(212,146,10,0.40)" : "var(--shadow-ouro)", transform: h ? "translateY(-1px)" : "none" }
-      : { background: "none", border: "1px solid var(--creme-20)", color: h ? "var(--ouro)" : "var(--creme-80)", borderColor: h ? "rgba(212,146,10,0.40)" : "var(--creme-20)" }),
+      : { background: "none", border: "1px solid var(--creme-20)", color: h ? "var(--ouro)" : "var(--creme-80)", borderColor: h ? "rgba(212,146,10,0.40)" : "var(--creme-20)", padding: "9px 20px", borderRadius: "var(--radius-md)" }),
   };
   if (href) return <a href={href} style={base} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{children}</a>;
   return <button type="button" style={base} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{children}</button>;

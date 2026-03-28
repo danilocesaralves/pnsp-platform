@@ -544,7 +544,7 @@ export default function AdminDashboard() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 16, marginBottom: 48 }}>
             <KpiCard icon={Users}     value={stats?.totalProfiles      ?? 0} label="Total Perfis"     sub="+2 esta semana" />
             <KpiCard icon={Users}     value={stats?.totalUsers         ?? 0} label="Usuários"         sub="+3 esta semana" />
-            <KpiCard icon={Music2}    value={stats?.totalOpportunidades ?? stats?.totalOpportunities ?? 0} label="Oportunidades" />
+            <KpiCard icon={Music2}    value={stats?.totalOpportunities ?? 0} label="Oportunidades" />
             <KpiCard icon={Briefcase} value={stats?.totalOfferings     ?? 0} label="Ofertas" />
             <KpiCard icon={Building2} value={stats?.totalStudios       ?? 0} label="Estúdios" />
             <KpiCard icon={MapPin}    value={stats?.totalCities        ?? 0} label="Cidades" />
