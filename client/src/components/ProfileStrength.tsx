@@ -52,7 +52,10 @@ export function ProfileStrength({ profile }: ProfileStrengthProps) {
     { id: 'city',     label: 'Informar sua cidade',         done: !!profile?.city,                                        points: 10, action: 'Informar',   to: '/dashboard' },
     { id: 'phone',    label: 'Adicionar telefone de contato', done: !!profile?.phone,                                     points: 15, action: 'Adicionar',  to: '/dashboard' },
     { id: 'cover',    label: 'Adicionar foto de capa',      done: !!profile?.coverUrl,                                    points: 10, action: 'Adicionar',  to: '/dashboard' },
-    { id: 'genres',   label: 'Informar gêneros musicais',   done: !!(profile?.genres && profile.genres.length > 0),       points: 15, action: 'Informar',   to: '/dashboard' },
+    { id: 'cache',       label: 'Informar cachê de apresentação', done: !!(profile?.priceMin),                                points: 15, action: 'Informar', to: '/dashboard' },
+    { id: 'duracao',     label: 'Informar duração de apresentação', done: !!(profile?.durationMin),                           points: 10, action: 'Informar', to: '/dashboard' },
+    { id: 'cidades',     label: 'Informar cidades onde atua',       done: !!(profile?.cities),                                points: 10, action: 'Informar', to: '/dashboard' },
+    { id: 'instrumentos',label: 'Informar instrumentos',            done: !!(profile?.instruments),                           points: 10, action: 'Informar', to: '/dashboard' },
     { id: 'instagram',label: 'Conectar Instagram',          done: !!profile?.instagramUrl,                               points: 15, action: 'Conectar',   to: '/dashboard' },
   ];
 

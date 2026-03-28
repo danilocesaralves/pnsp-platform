@@ -35,7 +35,8 @@ export default function EditProfile() {
   const [, navigate] = useLocation();
   const { data: profile } = trpc.profiles.getById.useQuery({ id: Number(params.id) }, { enabled: !!params.id });
 
-  const [form, setForm] = useState({ displayName: "", bio: "", city: "", state: "", phone: "", website: "", instagramUrl: "", youtubeUrl: "" });
+  const [form, setForm] = useState({ displayName: "", bio: "", city: "", state: "", phone: "", website: "", instagramUrl: "", youtubeUrl: "", priceMin: "", priceMax: "", durationMin: "", durationMax: "", cities: "", instrumentsText: "" });
+  const [showTypes, setShowTypes] = useState<string[]>([]);
   const [avatarStyle, setAvatarStyle] = useState("avataaars");
 
   // Upload state
@@ -52,6 +53,7 @@ export default function EditProfile() {
 
   useEffect(() => {
     if (profile) {
+      const p = profile as any;
       setForm({
         displayName: profile.displayName,
         bio: profile.bio ?? "",
@@ -61,7 +63,14 @@ export default function EditProfile() {
         website: profile.website ?? "",
         instagramUrl: profile.instagramUrl ?? "",
         youtubeUrl: profile.youtubeUrl ?? "",
+        priceMin: p.priceMin != null ? String(p.priceMin) : "",
+        priceMax: p.priceMax != null ? String(p.priceMax) : "",
+        durationMin: p.durationMin ?? "",
+        durationMax: p.durationMax ?? "",
+        cities: p.cities ?? "",
+        instrumentsText: Array.isArray(p.instruments) ? (p.instruments as string[]).join(", ") : "",
       });
+      setShowTypes(Array.isArray(p.showTypes) ? p.showTypes as string[] : []);
       const match = profile.avatarUrl?.match(/dicebear\.com\/7\.x\/([^/]+)\//);
       setAvatarStyle(match?.[1] ?? "avataaars");
       setAvatarUrl(profile.avatarUrl ?? null);
@@ -132,11 +141,19 @@ export default function EditProfile() {
       ? avatarUrl
       : `https://api.dicebear.com/7.x/${avatarStyle}/svg?seed=${avatarSeed}`;
 
+    const { priceMin, priceMax, durationMin, durationMax, cities, instrumentsText, ...baseForm } = form;
     update.mutate({
       id: Number(params.id),
-      ...form,
+      ...baseForm,
       avatarUrl: finalAvatarUrl,
       coverUrl: coverUrl ?? undefined,
+      priceMin: priceMin ? parseInt(priceMin) : undefined,
+      priceMax: priceMax ? parseInt(priceMax) : undefined,
+      durationMin: durationMin || undefined,
+      durationMax: durationMax || undefined,
+      showTypes: showTypes.length > 0 ? showTypes : undefined,
+      cities: cities || undefined,
+      instruments: instrumentsText ? instrumentsText.split(",").map(s => s.trim()).filter(Boolean) : undefined,
     });
   }
 
@@ -278,6 +295,70 @@ export default function EditProfile() {
           <div><label className="text-sm font-medium mb-1 block">Telefone</label><Input value={form.phone} onChange={e => set("phone", e.target.value)} /></div>
           <div><label className="text-sm font-medium mb-1 block">Instagram</label><Input value={form.instagramUrl} onChange={e => set("instagramUrl", e.target.value)} /></div>
           <div><label className="text-sm font-medium mb-1 block">YouTube</label><Input value={form.youtubeUrl} onChange={e => set("youtubeUrl", e.target.value)} /></div>
+
+          {/* ── Apresentação ──────────────────────────────────────────────── */}
+          <div style={{ borderTop: "1px solid var(--border)", paddingTop: 20 }}>
+            <p className="text-sm font-semibold mb-4" style={{ color: "#D4A017" }}>Informações de Apresentação</p>
+
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Cachê mínimo (R$)</label>
+                <Input type="number" placeholder="Ex: 500" value={form.priceMin} onChange={e => set("priceMin", e.target.value)} />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Cachê máximo (R$)</label>
+                <Input type="number" placeholder="Ex: 3000" value={form.priceMax} onChange={e => set("priceMax", e.target.value)} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Duração mínima</label>
+                <Select value={form.durationMin} onValueChange={v => set("durationMin", v)}>
+                  <SelectTrigger><SelectValue placeholder="Selecionar" /></SelectTrigger>
+                  <SelectContent>
+                    {["30min","1h","1h30","2h","2h30","3h","A combinar"].map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Duração máxima</label>
+                <Select value={form.durationMax} onValueChange={v => set("durationMax", v)}>
+                  <SelectTrigger><SelectValue placeholder="Selecionar" /></SelectTrigger>
+                  <SelectContent>
+                    {["30min","1h","1h30","2h","2h30","3h","A combinar"].map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label className="text-sm font-medium mb-2 block">Tipo de apresentação</label>
+              <div className="grid grid-cols-2 gap-2">
+                {["Pagode de mesa","Samba de roda","Show em palco","Serestas","Eventos corporativos","Festas e casamentos"].map(tipo => (
+                  <label key={tipo} className="flex items-center gap-2 cursor-pointer text-sm">
+                    <input
+                      type="checkbox"
+                      checked={showTypes.includes(tipo)}
+                      onChange={e => setShowTypes(prev => e.target.checked ? [...prev, tipo] : prev.filter(t => t !== tipo))}
+                      className="rounded border-border"
+                    />
+                    {tipo}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label className="text-sm font-medium mb-1 block">Cidades onde atua</label>
+              <Input placeholder="Ex: São Paulo, Rio de Janeiro" value={form.cities} onChange={e => set("cities", e.target.value)} />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-1 block">Instrumentos</label>
+              <Input placeholder="Ex: Cavaquinho, Pandeiro, Violão 7 cordas" value={form.instrumentsText} onChange={e => set("instrumentsText", e.target.value)} />
+            </div>
+          </div>
 
           <Button
             className="w-full"

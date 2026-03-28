@@ -11,6 +11,7 @@ export const PROFILE_TYPES = {
   luthier: "Luthier / Artesão",
   contratante: "Contratante",
   parceiro: "Parceiro / Patrocinador",
+  venue: "Venue / Casa de Show",
 } as const;
 
 export const OFFERING_CATEGORIES = {

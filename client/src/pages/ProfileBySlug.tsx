@@ -46,6 +46,7 @@ const coverGradient = (type?: string | null) => ({
   estudio:         "linear-gradient(135deg, #002d0d, #001a06)",
   luthier:         "linear-gradient(135deg, #1a1400, #2d2000)",
   contratante:     "linear-gradient(135deg, #1a1400, #2d2000)",
+  venue:           "linear-gradient(135deg, #1a001a, #2d002d)",
 }[type ?? ""] ?? "linear-gradient(135deg, #1a1400, #2d2000)");
 
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -399,6 +400,29 @@ export default function ProfileBySlug() {
                     <Phone style={{ width: 14, height: 14, flexShrink: 0, color: "var(--ouro)" }} />
                     {profile.phone}
                   </a>
+                )}
+                {(profile as any).priceMin != null && (
+                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#D4A017" }}>
+                    💰 Cachê: R$ {Number((profile as any).priceMin).toLocaleString("pt-BR")}
+                    {(profile as any).priceMax != null && ` — R$ ${Number((profile as any).priceMax).toLocaleString("pt-BR")}`}
+                  </div>
+                )}
+                {(profile as any).durationMin && (
+                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#D4A017" }}>
+                    ⏱ Duração: {(profile as any).durationMin}
+                    {(profile as any).durationMax && (profile as any).durationMax !== (profile as any).durationMin
+                      ? ` — ${(profile as any).durationMax}` : ""}
+                  </div>
+                )}
+                {(profile as any).cities && (
+                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#D4A017" }}>
+                    📍 Atua em: {(profile as any).cities}
+                  </div>
+                )}
+                {instruments.length > 0 && (
+                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#D4A017" }}>
+                    🎸 Instrumentos: {instruments.join(", ")}
+                  </div>
                 )}
               </div>
             </div>

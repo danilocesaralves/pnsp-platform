@@ -18,7 +18,7 @@ export const userRoleEnum = pgEnum("user_role", ["user", "admin", "owner"]);
 
 export const profileTypeEnum = pgEnum("profile_type", [
   "artista_solo", "grupo_banda", "comunidade_roda", "produtor", "estudio",
-  "professor", "loja", "luthier", "contratante", "parceiro",
+  "professor", "loja", "luthier", "contratante", "parceiro", "venue",
 ]);
 
 export const profileStatusEnum = pgEnum("profile_status", ["pending", "active", "suspended"]);
@@ -168,6 +168,12 @@ export const profiles = pgTable("profiles", {
   instruments: jsonb("instruments").$type<string[]>(),
   genres: jsonb("genres").$type<string[]>(),
   tags: jsonb("tags").$type<string[]>(),
+  priceMin: integer("priceMin"),
+  priceMax: integer("priceMax"),
+  durationMin: varchar("durationMin", { length: 20 }),
+  durationMax: varchar("durationMax", { length: 20 }),
+  showTypes: jsonb("showTypes").$type<string[]>(),
+  cities: text("cities"),
   isVerified: boolean("isVerified").default(false),
   isActive: boolean("isActive").default(true),
   isFeatured: boolean("isFeatured").default(false),

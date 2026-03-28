@@ -43,7 +43,7 @@ export const profilesRouter = router({
 
   create: protectedProcedure
     .input(z.object({
-      profileType: z.enum(["artista_solo","grupo_banda","comunidade_roda","produtor","estudio","professor","loja","luthier","contratante","parceiro"]),
+      profileType: z.enum(["artista_solo","grupo_banda","comunidade_roda","produtor","estudio","professor","loja","luthier","contratante","parceiro","venue"]),
       displayName: z.string().min(2).max(200),
       bio: z.string().optional(),
       avatarUrl: z.string().optional(),
@@ -96,19 +96,26 @@ export const profilesRouter = router({
       instruments: z.array(z.string()).optional(),
       genres: z.array(z.string()).optional(),
       tags: z.array(z.string()).optional(),
+      priceMin: z.number().int().optional(),
+      priceMax: z.number().int().optional(),
+      durationMin: z.string().optional(),
+      durationMax: z.string().optional(),
+      showTypes: z.array(z.string()).optional(),
+      cities: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const profile = await repo.getProfileById(input.id);
       if (!profile || profile.userId !== ctx.user.id) {
         throw new TRPCError({ code: "FORBIDDEN" });
       }
-      const { id, specialties, instruments, genres, tags, ...rest } = input;
+      const { id, specialties, instruments, genres, tags, showTypes, ...rest } = input;
       await repo.updateProfile(id, {
         ...rest,
         specialties: specialties ?? undefined,
         instruments: instruments ?? undefined,
         genres: genres ?? undefined,
         tags: tags ?? undefined,
+        showTypes: showTypes ?? undefined,
       });
       return { success: true };
     }),

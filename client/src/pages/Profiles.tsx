@@ -15,6 +15,7 @@ const TYPE_PILLS = [
   { value: "contratante",     label: "Contratante" },
   { value: "luthier",         label: "Luthier" },
   { value: "comunidade_roda", label: "Comunidade" },
+  { value: "venue",           label: "Venue / Casa de Show" },
 ];
 
 /* ─── Profile Card ──────────────────────────────────────────────────────────── */
