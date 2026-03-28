@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { PROFILE_TYPES } from "@shared/pnsp";
+import ReviewSection, { StarDisplay } from "@/components/ReviewSection";
 import {
   MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink,
   Pencil, Camera, ImagePlus, Loader2, Calendar,
@@ -90,6 +91,15 @@ export default function ProfileBySlug() {
   const { data: profile, isLoading, error, refetch } = trpc.profiles.getBySlug.useQuery(
     { slug },
     { enabled: !!slug, staleTime: 5 * 60 * 1000 },
+  );
+
+  const { data: reviewStats } = trpc.reviews.getStats.useQuery(
+    { profileId: profile?.id ?? 0 },
+    { enabled: !!profile?.id },
+  );
+  const { data: myProfile } = trpc.profiles.getMyProfile.useQuery(
+    undefined,
+    { enabled: !!user },
   );
 
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -251,6 +261,13 @@ export default function ProfileBySlug() {
                 </div>
               )}
             </div>
+            {reviewStats && reviewStats.total > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <StarDisplay rating={reviewStats.avg} size={18} />
+                <span style={{ color: "#D4A017", fontWeight: 700, fontSize: 15 }}>{reviewStats.avg.toFixed(1)}</span>
+                <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>({reviewStats.total} {reviewStats.total === 1 ? "avaliação" : "avaliações"})</span>
+              </div>
+            )}
             <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
               <span className="pnsp-badge">
                 {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
@@ -344,6 +361,8 @@ export default function ProfileBySlug() {
                 </p>
               </div>
             )}
+
+            <ReviewSection profileId={profile.id} isOwner={isOwner} currentUserProfileId={myProfile?.id} />
 
             {portfolio.length > 0 && (
               <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "28px", marginBottom: 20 }}>

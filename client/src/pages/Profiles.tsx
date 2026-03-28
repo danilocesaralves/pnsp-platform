@@ -19,7 +19,7 @@ const TYPE_PILLS = [
 ];
 
 /* ─── Profile Card ──────────────────────────────────────────────────────────── */
-function ProfileCard({ profile }: { profile: any }) {
+function ProfileCard({ profile, stats }: { profile: any; stats?: { avg: number; total: number } | null }) {
   const [hovered, setHovered] = useState(false);
   return (
     <Link href={`/perfil/${profile.slug?.toLowerCase()}`}>
@@ -81,9 +81,16 @@ function ProfileCard({ profile }: { profile: any }) {
 
         {/* Info */}
         <div style={{ padding: "18px" }}>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 700, marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {profile.displayName}
           </div>
+          {stats && stats.total > 0 && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 6, fontSize: "var(--text-xs)" }}>
+              <span style={{ color: "#D4A017" }}>{"★".repeat(Math.round(stats.avg))}</span>
+              <span style={{ color: "#D4A017", fontWeight: 700 }}>{Number(stats.avg).toFixed(1)}</span>
+              <span style={{ color: "var(--creme-50)" }}>({stats.total})</span>
+            </div>
+          )}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
             <span style={{ fontSize: "var(--text-xs)", padding: "3px 10px", borderRadius: 9999, background: "rgba(212,160,23,0.15)", border: "1px solid rgba(212,160,23,0.4)", color: "#D4A017", fontFamily: "var(--font-body)", fontWeight: 600 }}>
               {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
@@ -143,6 +150,13 @@ export default function Profiles() {
     limit,
     offset,
   });
+
+  const profileIds = (profiles ?? []).map(p => p.id);
+  const { data: batchStats } = trpc.reviews.getStatsBatch.useQuery(
+    { profileIds },
+    { enabled: profileIds.length > 0 },
+  );
+  const statsMap = new Map((batchStats ?? []).map(s => [s.profileId, { avg: Number(s.avg), total: Number(s.total) }]));
 
   const hasFilters = !!(search || profileType !== "all" || state !== "all");
 
@@ -278,7 +292,7 @@ export default function Profiles() {
           ) : profiles && profiles.length > 0 ? (
             <>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 20 }}>
-                {profiles.map(p => <ProfileCard key={p.id} profile={p} />)}
+                {profiles.map(p => <ProfileCard key={p.id} profile={p} stats={statsMap.get(p.id) ?? null} />)}
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 48 }}>
                 {offset > 0 && (
