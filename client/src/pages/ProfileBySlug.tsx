@@ -39,14 +39,14 @@ function instagramHref(url: string) {
 }
 
 const coverGradient = (type?: string | null) => ({
-  artista_solo:    "linear-gradient(135deg, #1a0800 0%, #3d1500 100%)",
-  grupo_banda:     "linear-gradient(135deg, #1a1200 0%, #3d2d00 100%)",
-  produtor:        "linear-gradient(135deg, #0a0a1a 0%, #1a0a3d 100%)",
-  professor:       "linear-gradient(135deg, #001525 0%, #003050 100%)",
-  estudio:         "linear-gradient(135deg, #001a08 0%, #003d1a 100%)",
-  luthier:         "linear-gradient(135deg, #1a0e00 0%, #3d2200 100%)",
-  contratante:     "linear-gradient(135deg, #001a22 0%, #003344 100%)",
-}[type ?? ""] ?? "linear-gradient(135deg, #1a1200, #2d1f00)");
+  artista_solo:    "linear-gradient(135deg, #2d1a00, #1a0d00)",
+  grupo_banda:     "linear-gradient(135deg, #2d1a00, #1a0d00)",
+  produtor:        "linear-gradient(135deg, #0d0d2d, #060617)",
+  professor:       "linear-gradient(135deg, #0d0d2d, #060617)",
+  estudio:         "linear-gradient(135deg, #002d0d, #001a06)",
+  luthier:         "linear-gradient(135deg, #1a1400, #0d0a00)",
+  contratante:     "linear-gradient(135deg, #1a1400, #0d0a00)",
+}[type ?? ""] ?? "linear-gradient(135deg, #1a1400, #0d0a00)");
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
@@ -154,55 +154,54 @@ export default function ProfileBySlug() {
   return (
     <PublicLayout>
 
-      {/* ─── COVER ──────────────────────────────────────────────────────────── */}
-      <div style={{
-        height: 280,
-        position: "relative",
-        overflow: "hidden",
-        background: profile.coverUrl ? undefined : coverGradient(profile.profileType),
-      }}>
-        {profile.coverUrl && (
-          <img src={profile.coverUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        )}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, rgba(12,10,8,0.90) 100%)" }} />
+      {/* ─── COVER + AVATAR wrapper ─────────────────────────────────────────── */}
+      <div style={{ position: "relative" }}>
+        {/* Capa */}
+        <div style={{
+          height: 280,
+          position: "relative",
+          overflow: "hidden",
+          background: coverGradient(profile.profileType),
+        }}>
+          {profile.coverUrl && (
+            <img src={profile.coverUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          )}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, rgba(12,10,8,0.90) 100%)" }} />
 
-        {/* Trocar capa */}
-        {isOwner && (
-          <button
-            type="button"
-            onClick={() => coverInputRef.current?.click()}
-            disabled={uploadingCover}
-            style={{
-              position: "absolute", top: 16, right: 16,
-              display: "flex", alignItems: "center", gap: 6,
-              padding: "7px 14px",
-              background: "rgba(12,10,8,0.70)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid var(--creme-20)",
-              borderRadius: "var(--radius-full)",
-              color: "var(--creme-80)",
-              fontSize: "var(--text-xs)",
-              fontWeight: 600,
-              fontFamily: "var(--font-body)",
-              cursor: "pointer",
-              transition: "var(--transition)",
-            }}
-          >
-            {uploadingCover ? <Loader2 style={{ width: 13, height: 13, animation: "spin 1s linear infinite" }} /> : <ImagePlus style={{ width: 13, height: 13 }} />}
-            Trocar capa
-          </button>
-        )}
-        <input ref={coverInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: "none" }}
-          onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f, "cover", setUploadingCover); e.target.value = ""; }} />
-      </div>
+          {isOwner && (
+            <button
+              type="button"
+              onClick={() => coverInputRef.current?.click()}
+              disabled={uploadingCover}
+              style={{
+                position: "absolute", top: 16, right: 16,
+                display: "flex", alignItems: "center", gap: 6,
+                padding: "7px 14px",
+                background: "rgba(12,10,8,0.70)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid var(--creme-20)",
+                borderRadius: "var(--radius-full)",
+                color: "var(--creme-80)",
+                fontSize: "var(--text-xs)",
+                fontWeight: 600,
+                fontFamily: "var(--font-body)",
+                cursor: "pointer",
+                transition: "var(--transition)",
+              }}
+            >
+              {uploadingCover ? <Loader2 style={{ width: 13, height: 13, animation: "spin 1s linear infinite" }} /> : <ImagePlus style={{ width: 13, height: 13 }} />}
+              Trocar capa
+            </button>
+          )}
+          <input ref={coverInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: "none" }}
+            onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f, "cover", setUploadingCover); e.target.value = ""; }} />
+        </div>
 
-      {/* ─── HEADER ─────────────────────────────────────────────────────────── */}
-      <div style={{ padding: "0 24px", maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 24, marginTop: -56, marginBottom: 0, position: "relative", zIndex: 2 }}>
-          {/* Avatar */}
-          <div style={{ position: "relative", flexShrink: 0 }}>
+        {/* Avatar — sobrepõe a capa via bottom:-56px no wrapper */}
+        <div style={{ position: "absolute", bottom: -56, left: 32, zIndex: 3 }}>
+          <div style={{ position: "relative" }}>
             <img
-              src={profile.avatarUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=transparent`}
+              src={profile.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=D4A017&textColor=0a0a0a&fontWeight=700&fontSize=40&radius=50`}
               alt={profile.displayName}
               style={{
                 width: 120, height: 120,
@@ -230,11 +229,18 @@ export default function ProfileBySlug() {
               </button>
             )}
           </div>
-          <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: "none" }}
-            onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f, "avatar", setUploadingAvatar); e.target.value = ""; }} />
+        </div>
+      </div>
+      <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: "none" }}
+        onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f, "avatar", setUploadingAvatar); e.target.value = ""; }} />
 
+      {/* ─── HEADER ─────────────────────────────────────────────────────────── */}
+      <div style={{ padding: "0 24px", maxWidth: 1280, margin: "0 auto" }}>
+
+        {/* Name, meta & action buttons — paddingTop para dar espaço ao avatar */}
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 16, paddingTop: 72, paddingBottom: 16 }}>
           {/* Name & meta */}
-          <div style={{ flex: 1, minWidth: 0, paddingBottom: 4 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 8 }}>
               <h1 style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 800, lineHeight: 1.1, color: "var(--creme)" }}>
                 {profile.displayName}
@@ -255,27 +261,18 @@ export default function ProfileBySlug() {
                 </span>
               )}
             </div>
-            {/* Badges de qualidade */}
             {(() => {
               const isAllStar = !!(profile.avatarUrl && profile.bio && profile.city && profile.phone && profile.coverUrl);
               if (!isAllStar && !profile.isVerified) return null;
               return (
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {isAllStar && (
-                    <span style={{
-                      fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999,
-                      background: "rgba(27,107,58,0.20)", color: "var(--verde)",
-                      border: "1px solid rgba(27,107,58,0.40)",
-                    }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999, background: "rgba(27,107,58,0.20)", color: "var(--verde)", border: "1px solid rgba(27,107,58,0.40)" }}>
                       ⭐ Perfil All-Star
                     </span>
                   )}
                   {profile.isVerified && (
-                    <span style={{
-                      fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999,
-                      background: "rgba(37,99,235,0.20)", color: "#60A5FA",
-                      border: "1px solid rgba(37,99,235,0.40)",
-                    }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999, background: "rgba(37,99,235,0.20)", color: "#60A5FA", border: "1px solid rgba(37,99,235,0.40)" }}>
                       ✓ Verificado
                     </span>
                   )}

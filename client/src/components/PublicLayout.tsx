@@ -57,8 +57,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
           {/* Logo */}
           <Link href="/">
-            <div style={{ padding: "8px 0" }}>
-              <img src="/logo-pnsp.jpg" alt="PNSP" style={{ height: 56, width: "auto", cursor: "pointer", display: "block", filter: "invert(1)" }} />
+            <div style={{ padding: "10px 0" }}>
+              <img src="/logo-pnsp.jpg" alt="PNSP" title="PNSP - Plataforma Nacional do Samba e Pagode" style={{ height: 72, width: "auto", cursor: "pointer", display: "block", filter: "invert(1)" }} />
             </div>
           </Link>
 
@@ -94,7 +94,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--creme-10)"; }}
                   >
                     <Avatar style={{ width: 28, height: 28 }}>
-                      <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(user.name ?? "")}&backgroundColor=transparent`} alt={user.name ?? ""} />
+                      <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name ?? "")}&backgroundColor=D4A017&textColor=0a0a0a&fontWeight=700&fontSize=40&radius=50`} alt={user.name ?? ""} />
                       <AvatarFallback style={{ background: "var(--ouro)", color: "var(--preto)", fontSize: 12, fontWeight: 700 }}>
                         {user.name?.charAt(0)?.toUpperCase() ?? "U"}
                       </AvatarFallback>

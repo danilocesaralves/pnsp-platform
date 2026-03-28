@@ -57,17 +57,17 @@ export default function Dashboard() {
         {/* Stats cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { icon: User,     label: "Perfil",        value: summary?.profile ? "Ativo" : "Pendente", color: summary?.profile ? "text-green-600" : "text-amber-600" },
-            { icon: Briefcase,label: "Ofertas",        value: summary?.offeringsCount ?? 0,            color: "text-blue-600"   },
-            { icon: Target,   label: "Oportunidades",  value: summary?.opportunitiesCount ?? 0,        color: "text-purple-600" },
-            { icon: Bell,     label: "Notificações",   value: summary?.unreadNotifications ?? 0,       color: "text-red-600"    },
-          ].map(({ icon: Icon, label, value, color }) => (
+            { icon: User,     label: "Perfil",        value: summary?.profile ? "Ativo" : "Pendente" },
+            { icon: Briefcase,label: "Ofertas",        value: summary?.offeringsCount ?? 0            },
+            { icon: Target,   label: "Oportunidades",  value: summary?.opportunitiesCount ?? 0        },
+            { icon: Bell,     label: "Notificações",   value: summary?.unreadNotifications ?? 0       },
+          ].map(({ icon: Icon, label, value }) => (
             <div key={label} style={{ borderRadius: 12, border: "1px solid rgba(212,160,23,0.2)", background: "#1a1200", padding: 16 }}>
               <div className="flex items-center gap-2 mb-2">
-                <Icon className={`h-5 w-5 ${color}`} />
+                <Icon style={{ width: 20, height: 20, color: "#D4A017" }} />
                 <span className="text-sm text-muted-foreground">{label}</span>
               </div>
-              <p className={`text-2xl ${color}`} style={{ fontWeight: 800 }}>{value}</p>
+              <p style={{ fontSize: "1.5rem", fontWeight: 800, color: "#D4A017" }}>{value}</p>
             </div>
           ))}
         </div>

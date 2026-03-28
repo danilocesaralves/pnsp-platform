@@ -45,7 +45,7 @@ function ProfileCard({ profile }: { profile: any }) {
           position: "relative",
         }}>
           <img
-            src={profile.avatarUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=transparent`}
+            src={profile.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=D4A017&textColor=0a0a0a&fontWeight=700&fontSize=40&radius=50`}
             alt={profile.displayName}
             style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease", transform: hovered ? "scale(1.06)" : "scale(1)" }}
           />
