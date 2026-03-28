@@ -58,6 +58,8 @@ export async function listProfiles(opts: {
       or(
         ilike(profiles.displayName, `%${opts.search}%`),
         ilike(profiles.bio, `%${opts.search}%`),
+        ilike(profiles.city, `%${opts.search}%`),
+        ilike(profiles.state, `%${opts.search}%`),
       ) as any
     );
   }
