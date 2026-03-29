@@ -18,6 +18,8 @@ import { uploadRouter } from "./routers/upload.router";
 import { reviewsRouter } from "./routers/reviews.router";
 import { eventsRouter } from "./routers/events.router";
 import { chatRouter } from "./routers/chat.router";
+import { bookingsRouter } from "./routers/bookings.router";
+import { notificationsRouter as notifRouter } from "./routers/notifications.router";
 import {
   mapRouter,
   notificationsRouter,
@@ -48,6 +50,8 @@ export const appRouter = router({
   reviews: reviewsRouter,
   events: eventsRouter,
   chat: chatRouter,
+  bookings: bookingsRouter,
+  notifs: notifRouter,
   map: mapRouter,
   notifications: notificationsRouter,
   imageGen: imageGenRouter,

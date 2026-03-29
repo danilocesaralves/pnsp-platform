@@ -559,3 +559,50 @@ export const chatMessages = pgTable("chat_messages", {
 ]);
 
 export type ChatMessage = typeof chatMessages.$inferSelect;
+
+// ─── BOOKINGS (NEGOCIAÇÃO) ────────────────────────────────────────────────────
+export const bookingNegStatusEnum = pgEnum("booking_neg_status", [
+  "rascunho", "proposta_enviada", "contraproposta", "aceito", "recusado", "cancelado",
+]);
+
+export const bookings = pgTable("bookings", {
+  id: serial("id").primaryKey(),
+  opportunityId:       integer("opportunityId").references(() => opportunities.id, { onDelete: "set null" }),
+  contractorProfileId: integer("contractorProfileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  artistProfileId:     integer("artistProfileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  title:               varchar("title", { length: 200 }).notNull(),
+  description:         text("description"),
+  eventDate:           varchar("eventDate", { length: 10 }),
+  eventCity:           varchar("eventCity", { length: 100 }),
+  eventState:          varchar("eventState", { length: 2 }),
+  proposedValue:       integer("proposedValue"),
+  counterValue:        integer("counterValue"),
+  finalValue:          integer("finalValue"),
+  status:              bookingNegStatusEnum("status").notNull().default("rascunho"),
+  notes:               text("notes"),
+  contractorNotes:     text("contractorNotes"),
+  artistNotes:         text("artistNotes"),
+  createdAt:           timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:           timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
+}, (t) => [
+  index("bookings_contractor_idx").on(t.contractorProfileId),
+  index("bookings_artist_idx").on(t.artistProfileId),
+  index("bookings_status_idx").on(t.status),
+]);
+
+export type Booking = typeof bookings.$inferSelect;
+export type InsertBooking = typeof bookings.$inferInsert;
+
+// ─── BOOKING TIMELINE ─────────────────────────────────────────────────────────
+export const bookingTimeline = pgTable("booking_timeline", {
+  id:             serial("id").primaryKey(),
+  bookingId:      integer("bookingId").notNull().references(() => bookings.id, { onDelete: "cascade" }),
+  action:         varchar("action", { length: 100 }).notNull(),
+  actorProfileId: integer("actorProfileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  note:           text("note"),
+  createdAt:      timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("timeline_booking_idx").on(t.bookingId),
+]);
+
+export type BookingTimeline = typeof bookingTimeline.$inferSelect;

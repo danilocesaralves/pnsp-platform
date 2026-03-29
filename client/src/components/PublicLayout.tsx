@@ -9,8 +9,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Menu, X, User, Briefcase, Music2, MapPin, BookOpen,
-  Mic2, LayoutDashboard, LogOut, Settings, Shield, MessageSquare,
+  Mic2, LayoutDashboard, LogOut, Settings, Shield, MessageSquare, FileText,
 } from "lucide-react";
+import { NotificationDropdown } from "@/components/BookingFlow";
 
 const NAV_LINKS = [
   { href: "/perfis",       label: "Perfis",        icon: User },
@@ -28,6 +29,10 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   const { user, isAuthenticated, logout } = useAuth();
 
   const { data: unreadCount = 0 } = trpc.chat.getUnreadCount.useQuery(
+    undefined,
+    { enabled: isAuthenticated, refetchInterval: 30000 },
+  );
+  const { data: pendingBookings = 0 } = trpc.bookings.getPendingCount.useQuery(
     undefined,
     { enabled: isAuthenticated, refetchInterval: 30000 },
   );
@@ -148,6 +153,51 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     )}
                   </span>
                 </Link>
+                <Link href="/negociacoes">
+                  <span
+                    className="hidden-mobile"
+                    style={{
+                      position: "relative",
+                      padding: "7px 16px",
+                      background: isActive("/negociacoes") ? "var(--ouro-sutil)" : "var(--terra)",
+                      border: `1px solid ${isActive("/negociacoes") ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+                      borderRadius: "var(--radius-md)",
+                      color: isActive("/negociacoes") ? "var(--ouro)" : "var(--creme-50)",
+                      fontSize: "var(--text-sm)",
+                      fontWeight: 600,
+                      fontFamily: "var(--font-body)",
+                      cursor: "pointer",
+                      transition: "var(--transition)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <FileText style={{ width: 14, height: 14 }} />
+                    Negociações
+                    {pendingBookings > 0 && (
+                      <span style={{
+                        minWidth: 17, height: 17,
+                        background: "#2563EB",
+                        color: "white",
+                        borderRadius: 999,
+                        fontSize: 9,
+                        fontWeight: 700,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0 4px",
+                        marginLeft: 2,
+                      }}>
+                        {pendingBookings > 9 ? "9+" : pendingBookings}
+                      </span>
+                    )}
+                  </span>
+                </Link>
+                <span className="hidden-mobile">
+                  <NotificationDropdown />
+                </span>
               </>
             )}
             {isAuthenticated && user ? (
@@ -202,6 +252,17 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                       {unreadCount > 0 && (
                         <span style={{ marginLeft: "auto", minWidth: 17, height: 17, background: "var(--ouro)", color: "var(--preto)", borderRadius: 999, fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
                           {unreadCount > 9 ? "9+" : unreadCount}
+                        </span>
+                      )}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/negociacoes">
+                      <FileText style={{ width: 14, height: 14, marginRight: 8 }} />
+                      Negociações
+                      {pendingBookings > 0 && (
+                        <span style={{ marginLeft: "auto", minWidth: 17, height: 17, background: "#2563EB", color: "white", borderRadius: 999, fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
+                          {pendingBookings > 9 ? "9+" : pendingBookings}
                         </span>
                       )}
                     </Link>
@@ -332,6 +393,17 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   {unreadCount > 0 && (
                     <span style={{ marginLeft: 4, minWidth: 18, height: 18, background: "var(--ouro)", color: "var(--preto)", borderRadius: 999, fontSize: 10, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
                       {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </span>
+              </Link>
+              <Link href="/negociacoes">
+                <span style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: "var(--radius-md)", color: "var(--creme-80)", fontSize: "var(--text-base)", fontWeight: 500, fontFamily: "var(--font-body)", cursor: "pointer" }} onClick={() => setMobileOpen(false)}>
+                  <FileText style={{ width: 16, height: 16 }} />
+                  Negociações
+                  {pendingBookings > 0 && (
+                    <span style={{ marginLeft: 4, minWidth: 18, height: 18, background: "#2563EB", color: "white", borderRadius: 999, fontSize: 10, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
+                      {pendingBookings > 9 ? "9+" : pendingBookings}
                     </span>
                   )}
                 </span>

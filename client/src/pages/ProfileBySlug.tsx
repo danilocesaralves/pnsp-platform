@@ -8,8 +8,9 @@ import { PROFILE_TYPES } from "@shared/pnsp";
 import ReviewSection, { StarDisplay } from "@/components/ReviewSection";
 import {
   MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink,
-  Pencil, Camera, ImagePlus, Loader2, Calendar, MessageSquare,
+  Pencil, Camera, ImagePlus, Loader2, Calendar, MessageSquare, FileText,
 } from "lucide-react";
+import { NewBookingForm } from "@/components/BookingFlow";
 
 /* ─── Icons ─────────────────────────────────────────────────────────────────── */
 function InstagramIcon({ size = 16 }: { size?: number }) {
@@ -146,6 +147,7 @@ export default function ProfileBySlug() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [startingChat, setStartingChat] = useState(false);
+  const [showBookingForm, setShowBookingForm] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const getPresignedUrl = trpc.upload.getPresignedUrl.useMutation();
@@ -364,6 +366,30 @@ export default function ProfileBySlug() {
             {!isOwner && user && myProfile && (
               <button
                 type="button"
+                onClick={() => setShowBookingForm(v => !v)}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "10px 20px",
+                  background: "var(--ouro-sutil)",
+                  border: "1px solid rgba(212,146,10,0.40)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--ouro)",
+                  fontSize: "var(--text-sm)",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  transition: "var(--transition)",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(212,146,10,0.20)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--ouro-sutil)"; }}
+              >
+                <FileText style={{ width: 14, height: 14 }} />
+                Propor contratação
+              </button>
+            )}
+            {!isOwner && user && myProfile && (
+              <button
+                type="button"
                 onClick={handleStartChat}
                 disabled={startingChat}
                 style={{
@@ -429,6 +455,17 @@ export default function ProfileBySlug() {
           </div>
         </div>
       </div>
+
+      {/* ─── BOOKING FORM INLINE ────────────────────────────────────────────── */}
+      {showBookingForm && profile && myProfile && (
+        <div style={{ padding: "0 24px 24px", maxWidth: 1280, margin: "0 auto" }}>
+          <NewBookingForm
+            artistProfileId={profile.id}
+            onSuccess={() => { setShowBookingForm(false); navigate("/negociacoes"); }}
+            onCancel={() => setShowBookingForm(false)}
+          />
+        </div>
+      )}
 
       {/* ─── BODY ───────────────────────────────────────────────────────────── */}
       <div style={{ padding: "40px 24px 80px", maxWidth: 1280, margin: "0 auto" }}>

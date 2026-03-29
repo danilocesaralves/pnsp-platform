@@ -6,6 +6,7 @@ import PublicLayout from "@/components/PublicLayout";
 import { ProfileStrength } from "@/components/ProfileStrength";
 import { OpportunityFeed } from "@/components/OpportunityFeed";
 import AgendaTab from "@/components/AgendaTab";
+import { BookingCard, BookingStatusBadge } from "@/components/BookingFlow";
 import { PROFILE_TYPES, OFFERING_CATEGORIES, OPPORTUNITY_CATEGORIES } from "@shared/pnsp";
 import {
   User, Briefcase, Target, Bell, Plus, Eye, Star, TrendingUp,
@@ -315,6 +316,10 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<"visao-geral" | "operacao" | "reputacao" | "agenda" | "marketing">("visao-geral");
 
   const { data: summary, isLoading } = trpc.dashboard.summary.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: recentBookings = [] } = trpc.bookings.getMyBookings.useQuery(
+    { limit: 5 },
+    { enabled: isAuthenticated },
+  );
 
   useEffect(() => {
     if (!loading && !isAuthenticated) navigate("/");
@@ -665,6 +670,46 @@ export default function Dashboard() {
                       +{(summary?.applicationsCount ?? 0) - 5} candidaturas mais antigas
                     </div>
                   )}
+                </div>
+              )}
+            </div>
+
+            {/* Negociações recentes */}
+            <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <div>
+                  <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700 }}>Negociações</h2>
+                  <p style={{ fontSize: "var(--text-sm)", color: "var(--creme-50)", marginTop: 2 }}>Propostas de contratação em andamento</p>
+                </div>
+                <Link href="/negociacoes">
+                  <span style={{ fontSize: "var(--text-xs)", color: "var(--ouro)", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                    Ver todas <ArrowRight style={{ width: 12, height: 12 }} />
+                  </span>
+                </Link>
+              </div>
+              {recentBookings.length === 0 ? (
+                <EmptyState
+                  icon={FileText}
+                  title="Nenhuma negociação ainda"
+                  desc="Acesse um perfil e clique em Propor contratação"
+                  href="/perfis"
+                  cta="Explorar Perfis"
+                />
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {recentBookings.map((b: any) => (
+                    <BookingCard
+                      key={b.id}
+                      booking={b}
+                      currentProfileId={profile?.id ?? 0}
+                      onSelect={(id) => navigate(`/negociacoes`)}
+                    />
+                  ))}
+                  <Link href="/negociacoes">
+                    <div style={{ textAlign: "center", padding: "10px", color: "var(--creme-50)", fontSize: "var(--text-sm)", cursor: "pointer" }}>
+                      Ver todas as negociações →
+                    </div>
+                  </Link>
                 </div>
               )}
             </div>
