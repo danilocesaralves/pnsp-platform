@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { PROFILE_TYPES } from "@shared/pnsp";
 import ReviewSection, { StarDisplay } from "@/components/ReviewSection";
 import MemoryTimeline from "@/components/MemoryTimeline";
+import SEO from "@/components/SEO";
 import {
   MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink,
   Pencil, Camera, ImagePlus, Loader2, Calendar, MessageSquare, FileText,
@@ -223,6 +224,11 @@ export default function ProfileBySlug() {
 
   return (
     <PublicLayout>
+      <SEO
+        title={profile.displayName}
+        description={profile.bio ?? undefined}
+        image={profile.avatarUrl ?? undefined}
+      />
 
       {/* ─── CAPA + AVATAR ──────────────────────────────────────────────────── */}
       <div style={{ position: "relative", overflow: "visible" }}>

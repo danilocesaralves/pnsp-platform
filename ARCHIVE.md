@@ -15,6 +15,7 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - Logo: logo-pnsp-crop.png em todos os pontos de contato ✅
 - Avatares: DiceBear initials douradas (#D4A017)
 - Deploy: Vercel (frontend) + Railway (backend) + Neon PostgreSQL
+- M4: Mapa Vivo (Leaflet), SEO (react-helmet-async), PIX QR Code (qrcode.react), Playwright E2E
 
 ## Design System
 - COR PRIMÁRIA: #D4A017 (dourado — tema Noite de Samba aprovado)
@@ -62,12 +63,10 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - Fix crítico: await getDb() em 28 ocorrências nos routers M3
 
 ## Próximos Passos Prioritários
-1. ANTHROPIC_API_KEY no Railway — ativa gerador de conteúdo IA real
-2. Mapa Vivo — página existe no nav mas está vazia
-3. SEO — meta tags dinâmicas por perfil para Google indexar
-4. Mobile — otimização completa
-5. Integração de pagamentos real (módulo já estruturado)
-6. Playwright E2E no CI
+1. ANTHROPIC_API_KEY no Railway — adicionar variável de ambiente `ANTHROPIC_API_KEY` para ativar gerador de conteúdo IA real (generateContent atualmente usa fallback estático com `isAiGenerated: true`)
+2. Integração de pagamentos real (Stripe já estruturado, módulo de pagamentos manual ativo)
+3. Push notifications para chat/bookings
+4. PWA offline cache aprimorado
 
 ## Sessão 2026-03-29 — M3: Marketing IA, Comunidade, Academia, Memórias
 

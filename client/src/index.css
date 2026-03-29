@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ─── Leaflet ──────────────────────────────────────────────────────────────── */
+.leaflet-container { z-index: 1; }
+
 /* ═══════════════════════════════════════════════════════════════════════════════
    PNSP — NOITE DE SAMBA
    Paleta: Preto profundo · Ouro quente · Creme · Verde samba · Vermelho

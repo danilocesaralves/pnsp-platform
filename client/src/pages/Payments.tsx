@@ -4,7 +4,8 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import PublicLayout from "@/components/PublicLayout";
 import { toast } from "sonner";
-import { Loader2, DollarSign, TrendingUp, Clock, Plus } from "lucide-react";
+import { Loader2, DollarSign, TrendingUp, Clock, Plus, QrCode, Copy, Check, X } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 type PaymentMethod = "pix" | "transferencia" | "dinheiro" | "outro";
 type PaymentStatus = "pendente" | "confirmado" | "cancelado";
@@ -20,6 +21,189 @@ const STATUS_COLOR: Record<PaymentStatus, string> = {
 function fmtBRL(cents: number | null | undefined): string {
   if (cents == null) return "—";
   return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+// ─── PIX helpers ──────────────────────────────────────────────────────────────
+function crc16ccitt(data: string): string {
+  let crc = 0xffff;
+  for (let i = 0; i < data.length; i++) {
+    crc ^= (data.charCodeAt(i) << 8);
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xffff : (crc << 1) & 0xffff;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, "0");
+}
+
+function emv(id: string, value: string): string {
+  return id + String(value.length).padStart(2, "0") + value;
+}
+
+function buildPixPayload(pixKey: string, merchantName: string, city: string, amount?: number): string {
+  const gui  = emv("00", "br.gov.bcb.pix");
+  const key  = emv("01", pixKey);
+  const mae  = emv("26", gui + key);          // merchant account info
+  const mcc  = emv("52", "0000");
+  const cur  = emv("53", "986");
+  const amt  = amount && amount > 0 ? emv("54", amount.toFixed(2)) : "";
+  const ctry = emv("58", "BR");
+  const name = emv("59", (merchantName || "RECEBEDOR").substring(0, 25).toUpperCase());
+  const cityF = emv("60", (city || "BRASIL").substring(0, 15).toUpperCase());
+  const txid  = emv("05", "***");
+  const addl  = emv("62", txid);
+  const partial = `000201010212${mae}${mcc}${cur}${amt}${ctry}${name}${cityF}${addl}6304`;
+  return partial + crc16ccitt(partial);
+}
+
+// ─── PixPayment ───────────────────────────────────────────────────────────────
+function PixPayment({ defaultAmount }: { defaultAmount?: number }) {
+  const [pixKey,       setPixKey]       = useState("");
+  const [merchantName, setMerchantName] = useState("");
+  const [city,         setCity]         = useState("SAO PAULO");
+  const [payload,      setPayload]      = useState("");
+  const [generated,    setGenerated]    = useState(false);
+  const [copied,       setCopied]       = useState(false);
+  const [open,         setOpen]         = useState(false);
+
+  function handleGenerate() {
+    if (!pixKey.trim()) { toast.error("Informe a chave PIX"); return; }
+    setPayload(buildPixPayload(pixKey.trim(), merchantName.trim() || "RECEBEDOR", city.trim() || "BRASIL", defaultAmount));
+    setGenerated(true);
+  }
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(payload);
+      setCopied(true);
+      toast.success("Código PIX copiado!");
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast.error("Não foi possível copiar");
+    }
+  }
+
+  function handleReset() {
+    setGenerated(false);
+    setPayload("");
+    setPixKey("");
+  }
+
+  const inpSt: React.CSSProperties = {
+    width: "100%", background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(212,146,10,0.15)", borderRadius: 8,
+    padding: "9px 12px", fontSize: 13, color: "var(--creme)",
+    outline: "none", fontFamily: "var(--font-body)", boxSizing: "border-box",
+  };
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          padding: "10px 18px", borderRadius: 10,
+          border: "1px solid rgba(212,146,10,0.3)", background: "var(--terra)",
+          color: "var(--ouro)", fontSize: 13, fontWeight: 600, cursor: "pointer",
+          fontFamily: "var(--font-body)", marginBottom: 24,
+        }}
+      >
+        <QrCode style={{ width: 16, height: 16 }} />
+        Gerar QR Code PIX
+      </button>
+    );
+  }
+
+  return (
+    <div style={{ background: "var(--terra)", border: "1px solid rgba(212,146,10,0.25)", borderRadius: "var(--radius-lg)", padding: 24, marginBottom: 24 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <QrCode style={{ width: 18, height: 18, color: "var(--ouro)" }} />
+          <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-lg)", fontWeight: 700, color: "var(--creme)" }}>
+            PIX QR Code
+          </h3>
+        </div>
+        <button type="button" onClick={() => { setOpen(false); handleReset(); }} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--creme-50)", padding: 4 }}>
+          <X style={{ width: 16, height: 16 }} />
+        </button>
+      </div>
+
+      {!generated ? (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--creme-50)", marginBottom: 5, textTransform: "uppercase" }}>
+              Chave PIX *
+            </label>
+            <input
+              style={inpSt}
+              placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória"
+              value={pixKey}
+              onChange={e => setPixKey(e.target.value)}
+            />
+          </div>
+          <div>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--creme-50)", marginBottom: 5, textTransform: "uppercase" }}>
+              Nome do Recebedor
+            </label>
+            <input style={inpSt} placeholder="Ex: João Silva" value={merchantName} onChange={e => setMerchantName(e.target.value)} />
+          </div>
+          <div>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--creme-50)", marginBottom: 5, textTransform: "uppercase" }}>
+              Cidade
+            </label>
+            <input style={inpSt} placeholder="Ex: SAO PAULO" value={city} onChange={e => setCity(e.target.value)} />
+          </div>
+          {defaultAmount && (
+            <div style={{ gridColumn: "1 / -1" }}>
+              <p style={{ fontSize: 12, color: "var(--creme-50)" }}>
+                Valor: <strong style={{ color: "var(--ouro)" }}>{fmtBRL(defaultAmount)}</strong> (será incluído no QR Code)
+              </p>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleGenerate}
+            className="pnsp-btn-primary"
+            style={{ gridColumn: "1 / -1", padding: "10px" }}
+          >
+            Gerar QR Code
+          </button>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18 }}>
+          <div style={{ padding: 16, background: "#fff", borderRadius: 12 }}>
+            <QRCodeSVG
+              value={payload}
+              size={200}
+              level="M"
+              includeMargin={false}
+            />
+          </div>
+          <p style={{ fontSize: 12, color: "var(--creme-50)", textAlign: "center", maxWidth: 280, wordBreak: "break-all" }}>
+            {payload.substring(0, 60)}…
+          </p>
+          <div style={{ display: "flex", gap: 10, width: "100%", justifyContent: "center" }}>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="pnsp-btn-primary"
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px" }}
+            >
+              {copied ? <Check style={{ width: 14, height: 14 }} /> : <Copy style={{ width: 14, height: 14 }} />}
+              {copied ? "Copiado!" : "Copiar código"}
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              style={{ padding: "10px 16px", borderRadius: 8, border: "1px solid var(--creme-10)", background: "none", color: "var(--creme-50)", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)" }}
+            >
+              Novo QR
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─── KpiCard ──────────────────────────────────────────────────────────────────
@@ -203,6 +387,9 @@ export default function Payments() {
           <KpiCard icon={Clock}      label="Pendente"        value={fmtBRL(stats.totalPending)} />
           <KpiCard icon={DollarSign} label="Ticket Médio"    value={fmtBRL(stats.avgTicket)} />
         </div>
+
+        {/* PIX QR Code */}
+        <PixPayment />
 
         {/* Formulário novo pagamento */}
         {showNew && (

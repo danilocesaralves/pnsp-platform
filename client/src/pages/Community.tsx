@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import PublicLayout from "@/components/PublicLayout";
 import CommunityFeed from "@/components/CommunityFeed";
 import { Users } from "lucide-react";
+import SEO from "@/components/SEO";
 
 export default function CommunityPage() {
   const { user } = useAuth();
@@ -11,6 +12,7 @@ export default function CommunityPage() {
 
   return (
     <PublicLayout>
+      <SEO title="Comunidade" description="Conecte-se com a cena do samba e pagode — compartilhe, discuta e inspire artistas por todo o Brasil." />
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-6">
           <Users size={24} style={{ color: "var(--ouro)" }} />

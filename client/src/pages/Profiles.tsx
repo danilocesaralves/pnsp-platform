@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import PublicLayout from "@/components/PublicLayout";
 import { PROFILE_TYPES, BRAZIL_STATES } from "@shared/pnsp";
 import { Search, MapPin, Star, Award, AlertCircle, Users, X } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const TYPE_PILLS = [
   { value: "all",             label: "Todos" },
@@ -169,6 +170,7 @@ export default function Profiles() {
 
   return (
     <PublicLayout>
+      <SEO title="Perfis" description="Encontre artistas, grupos, produtores, estúdios e profissionais do samba e pagode em todo o Brasil." />
       {/* Header */}
       <div style={{
         padding: "72px 24px 56px",
@@ -286,12 +288,12 @@ export default function Profiles() {
 
           {/* Grid */}
           {isLoading ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 20 }}>
               {Array.from({ length: 12 }).map((_, i) => <ProfileSkeleton key={i} />)}
             </div>
           ) : profiles && profiles.length > 0 ? (
             <>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 20 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 20 }}>
                 {profiles.map(p => <ProfileCard key={p.id} profile={p} stats={statsMap.get(p.id) ?? null} />)}
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 12, marginTop: 48 }}>

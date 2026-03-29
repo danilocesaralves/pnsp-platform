@@ -302,7 +302,7 @@ function DashboardSkeleton() {
     <PublicLayout>
       <div className="container py-8">
         <div className="skeleton" style={{ height: 40, width: 300, marginBottom: 32 }} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 16, marginBottom: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 16, marginBottom: 32 }}>
           {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 100, borderRadius: 12 }} />)}
         </div>
         <div className="skeleton" style={{ height: 400, borderRadius: 16 }} />

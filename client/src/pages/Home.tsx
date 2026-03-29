@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { PROFILE_TYPES } from "@shared/pnsp";
+import SEO from "@/components/SEO";
 
 /* ─── Smart Search ──────────────────────────────────────────────────────────── */
 const SEARCH_TYPES = [
@@ -364,6 +365,7 @@ export default function Home() {
 
   return (
     <div style={{ background: "var(--preto)", minHeight: "100vh" }}>
+      <SEO />
 
       {/* ═══ HEADER ═══ */}
       <header style={{

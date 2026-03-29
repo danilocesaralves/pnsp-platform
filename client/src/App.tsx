@@ -18,7 +18,7 @@ const Offerings = lazy(() => import("./pages/Offerings"));
 const OfferingDetail = lazy(() => import("./pages/OfferingDetail"));
 const Opportunities = lazy(() => import("./pages/Opportunities"));
 const OpportunityDetail = lazy(() => import("./pages/OpportunityDetail"));
-const MapPage = lazy(() => import("./pages/MapPage"));
+const MapaVivo = lazy(() => import("./pages/MapaVivo"));
 const Academy = lazy(() => import("./pages/Academy"));
 const AcademyDetail = lazy(() => import("./pages/AcademyDetail"));
 const Studios = lazy(() => import("./pages/Studios"));
@@ -76,7 +76,7 @@ function Router() {
         <Route path="/ofertas/:id" component={OfferingDetail} />
         <Route path="/oportunidades" component={Opportunities} />
         <Route path="/oportunidades/:id" component={OpportunityDetail} />
-        <Route path="/mapa" component={MapPage} />
+        <Route path="/mapa" component={MapaVivo} />
         <Route path="/academia" component={Academy} />
         <Route path="/academia/:id" component={AcademyDetail} />
         <Route path="/estudios" component={Studios} />

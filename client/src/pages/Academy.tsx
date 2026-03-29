@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import SEO from "@/components/SEO";
 import { trpc } from "@/lib/trpc";
 import PublicLayout from "@/components/PublicLayout";
 import { Button } from "@/components/ui/button";
@@ -88,6 +89,7 @@ export default function Academy() {
 
   return (
     <PublicLayout>
+      <SEO title="Academia Digital" description="Cursos, artigos e vídeos sobre samba, pagode, instrumentos e o ecossistema musical brasileiro." />
       {/* ─── Header ─────────────────────────────────────────────────────── */}
       <div
         className="py-12 border-b border-border"
