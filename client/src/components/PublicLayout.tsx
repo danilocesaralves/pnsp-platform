@@ -59,18 +59,19 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         borderBottom: "1px solid rgba(212,160,23,0.15)",
-        height: 68,
+        minHeight: 72,
         display: "flex",
         alignItems: "center",
         padding: "0 24px",
+        overflow: "visible",
         boxShadow: scrolled ? "0 4px 24px rgba(0,0,0,0.8)" : "none",
         transition: "box-shadow 0.3s ease",
       }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32, overflow: "visible" }}>
 
           {/* Logo */}
-          <Link href="/">
-            <img src="/logo-pnsp-crop.png" alt="PNSP" title="PNSP - Plataforma Nacional do Samba e Pagode" style={{ height: 64, width: "auto", cursor: "pointer", display: "block", filter: "invert(1) brightness(1.2)", objectFit: "contain", background: "none" }} />
+          <Link href="/" style={{ display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}>
+            <img src="/logo-pnsp-crop.png" alt="PNSP" title="PNSP - Plataforma Nacional do Samba e Pagode" style={{ height: 64, width: "auto", display: "block", flexShrink: 0, objectFit: "contain", filter: "invert(1) brightness(1.2)", cursor: "pointer" }} />
           </Link>
 
           {/* Desktop Nav */}
