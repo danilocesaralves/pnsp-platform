@@ -75,7 +75,7 @@ export const marketingRouter = router({
       status: CAMPAIGN_STATUS_ENUM.optional(),
     }))
     .query(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -98,7 +98,7 @@ export const marketingRouter = router({
       notes: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -129,7 +129,7 @@ export const marketingRouter = router({
       notes: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [campaign] = await db.select().from(marketingCampaigns).where(eq(marketingCampaigns.id, input.id));
       if (!campaign) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -149,7 +149,7 @@ export const marketingRouter = router({
       status: CONTENT_STATUS_ENUM.optional(),
     }))
     .query(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -168,7 +168,7 @@ export const marketingRouter = router({
       campaignId: z.number().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -196,7 +196,7 @@ export const marketingRouter = router({
       scheduledAt: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [content] = await db.select().from(marketingContents).where(eq(marketingContents.id, input.id));
       if (!content) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -215,7 +215,7 @@ export const marketingRouter = router({
   getMyScores: protectedProcedure
     .input(z.object({ profileId: z.number() }))
     .query(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -226,7 +226,7 @@ export const marketingRouter = router({
   getMyInsights: protectedProcedure
     .input(z.object({ profileId: z.number() }))
     .query(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -242,7 +242,7 @@ export const marketingRouter = router({
   dismissInsight: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [insight] = await db.select().from(marketingInsights).where(eq(marketingInsights.id, input.id));
       if (!insight) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -256,7 +256,7 @@ export const marketingRouter = router({
   seedInsights: protectedProcedure
     .input(z.object({ profileId: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });

@@ -129,7 +129,7 @@ export const academyRouter = router({
       offset: z.number().min(0).default(0),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       const conditions = [eq(academyCourses.isPublished, true)];
       if (input.category) conditions.push(eq(academyCourses.category, input.category as any));
       if (input.level) conditions.push(eq(academyCourses.level, input.level as any));
@@ -144,7 +144,7 @@ export const academyRouter = router({
   getCourseById: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [course] = await db.select().from(academyCourses).where(eq(academyCourses.id, input.id));
       if (!course) throw new TRPCError({ code: "NOT_FOUND" });
       const lessons = await db.select().from(academyLessons)
@@ -156,7 +156,7 @@ export const academyRouter = router({
   enroll: protectedProcedure
     .input(z.object({ courseId: z.number(), profileId: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -180,7 +180,7 @@ export const academyRouter = router({
   getMyEnrollments: protectedProcedure
     .input(z.object({ profileId: z.number() }))
     .query(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -196,7 +196,7 @@ export const academyRouter = router({
   updateProgress: protectedProcedure
     .input(z.object({ enrollmentId: z.number(), progress: z.number().min(0).max(100) }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [enrollment] = await db.select().from(academyEnrollments).where(eq(academyEnrollments.id, input.enrollmentId));
       if (!enrollment) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -212,7 +212,7 @@ export const academyRouter = router({
 
   seedCourses: adminProcedure
     .mutation(async () => {
-      const db = getDb();
+      const db = await getDb();
       const existing = await db.select({ id: academyCourses.id }).from(academyCourses).limit(1);
       if (existing.length > 0) return { message: "Courses already seeded" };
 

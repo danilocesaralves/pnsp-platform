@@ -17,7 +17,7 @@ export const communityRouter = router({
       offset: z.number().min(0).default(0),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       const where = input.postType ? eq(communityPosts.postType, input.postType) : undefined;
       const rows = await db
         .select({
@@ -49,7 +49,7 @@ export const communityRouter = router({
       tags: z.array(z.string()).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -69,7 +69,7 @@ export const communityRouter = router({
   deletePost: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [post] = await db.select().from(communityPosts).where(eq(communityPosts.id, input.id));
       if (!post) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -84,7 +84,7 @@ export const communityRouter = router({
   getComments: publicProcedure
     .input(z.object({ postId: z.number() }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       return db
         .select({
           comment: communityComments,
@@ -107,7 +107,7 @@ export const communityRouter = router({
       body: z.string().min(1).max(2000),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -132,7 +132,7 @@ export const communityRouter = router({
       profileId: z.number(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -158,7 +158,7 @@ export const communityRouter = router({
   getMyLikes: protectedProcedure
     .input(z.object({ profileId: z.number(), postIds: z.array(z.number()) }))
     .query(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) return [];
       if (input.postIds.length === 0) return [];

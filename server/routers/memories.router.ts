@@ -16,7 +16,7 @@ export const memoriesRouter = router({
       offset: z.number().min(0).default(0),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       return db.select().from(memories)
         .where(and(eq(memories.profileId, input.profileId), eq(memories.isPublic, true)))
         .orderBy(desc(memories.date), desc(memories.createdAt))
@@ -32,7 +32,7 @@ export const memoriesRouter = router({
       offset: z.number().min(0).default(0),
     }))
     .query(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -59,7 +59,7 @@ export const memoriesRouter = router({
       isPublic: z.boolean().default(true),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -91,7 +91,7 @@ export const memoriesRouter = router({
       isPublic: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [memory] = await db.select().from(memories).where(eq(memories.id, input.id));
       if (!memory) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -106,7 +106,7 @@ export const memoriesRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [memory] = await db.select().from(memories).where(eq(memories.id, input.id));
       if (!memory) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
