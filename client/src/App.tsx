@@ -38,6 +38,7 @@ const AdminOpportunities = lazy(() => import("./pages/admin/AdminOpportunities")
 const AdminContent = lazy(() => import("./pages/admin/AdminContent"));
 const AdminLogs = lazy(() => import("./pages/admin/AdminLogs"));
 const OwnerDashboard = lazy(() => import("./pages/owner/OwnerDashboard"));
+const Messages = lazy(() => import("./pages/Messages"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // ─── Page loading fallback ───────────────────────────────────────────────────
@@ -82,6 +83,7 @@ function Router() {
         <Route path="/criar-oferta" component={CreateOffering} />
         <Route path="/criar-oportunidade" component={CreateOpportunity} />
         <Route path="/criar-imagem" component={ImageGenerator} />
+        <Route path="/mensagens" component={Messages} />
 
         {/* Admin */}
         <Route path="/admin" component={AdminDashboard} />

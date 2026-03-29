@@ -8,7 +8,7 @@ import { PROFILE_TYPES } from "@shared/pnsp";
 import ReviewSection, { StarDisplay } from "@/components/ReviewSection";
 import {
   MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink,
-  Pencil, Camera, ImagePlus, Loader2, Calendar,
+  Pencil, Camera, ImagePlus, Loader2, Calendar, MessageSquare,
 } from "lucide-react";
 
 /* ─── Icons ─────────────────────────────────────────────────────────────────── */
@@ -145,11 +145,26 @@ export default function ProfileBySlug() {
 
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [startingChat, setStartingChat] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const getPresignedUrl = trpc.upload.getPresignedUrl.useMutation();
   const updateProfile = trpc.profiles.update.useMutation({ onSuccess: () => refetch() });
+  const getOrCreateConversation = trpc.chat.getOrCreateConversation.useMutation();
   const isOwner = !!user && !!profile && user.id === profile.userId;
+
+  async function handleStartChat() {
+    if (!profile || !myProfile) return;
+    setStartingChat(true);
+    try {
+      await getOrCreateConversation.mutateAsync({ otherProfileId: profile.id });
+      navigate(`/mensagens?profileId=${profile.id}`);
+    } catch {
+      // ignore
+    } finally {
+      setStartingChat(false);
+    }
+  }
 
   async function handleFileUpload(file: File, type: "avatar" | "cover", setUploading: (v: boolean) => void) {
     const err = validateImage(file);
@@ -345,6 +360,35 @@ export default function ProfileBySlug() {
               <ActionBtn primary onClick={() => navigate("/dashboard")}>
                 <Pencil style={{ width: 13, height: 13 }} /> Editar perfil
               </ActionBtn>
+            )}
+            {!isOwner && user && myProfile && (
+              <button
+                type="button"
+                onClick={handleStartChat}
+                disabled={startingChat}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "10px 20px",
+                  background: "var(--terra)",
+                  border: "1px solid var(--creme-20)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--creme-80)",
+                  fontSize: "var(--text-sm)",
+                  fontWeight: 600,
+                  fontFamily: "var(--font-body)",
+                  cursor: startingChat ? "not-allowed" : "pointer",
+                  transition: "var(--transition)",
+                  opacity: startingChat ? 0.7 : 1,
+                }}
+                onMouseEnter={e => { if (!startingChat) { (e.currentTarget as HTMLElement).style.borderColor = "rgba(212,146,10,0.40)"; (e.currentTarget as HTMLElement).style.color = "var(--ouro)"; } }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--creme-20)"; (e.currentTarget as HTMLElement).style.color = "var(--creme-80)"; }}
+              >
+                {startingChat
+                  ? <Loader2 style={{ width: 14, height: 14, animation: "spin 1s linear infinite" }} />
+                  : <MessageSquare style={{ width: 14, height: 14 }} />
+                }
+                Enviar mensagem
+              </button>
             )}
             {profile.phone && (
               <a

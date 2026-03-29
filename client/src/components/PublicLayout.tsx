@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -8,7 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Menu, X, User, Briefcase, Music2, MapPin, BookOpen,
-  Mic2, LayoutDashboard, LogOut, Settings, Shield,
+  Mic2, LayoutDashboard, LogOut, Settings, Shield, MessageSquare,
 } from "lucide-react";
 
 const NAV_LINKS = [
@@ -25,6 +26,11 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
+
+  const { data: unreadCount = 0 } = trpc.chat.getUnreadCount.useQuery(
+    undefined,
+    { enabled: isAuthenticated, refetchInterval: 30000 },
+  );
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 50);
@@ -75,30 +81,74 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           {/* Auth */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {isAuthenticated && user && (
-              <Link href="/dashboard">
-                <span
-                  className="hidden-mobile"
-                  style={{
-                    padding: "7px 16px",
-                    background: isActive("/dashboard") ? "var(--ouro-sutil)" : "var(--terra)",
-                    border: `1px solid ${isActive("/dashboard") ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
-                    borderRadius: "var(--radius-md)",
-                    color: isActive("/dashboard") ? "var(--ouro)" : "var(--creme-50)",
-                    fontSize: "var(--text-sm)",
-                    fontWeight: 600,
-                    fontFamily: "var(--font-body)",
-                    cursor: "pointer",
-                    transition: "var(--transition)",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <LayoutDashboard style={{ width: 14, height: 14 }} />
-                  Dashboard
-                </span>
-              </Link>
+              <>
+                <Link href="/dashboard">
+                  <span
+                    className="hidden-mobile"
+                    style={{
+                      padding: "7px 16px",
+                      background: isActive("/dashboard") ? "var(--ouro-sutil)" : "var(--terra)",
+                      border: `1px solid ${isActive("/dashboard") ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+                      borderRadius: "var(--radius-md)",
+                      color: isActive("/dashboard") ? "var(--ouro)" : "var(--creme-50)",
+                      fontSize: "var(--text-sm)",
+                      fontWeight: 600,
+                      fontFamily: "var(--font-body)",
+                      cursor: "pointer",
+                      transition: "var(--transition)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <LayoutDashboard style={{ width: 14, height: 14 }} />
+                    Dashboard
+                  </span>
+                </Link>
+                <Link href="/mensagens">
+                  <span
+                    className="hidden-mobile"
+                    style={{
+                      position: "relative",
+                      padding: "7px 16px",
+                      background: isActive("/mensagens") ? "var(--ouro-sutil)" : "var(--terra)",
+                      border: `1px solid ${isActive("/mensagens") ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+                      borderRadius: "var(--radius-md)",
+                      color: isActive("/mensagens") ? "var(--ouro)" : "var(--creme-50)",
+                      fontSize: "var(--text-sm)",
+                      fontWeight: 600,
+                      fontFamily: "var(--font-body)",
+                      cursor: "pointer",
+                      transition: "var(--transition)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <MessageSquare style={{ width: 14, height: 14 }} />
+                    Mensagens
+                    {unreadCount > 0 && (
+                      <span style={{
+                        minWidth: 17, height: 17,
+                        background: "var(--ouro)",
+                        color: "var(--preto)",
+                        borderRadius: 999,
+                        fontSize: 9,
+                        fontWeight: 700,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0 4px",
+                        marginLeft: 2,
+                      }}>
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </span>
+                </Link>
+              </>
             )}
             {isAuthenticated && user ? (
               <DropdownMenu>
@@ -143,6 +193,17 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard">
                       <LayoutDashboard style={{ width: 14, height: 14, marginRight: 8 }} />Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/mensagens">
+                      <MessageSquare style={{ width: 14, height: 14, marginRight: 8 }} />
+                      Mensagens
+                      {unreadCount > 0 && (
+                        <span style={{ marginLeft: "auto", minWidth: 17, height: 17, background: "var(--ouro)", color: "var(--preto)", borderRadius: 999, fontSize: 9, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
+                          {unreadCount > 9 ? "9+" : unreadCount}
+                        </span>
+                      )}
                     </Link>
                   </DropdownMenuItem>
                   {(user.role === "admin" || user.role === "owner" || user.email === "composisamba@gmail.com") && (
@@ -262,6 +323,17 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 <span style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: "var(--radius-md)", color: "var(--ouro)", background: "var(--ouro-sutil)", fontSize: "var(--text-base)", fontWeight: 700, fontFamily: "var(--font-body)", cursor: "pointer" }} onClick={() => setMobileOpen(false)}>
                   <LayoutDashboard style={{ width: 16, height: 16 }} />
                   Dashboard Proprietário
+                </span>
+              </Link>
+              <Link href="/mensagens">
+                <span style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: "var(--radius-md)", color: "var(--creme-80)", fontSize: "var(--text-base)", fontWeight: 500, fontFamily: "var(--font-body)", cursor: "pointer" }} onClick={() => setMobileOpen(false)}>
+                  <MessageSquare style={{ width: 16, height: 16 }} />
+                  Mensagens
+                  {unreadCount > 0 && (
+                    <span style={{ marginLeft: 4, minWidth: 18, height: 18, background: "var(--ouro)", color: "var(--preto)", borderRadius: 999, fontSize: 10, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
                 </span>
               </Link>
               <Link href="/minha-conta">

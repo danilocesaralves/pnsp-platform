@@ -5,6 +5,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import PublicLayout from "@/components/PublicLayout";
 import { ProfileStrength } from "@/components/ProfileStrength";
 import { OpportunityFeed } from "@/components/OpportunityFeed";
+import AgendaTab from "@/components/AgendaTab";
 import { PROFILE_TYPES, OFFERING_CATEGORIES, OPPORTUNITY_CATEGORIES } from "@shared/pnsp";
 import {
   User, Briefcase, Target, Bell, Plus, Eye, Star, TrendingUp,
@@ -753,14 +754,7 @@ export default function Dashboard() {
         )}
 
         {/* ════════════════════════════ AGENDA ═══════════════════════════════ */}
-        {activeTab === "agenda" && (
-          <ComingSoon
-            icon={Calendar}
-            title="Agenda Inteligente"
-            desc="Central de controle de shows, ensaios, gravações e reuniões. Com conflitos de agenda, convocação de membros, setlist e checklist pré e pós-evento."
-            items={["Shows agendados", "Ensaios", "Gravações", "Reuniões", "Setlist", "Checklist pré-show", "Conflitos de agenda", "Convocação de equipe"]}
-          />
-        )}
+        {activeTab === "agenda" && <AgendaTab />}
 
         {/* ═══════════════════════════ MARKETING ════════════════════════════ */}
         {activeTab === "marketing" && (

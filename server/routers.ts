@@ -16,6 +16,8 @@ import { studiosRouter } from "./routers/studios.router";
 import { academyRouter } from "./routers/academy.router";
 import { uploadRouter } from "./routers/upload.router";
 import { reviewsRouter } from "./routers/reviews.router";
+import { eventsRouter } from "./routers/events.router";
+import { chatRouter } from "./routers/chat.router";
 import {
   mapRouter,
   notificationsRouter,
@@ -31,10 +33,6 @@ export const appRouter = router({
   system: systemRouter,
 
   // ─── AUTH ─────────────────────────────────────────────────────────────────
-  // Session management is handled by better-auth at /api/auth/*
-  // auth.me reads user from tRPC context (populated by better-auth session)
-  // auth.logout is a no-op kept for backwards compatibility; clients should
-  // call POST /api/auth/sign-out directly for proper cookie invalidation.
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
     logout: publicProcedure.mutation(() => ({ success: true } as const)),
@@ -48,6 +46,8 @@ export const appRouter = router({
   academy: academyRouter,
   upload: uploadRouter,
   reviews: reviewsRouter,
+  events: eventsRouter,
+  chat: chatRouter,
   map: mapRouter,
   notifications: notificationsRouter,
   imageGen: imageGenRouter,

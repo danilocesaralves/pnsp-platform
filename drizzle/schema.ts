@@ -500,3 +500,62 @@ export const reviews = pgTable("reviews", {
 
 export type Review = typeof reviews.$inferSelect;
 export type InsertReview = typeof reviews.$inferInsert;
+
+// ─── EVENTS (AGENDA) ──────────────────────────────────────────────────────────
+export const eventTypeEnum = pgEnum("event_type", ["show", "ensaio", "gravacao", "reuniao", "outro"]);
+export const eventStatusEnum = pgEnum("event_status", ["confirmado", "pendente", "cancelado"]);
+
+export const events = pgTable("events", {
+  id: serial("id").primaryKey(),
+  profileId: integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 200 }).notNull(),
+  type: eventTypeEnum("type").notNull().default("outro"),
+  date: varchar("date", { length: 10 }).notNull(),
+  startTime: varchar("startTime", { length: 5 }),
+  endTime: varchar("endTime", { length: 5 }),
+  location: text("location"),
+  city: varchar("city", { length: 100 }),
+  state: varchar("state", { length: 2 }),
+  notes: text("notes"),
+  status: eventStatusEnum("status").notNull().default("pendente"),
+  isPublic: boolean("isPublic").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
+}, (t) => [
+  index("events_profile_date_idx").on(t.profileId, t.date),
+  index("events_date_idx").on(t.date),
+]);
+
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = typeof events.$inferInsert;
+
+// ─── CONVERSATIONS ────────────────────────────────────────────────────────────
+export const conversations = pgTable("conversations", {
+  id: serial("id").primaryKey(),
+  participantA: integer("participantA").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  participantB: integer("participantB").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  context: varchar("context", { length: 200 }),
+  lastMessageAt: timestamp("lastMessageAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("conversations_a_idx").on(t.participantA),
+  index("conversations_b_idx").on(t.participantB),
+  unique("conversations_participants_uniq").on(t.participantA, t.participantB),
+]);
+
+export type Conversation = typeof conversations.$inferSelect;
+
+// ─── MESSAGES ─────────────────────────────────────────────────────────────────
+export const chatMessages = pgTable("chat_messages", {
+  id: serial("id").primaryKey(),
+  conversationId: integer("conversationId").notNull().references(() => conversations.id, { onDelete: "cascade" }),
+  senderId: integer("senderId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  isRead: boolean("isRead").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("messages_conv_idx").on(t.conversationId),
+  index("messages_created_idx").on(t.createdAt),
+]);
+
+export type ChatMessage = typeof chatMessages.$inferSelect;
