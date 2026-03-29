@@ -74,6 +74,32 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
           {/* Auth */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {isAuthenticated && user && (
+              <Link href="/dashboard">
+                <span
+                  className="hidden-mobile"
+                  style={{
+                    padding: "7px 16px",
+                    background: isActive("/dashboard") ? "var(--ouro-sutil)" : "var(--terra)",
+                    border: `1px solid ${isActive("/dashboard") ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+                    borderRadius: "var(--radius-md)",
+                    color: isActive("/dashboard") ? "var(--ouro)" : "var(--creme-50)",
+                    fontSize: "var(--text-sm)",
+                    fontWeight: 600,
+                    fontFamily: "var(--font-body)",
+                    cursor: "pointer",
+                    transition: "var(--transition)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <LayoutDashboard style={{ width: 14, height: 14 }} />
+                  Dashboard
+                </span>
+              </Link>
+            )}
             {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -230,7 +256,26 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               </span>
             </Link>
           ))}
-          {!isAuthenticated && (
+          {isAuthenticated ? (
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid var(--creme-10)", display: "flex", flexDirection: "column", gap: 4 }}>
+              <Link href="/dashboard">
+                <span style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: "var(--radius-md)", color: "var(--ouro)", background: "var(--ouro-sutil)", fontSize: "var(--text-base)", fontWeight: 700, fontFamily: "var(--font-body)", cursor: "pointer" }} onClick={() => setMobileOpen(false)}>
+                  <LayoutDashboard style={{ width: 16, height: 16 }} />
+                  Dashboard Proprietário
+                </span>
+              </Link>
+              <Link href="/minha-conta">
+                <span style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: "var(--radius-md)", color: "var(--creme-80)", fontSize: "var(--text-base)", fontWeight: 500, fontFamily: "var(--font-body)", cursor: "pointer" }} onClick={() => setMobileOpen(false)}>
+                  <User style={{ width: 16, height: 16 }} />
+                  Minha Conta
+                </span>
+              </Link>
+              <button onClick={() => { logout(); setMobileOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: "var(--radius-md)", color: "var(--vermelho)", fontSize: "var(--text-base)", fontWeight: 500, fontFamily: "var(--font-body)", cursor: "pointer", background: "none", border: "none", width: "100%", textAlign: "left" }}>
+                <LogOut style={{ width: 16, height: 16 }} />
+                Sair
+              </button>
+            </div>
+          ) : (
             <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--creme-10)", display: "flex", gap: 8 }}>
               <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", border: "1px solid var(--creme-20)", borderRadius: "var(--radius-md)", color: "var(--creme-80)", fontSize: "var(--text-sm)", fontWeight: 500, fontFamily: "var(--font-body)" }}>
                 Entrar

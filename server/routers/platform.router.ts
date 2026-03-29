@@ -370,15 +370,72 @@ export const dashboardRouter = router({
         repo.getBookingsByUser(ctx.user.id),
         repo.getUserNotifications(ctx.user.id),
       ]);
+
+      // Review stats for this user's profile
+      let reviewStats = { avg: 0, total: 0 };
+      let recentReviews: any[] = [];
+      let receivedApplicationsCount = 0;
+
+      if (profile) {
+        const db = await import("../db").then(m => m.getDb());
+        if (db) {
+          const { reviews, profiles: profilesTable, opportunityApplications } = await import("../../drizzle/schema");
+          const { eq, desc, sql: sqlExpr, and, inArray } = await import("drizzle-orm");
+
+          // Review stats
+          const [statsRow] = await db.select({
+            avg:   sqlExpr<string>`COALESCE(ROUND(AVG(${reviews.rating})::numeric, 1), 0)`,
+            total: sqlExpr<number>`COUNT(*)::int`,
+          }).from(reviews).where(eq(reviews.reviewedId, profile.id));
+          reviewStats = {
+            avg:   Number(statsRow?.avg ?? 0),
+            total: Number(statsRow?.total ?? 0),
+          };
+
+          // 3 most recent reviews
+          recentReviews = await db
+            .select({
+              id:             reviews.id,
+              rating:         reviews.rating,
+              comment:        reviews.comment,
+              context:        reviews.context,
+              createdAt:      reviews.createdAt,
+              reviewerName:   profilesTable.displayName,
+              reviewerAvatar: profilesTable.avatarUrl,
+              reviewerSlug:   profilesTable.slug,
+            })
+            .from(reviews)
+            .innerJoin(profilesTable, eq(reviews.reviewerId, profilesTable.id))
+            .where(eq(reviews.reviewedId, profile.id))
+            .orderBy(desc(reviews.createdAt))
+            .limit(3);
+
+          // Applications received on user's opportunities
+          if (myOpportunities.length > 0) {
+            const oppIds = myOpportunities.map(o => o.id);
+            const [appCountRow] = await db.select({
+              count: sqlExpr<number>`COUNT(*)::int`,
+            }).from(opportunityApplications)
+              .where(inArray(opportunityApplications.opportunityId, oppIds));
+            receivedApplicationsCount = Number(appCountRow?.count ?? 0);
+          }
+        }
+      }
+
       return {
         profile,
-        offeringsCount: myOfferings.length,
-        opportunitiesCount: myOpportunities.length,
-        applicationsCount: myApplications.length,
-        bookingsCount: myBookings.length,
-        unreadNotifications: notifications.filter(n => !n.isRead).length,
-        recentOfferings: myOfferings.slice(0, 5),
-        recentOpportunities: myOpportunities.slice(0, 5),
+        offeringsCount:            myOfferings.length,
+        opportunitiesCount:        myOpportunities.length,
+        applicationsCount:         myApplications.length,
+        bookingsCount:             myBookings.length,
+        unreadNotifications:       notifications.filter(n => !n.isRead).length,
+        recentOfferings:           myOfferings.slice(0, 8),
+        recentOpportunities:       myOpportunities.slice(0, 8),
+        recentApplications:        myApplications.slice(0, 5),
+        reviewStats,
+        recentReviews,
+        receivedApplicationsCount,
+        profileViewCount:          profile?.viewCount ?? 0,
       };
     }),
 });

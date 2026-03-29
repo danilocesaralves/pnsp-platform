@@ -39,14 +39,32 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - Monitoramento: Sentry configurado
 - CI/CD: GitHub Actions
 
-## Próximas Melhorias (próxima sessão)
-1. Página de edição de perfil com todos os novos campos funcionais
-2. Calculadora de cachê com índice de mercado por cidade
-3. Página de Venue completa
-4. Animações de scroll e parallax na Home
-5. Mobile 100% otimizado
-6. Instagram: link funcional no perfil público
-7. Telefone: link funcional (WhatsApp) no perfil público
+## Sessão 2026-03-28 — Auditoria + Dashboard Proprietário
+
+### Implementado:
+- Dashboard Proprietário do usuário (/dashboard) — completamente reescrito
+  - 6 KPIs: views do perfil, avaliação média, ofertas, oportunidades, candidaturas, notificações
+  - 5 tabs: Visão Geral | Operação | Reputação | Agenda (coming soon) | Marketing (coming soon)
+  - Visão Geral: perfil card + ProfileStrength + quick actions + opportunity feed + candidaturas
+  - Operação: minhas ofertas (com status/views), minhas oportunidades, candidaturas enviadas
+  - Reputação: avg de avaliações + distribuição + indicadores de confiança + avaliações recentes
+  - Agenda/Marketing: estrutura placeholder rica com coming soon
+- dashboardRouter.summary expandido: review stats, avaliações recentes, receivedApplicationsCount, profileViewCount
+- PublicLayout: botão "Dashboard" na navbar desktop quando autenticado; mobile nav completo com Dashboard + Conta + Sair
+- OwnerDashboard: fix COLORS (var(--o500)/var(--g500) → var(--ouro)/var(--verde)) — gráficos não quebravam mais
+- MEMORY.md: corrigido índice errado (dizia "turquesa" quando o design é dourado)
+
+### Pendente (próximas sessões):
+1. Página de edição de perfil com todos os novos campos funcionais (cachê, duração, cidades, instrumentos, showTypes)
+2. Agenda/Calendário — módulo completo
+3. Chat básico contextual entre usuários
+4. Módulo de Patrocinadores
+5. Marketing Inteligente Autônomo — estrutura base
+6. Booking/negociação entre partes
+7. Calculadora de cachê com índice por cidade
+8. Meta tags dinâmicas e Open Graph por perfil
+9. Sitemap
+10. Notificações por email (SMTP)
 
 ## Instrução para Claude
 Ao iniciar nova sessão: leia este arquivo primeiro.

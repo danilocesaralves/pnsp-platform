@@ -19,7 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 
-const COLORS = ["var(--o500)", "var(--g500)", "#8b5cf6", "#3b82f6", "#ef4444", "#f97316"];
+const COLORS = ["var(--ouro)", "var(--verde)", "#8b5cf6", "#3b82f6", "#ef4444", "#f97316"];
 
 export default function OwnerDashboard() {
   const { user, loading } = useAuth();
