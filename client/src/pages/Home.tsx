@@ -365,6 +365,40 @@ export default function Home() {
   return (
     <div style={{ background: "var(--preto)", minHeight: "100vh" }}>
 
+      {/* ═══ HEADER ═══ */}
+      <header style={{
+        position: "fixed",
+        top: 0, left: 0, right: 0,
+        zIndex: 50,
+        background: "rgba(10,8,0,0.92)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(212,160,23,0.15)",
+        minHeight: 72,
+        display: "flex",
+        alignItems: "center",
+        padding: "0 24px",
+        overflow: "visible",
+      }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", overflow: "visible" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}>
+            <img
+              src="/logo-pnsp-crop.png"
+              alt="PNSP"
+              style={{ height: 64, width: "auto", display: "block", flexShrink: 0, objectFit: "contain", filter: "invert(1) brightness(1.2)", cursor: "pointer" }}
+            />
+          </Link>
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            <a href="/entrar" style={{ padding: "8px 18px", color: "var(--creme-80)", fontSize: "var(--text-sm)", fontWeight: 500, fontFamily: "var(--font-body)", borderRadius: "var(--radius-md)" }}>
+              Entrar
+            </a>
+            <a href="/entrar" style={{ padding: "8px 18px", background: "var(--ouro)", color: "var(--preto)", fontSize: "var(--text-sm)", fontWeight: 700, fontFamily: "var(--font-body)", borderRadius: "var(--radius-md)", whiteSpace: "nowrap" }}>
+              Cadastrar grátis
+            </a>
+          </div>
+        </div>
+      </header>
+
       {/* ═══ HERO ═══ */}
       <section style={{
         minHeight: "100vh",
