@@ -15,6 +15,7 @@ import { opportunitiesRouter } from "./routers/opportunities.router";
 import { studiosRouter } from "./routers/studios.router";
 import { academyRouter } from "./routers/academy.router";
 import { uploadRouter } from "./routers/upload.router";
+import { reviewsRouter } from "./routers/reviews.router";
 import {
   mapRouter,
   notificationsRouter,
@@ -46,6 +47,7 @@ export const appRouter = router({
   studios: studiosRouter,
   academy: academyRouter,
   upload: uploadRouter,
+  reviews: reviewsRouter,
   map: mapRouter,
   notifications: notificationsRouter,
   imageGen: imageGenRouter,

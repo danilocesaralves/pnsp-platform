@@ -60,6 +60,49 @@ function validateImage(file: File): string | null {
   return null;
 }
 
+/* ─── PortfolioItem ──────────────────────────────────────────────────────────── */
+function PortfolioItem({ item }: { item: any }) {
+  const [h, setH] = useState(false);
+  return (
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: "block", aspectRatio: "1/1", borderRadius: "var(--radius-md)",
+        overflow: "hidden",
+        border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
+        background: "var(--terra-escura)", position: "relative",
+        transition: "var(--transition)",
+      }}
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+    >
+      {item.mediaType === "image" ? (
+        <img
+          src={item.url}
+          alt={item.title ?? ""}
+          style={{
+            width: "100%", height: "100%", objectFit: "cover",
+            transform: h ? "scale(1.06)" : "scale(1)",
+            transition: "transform 0.4s ease",
+          }}
+        />
+      ) : (
+        <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6, padding: 10 }}>
+          <Music style={{ width: 28, height: 28, color: "var(--ouro)" }} />
+          <span style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)", textAlign: "center", lineHeight: 1.3 }}>{item.title}</span>
+        </div>
+      )}
+      {h && (
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <ExternalLink style={{ width: 18, height: 18, color: "white" }} />
+        </div>
+      )}
+    </a>
+  );
+}
+
 /* ─── Btn link helper ────────────────────────────────────────────────────────── */
 function ActionBtn({ href, children, primary }: { href?: string; children: React.ReactNode; primary?: boolean; onClick?: () => void }) {
   const [h, setH] = useState(false);
@@ -368,29 +411,9 @@ export default function ProfileBySlug() {
                   Portfólio
                 </h2>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
-                  {portfolio.map((item) => {
-                    const [h, setH] = useState(false);
-                    return (
-                      <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer"
-                        style={{ display: "block", aspectRatio: "1/1", borderRadius: "var(--radius-md)", overflow: "hidden", border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`, background: "var(--terra-escura)", position: "relative", transition: "var(--transition)" }}
-                        onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-                      >
-                        {item.mediaType === "image" ? (
-                          <img src={item.url} alt={item.title ?? ""} style={{ width: "100%", height: "100%", objectFit: "cover", transform: h ? "scale(1.06)" : "scale(1)", transition: "transform 0.4s ease" }} />
-                        ) : (
-                          <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6, padding: 10 }}>
-                            <Music style={{ width: 28, height: 28, color: "var(--ouro)" }} />
-                            <span style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)", textAlign: "center", lineHeight: 1.3 }}>{item.title}</span>
-                          </div>
-                        )}
-                        {h && (
-                          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <ExternalLink style={{ width: 18, height: 18, color: "white" }} />
-                          </div>
-                        )}
-                      </a>
-                    );
-                  })}
+                  {portfolio.map((item) => (
+                    <PortfolioItem key={item.id} item={item} />
+                  ))}
                 </div>
               </div>
             )}

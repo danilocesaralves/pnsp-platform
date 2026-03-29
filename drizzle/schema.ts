@@ -480,3 +480,23 @@ export const subscriptions = pgTable("subscriptions", {
 });
 
 export type Subscription = typeof subscriptions.$inferSelect;
+
+// ─── REVIEWS ──────────────────────────────────────────────────────────────────
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  reviewerId: integer("reviewerId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  reviewedId: integer("reviewedId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  rating: integer("rating").notNull(),
+  comment: text("comment"),
+  context: varchar("context", { length: 100 }).default("Outro"),
+  ownerReply: text("ownerReply"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
+}, (t) => [
+  index("reviews_reviewed_idx").on(t.reviewedId),
+  index("reviews_reviewer_idx").on(t.reviewerId),
+  unique("reviews_reviewer_reviewed_context_uniq").on(t.reviewerId, t.reviewedId, t.context),
+]);
+
+export type Review = typeof reviews.$inferSelect;
+export type InsertReview = typeof reviews.$inferInsert;
