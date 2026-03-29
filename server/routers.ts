@@ -20,6 +20,9 @@ import { eventsRouter } from "./routers/events.router";
 import { chatRouter } from "./routers/chat.router";
 import { bookingsRouter } from "./routers/bookings.router";
 import { notificationsRouter as notifRouter } from "./routers/notifications.router";
+import { contractsRouter } from "./routers/contracts.router";
+import { sponsorsRouter } from "./routers/sponsors.router";
+import { payRecordsRouter } from "./routers/payrecords.router";
 import {
   mapRouter,
   notificationsRouter,
@@ -52,6 +55,9 @@ export const appRouter = router({
   chat: chatRouter,
   bookings: bookingsRouter,
   notifs: notifRouter,
+  contracts: contractsRouter,
+  sponsors: sponsorsRouter,
+  pay: payRecordsRouter,
   map: mapRouter,
   notifications: notificationsRouter,
   imageGen: imageGenRouter,

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import {
@@ -190,8 +190,16 @@ export function BookingDetail({
   const [counterNote, setCounterNote] = useState("");
   const [showCounterForm, setShowCounterForm] = useState(false);
   const utils = trpc.useUtils();
+  const [, navigate] = useLocation();
 
   const { data: booking, isLoading } = trpc.bookings.getById.useQuery({ bookingId });
+  const generateContract = trpc.contracts.generateFromBooking.useMutation({
+    onSuccess: () => {
+      toast.success("Contrato gerado automaticamente!");
+      navigate("/contratos");
+    },
+    onError: (e) => toast.error(e.message),
+  });
   const sendCounter = trpc.bookings.sendCounter.useMutation({
     onSuccess: () => {
       toast.success("Contraproposta enviada!");
@@ -415,12 +423,23 @@ export function BookingDetail({
       )}
 
       {status === "aceito" && (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 20px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: "var(--radius-md)" }}>
-          <CheckCircle style={{ width: 20, height: 20, color: "#4ADE80", flexShrink: 0 }} />
-          <div>
-            <div style={{ fontWeight: 700, color: "#4ADE80", fontSize: "var(--text-sm)" }}>Booking confirmado!</div>
-            <div style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)" }}>Valor final: {fmtBRL(booking.finalValue)}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 20px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: "var(--radius-md)" }}>
+            <CheckCircle style={{ width: 20, height: 20, color: "#4ADE80", flexShrink: 0 }} />
+            <div>
+              <div style={{ fontWeight: 700, color: "#4ADE80", fontSize: "var(--text-sm)" }}>Booking confirmado!</div>
+              <div style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)" }}>Valor final: {fmtBRL(booking.finalValue)}</div>
+            </div>
           </div>
+          <button
+            onClick={() => generateContract.mutate({ bookingId })}
+            disabled={generateContract.isPending}
+            className="pnsp-btn-primary"
+            style={{ padding: "12px 24px", fontSize: "var(--text-sm)", display: "inline-flex", alignItems: "center", gap: 8, alignSelf: "flex-start" }}
+          >
+            <Package style={{ width: 15, height: 15 }} />
+            {generateContract.isPending ? "Gerando..." : "📄 Gerar Contrato"}
+          </button>
         </div>
       )}
 

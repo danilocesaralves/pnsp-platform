@@ -39,6 +39,22 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - Monitoramento: Sentry configurado
 - CI/CD: GitHub Actions
 
+## Sessão 2026-03-29 — M2: Contratos, Patrocinadores, Pagamentos
+
+### Implementado (M2 completo):
+- **Schema DB**: contract_templates, contracts, sponsors, sponsor_deliverables, payment_records — já estavam no banco Neon
+- **Seed templates**: 3 templates HTML inseridos (Show, Produção Musical, Aula/Oficina)
+- **Routers** (já existiam): contracts.router.ts, sponsors.router.ts, payrecords.router.ts — todos registrados em routers.ts
+- **ContractFlow.tsx**: ContractStatusBadge, ContractCard, TemplateSelector, ContractPreview, SignatureModal, ContractDetail, ContractEditor — subcomponentes fora do export default
+- **SponsorFlow.tsx**: SponsorStatusBadge, SponsorPipeline, DeliverableItem, SponsorCard, SponsorDetail, NewSponsorForm — fix import path `@/lib/trpc`
+- **Página /contratos**: wizard list→template→editor→detail com lazy loading
+- **Página /patrocinadores**: pipeline visual, filtros pills, CRUD inline
+- **Página /pagamentos**: 3 KPIs (recebido/pendente/ticket médio), lista + form registrar
+- **BookingFlow.tsx**: botão "📄 Gerar Contrato" dourado em BookingDetail quando status = "aceito" → gera contrato automaticamente e navega para /contratos
+- **PublicLayout.tsx**: dropdown do usuário com links Contratos / Patrocinadores / Pagamentos
+- **App.tsx**: rotas lazy /contratos, /patrocinadores, /pagamentos
+- 124 testes passando
+
 ## Sessão 2026-03-28 — Auditoria + Dashboard Proprietário
 
 ### Implementado:

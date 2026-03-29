@@ -9,7 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Menu, X, User, Briefcase, Music2, MapPin, BookOpen,
-  Mic2, LayoutDashboard, LogOut, Settings, Shield, MessageSquare, FileText,
+  Mic2, LayoutDashboard, LogOut, Settings, Shield, MessageSquare, FileText, DollarSign,
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/BookingFlow";
 
@@ -265,6 +265,22 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                           {pendingBookings > 9 ? "9+" : pendingBookings}
                         </span>
                       )}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/contratos">
+                      <FileText style={{ width: 14, height: 14, marginRight: 8 }} />Contratos
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/patrocinadores">
+                      <Briefcase style={{ width: 14, height: 14, marginRight: 8 }} />Patrocinadores
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/pagamentos">
+                      <DollarSign style={{ width: 14, height: 14, marginRight: 8 }} />Pagamentos
                     </Link>
                   </DropdownMenuItem>
                   {(user.role === "admin" || user.role === "owner" || user.email === "composisamba@gmail.com") && (

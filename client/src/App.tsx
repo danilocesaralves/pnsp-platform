@@ -40,6 +40,9 @@ const AdminLogs = lazy(() => import("./pages/admin/AdminLogs"));
 const OwnerDashboard = lazy(() => import("./pages/owner/OwnerDashboard"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Bookings = lazy(() => import("./pages/Bookings"));
+const Contracts = lazy(() => import("./pages/Contracts"));
+const Sponsors = lazy(() => import("./pages/Sponsors"));
+const Payments = lazy(() => import("./pages/Payments"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // ─── Page loading fallback ───────────────────────────────────────────────────
@@ -86,6 +89,9 @@ function Router() {
         <Route path="/criar-imagem" component={ImageGenerator} />
         <Route path="/mensagens" component={Messages} />
         <Route path="/negociacoes" component={Bookings} />
+        <Route path="/contratos" component={Contracts} />
+        <Route path="/patrocinadores" component={Sponsors} />
+        <Route path="/pagamentos" component={Payments} />
 
         {/* Admin */}
         <Route path="/admin" component={AdminDashboard} />

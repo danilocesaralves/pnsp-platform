@@ -606,3 +606,112 @@ export const bookingTimeline = pgTable("booking_timeline", {
 ]);
 
 export type BookingTimeline = typeof bookingTimeline.$inferSelect;
+
+
+// ─── CONTRACT TEMPLATES ────────────────────────────────────────────────────────
+export const contractTypeEnum = pgEnum("contract_type", [
+  "show", "producao", "aula", "parceria", "patrocinio", "fornecedor", "outro",
+]);
+
+export const contractStatusEnum = pgEnum("contract_status", [
+  "rascunho", "aguardando_assinatura", "assinado", "cancelado",
+]);
+
+export const contractTemplates = pgTable("contract_templates", {
+  id:        serial("id").primaryKey(),
+  name:      varchar("name", { length: 200 }).notNull(),
+  type:      varchar("type", { length: 50 }).notNull().default("show"),
+  content:   text("content").notNull(),
+  isDefault: boolean("isDefault").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ContractTemplate = typeof contractTemplates.$inferSelect;
+
+export const contracts = pgTable("contracts", {
+  id:                   serial("id").primaryKey(),
+  bookingId:            integer("bookingId").references(() => bookings.id, { onDelete: "set null" }),
+  profileId:            integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  counterpartProfileId: integer("counterpartProfileId").references(() => profiles.id, { onDelete: "set null" }),
+  title:                varchar("title", { length: 200 }).notNull(),
+  type:                 contractTypeEnum("type").notNull().default("show"),
+  templateId:           integer("templateId").references(() => contractTemplates.id, { onDelete: "set null" }),
+  content:              text("content").notNull(),
+  status:               contractStatusEnum("status").notNull().default("rascunho"),
+  signedAt:             timestamp("signedAt"),
+  signerName:           varchar("signerName", { length: 200 }),
+  signerDocument:       varchar("signerDocument", { length: 50 }),
+  ipAddress:            varchar("ipAddress", { length: 50 }),
+  createdAt:            timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:            timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
+}, (t) => [
+  index("contracts_profile_idx").on(t.profileId),
+  index("contracts_status_idx").on(t.status),
+]);
+
+export type Contract = typeof contracts.$inferSelect;
+
+// ─── SPONSORS ─────────────────────────────────────────────────────────────────
+export const sponsorStatusEnum = pgEnum("sponsor_status", [
+  "prospecto", "proposta_enviada", "em_negociacao", "fechado", "recusado",
+]);
+
+export const sponsors = pgTable("sponsors", {
+  id:             serial("id").primaryKey(),
+  profileId:      integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  companyName:    varchar("companyName", { length: 200 }).notNull(),
+  contactName:    varchar("contactName", { length: 200 }),
+  contactEmail:   varchar("contactEmail", { length: 200 }),
+  contactPhone:   varchar("contactPhone", { length: 50 }),
+  website:        varchar("website", { length: 300 }),
+  logoUrl:        varchar("logoUrl", { length: 500 }),
+  proposalValue:  integer("proposalValue"),
+  finalValue:     integer("finalValue"),
+  status:         sponsorStatusEnum("status").notNull().default("prospecto"),
+  notes:          text("notes"),
+  createdAt:      timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:      timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
+}, (t) => [
+  index("sponsors_profile_idx").on(t.profileId),
+  index("sponsors_status_idx").on(t.status),
+]);
+
+export type Sponsor = typeof sponsors.$inferSelect;
+
+export const sponsorDeliverables = pgTable("sponsor_deliverables", {
+  id:          serial("id").primaryKey(),
+  sponsorId:   integer("sponsorId").notNull().references(() => sponsors.id, { onDelete: "cascade" }),
+  description: varchar("description", { length: 300 }).notNull(),
+  isDone:      boolean("isDone").default(false),
+  dueDate:     varchar("dueDate", { length: 10 }),
+});
+
+export type SponsorDeliverable = typeof sponsorDeliverables.$inferSelect;
+
+// ─── MANUAL PAYMENTS ──────────────────────────────────────────────────────────
+export const paymentMethodEnum = pgEnum("payment_method", [
+  "pix", "transferencia", "dinheiro", "outro",
+]);
+
+export const paymentRegStatusEnum = pgEnum("payment_reg_status", [
+  "pendente", "confirmado", "cancelado",
+]);
+
+export const paymentRecords = pgTable("payment_records", {
+  id:        serial("id").primaryKey(),
+  bookingId: integer("bookingId").references(() => bookings.id, { onDelete: "set null" }),
+  payerId:   integer("payerId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  payeeId:   integer("payeeId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  amount:    integer("amount").notNull(),
+  method:    paymentMethodEnum("method").notNull().default("pix"),
+  status:    paymentRegStatusEnum("status").notNull().default("pendente"),
+  reference: varchar("reference", { length: 200 }),
+  notes:     text("notes"),
+  paidAt:    timestamp("paidAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("paymentrec_payer_idx").on(t.payerId),
+  index("paymentrec_payee_idx").on(t.payeeId),
+]);
+
+export type PaymentRecord = typeof paymentRecords.$inferSelect;
