@@ -12,9 +12,9 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 ## Status Atual
 - 124 testes passando
 - Visual: Tema "Noite de Samba" dourado — APROVADO
-- Logo: logo-pnsp-crop.png, 64px no header, 80px no footer, sem fundo preto
+- Logo: logo-pnsp-crop.png em todos os pontos de contato ✅
 - Avatares: DiceBear initials douradas (#D4A017)
-- Deploy: Vercel (frontend) + Railway (backend) + Neon (banco)
+- Deploy: Vercel (frontend) + Railway (backend) + Neon PostgreSQL
 
 ## Design System
 - COR PRIMÁRIA: #D4A017 (dourado — tema Noite de Samba aprovado)
@@ -24,20 +24,50 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - FONTE DISPLAY: Syne 700/800
 - FONTE BODY: Inter 400/500/600
 
-## Funcionalidades Implementadas e Funcionando
+## Funcionalidades Implementadas
+
+### M0 — Base
+- Auth: better-auth com email/senha
+- Perfis: CRUD completo, tipos (artista, grupo, produtor, estúdio, venue…), slug público
+- Design system: Noite de Samba, CSS vars, componentes shadcn/ui customizados
+- Busca inteligente na Home com filtros por tipo e cidade
+- Perfil público: capa com gradiente por tipo, avatar 104px, badges, ReviewSection
 - ProfileStrength: 10 itens, gauge SVG, navega para /editar-perfil/:id
 - OpportunityFeed: feed LIVE com filtros por categoria
-- Dashboard 2 colunas: força do perfil + feed
-- Perfil público: capa com gradiente por tipo, avatar 104px, badges
-- Busca inteligente na Home
-- Toast notifications
 - Upload avatar + capa via Cloudflare R2
-- Novos campos: cachê, duração, cidades, instrumentos, tipo de show
-- Novo tipo de perfil: Venue / Casa de Show
-- Migration aplicada no Neon PostgreSQL
-- Auth: better-auth com email/senha
+- Campos estendidos: cachê, duração, cidades, instrumentos, tipo de show
 - Monitoramento: Sentry configurado
 - CI/CD: GitHub Actions
+- Home.tsx: header fixo próprio com logo + hero + seções + footer
+
+### M1 — Operação
+- Chat: mensagens em tempo real entre usuários autenticados
+- Booking/negociação: proposta → aceite → contrato, BookingCard, BookingDetail
+- Notificações: dropdown em tempo real, badge de contagem
+- Dashboard Proprietário (/dashboard): 6 KPIs, 5 tabs (Visão Geral, Operação, Reputação, Agenda, Marketing)
+- AgendaTab: estrutura com coming soon
+
+### M2 — Financeiro
+- Contratos: templates HTML (Show, Produção, Aula), wizard list→template→editor→detail, assinatura digital
+- Patrocinadores: pipeline visual (prospecto→fechado), CRUD inline, deliverables
+- Pagamentos: 3 KPIs (recebido/pendente/ticket médio), registro manual, confirmação
+- BookingFlow: botão "📄 Gerar Contrato" quando booking aceito → gera e navega para /contratos
+
+### M3 — Crescimento
+- Marketing Inteligente IA: ScoreGauge SVG, insights por prioridade, gerador de conteúdo, campanhas
+- Comunidade: feed de posts com likes toggle, comentários inline, filtros por tipo
+- Academia: tab "Cursos" (enroll + progresso) + tab "Artigos & Vídeos"; 3 cursos demo no Neon
+- Memórias: linha do tempo vertical por tipo, CRUD, público/privado, visível no perfil público
+- Routers M3: marketing, community, memories + academy extendido (getCourses, enroll…)
+- Fix crítico: await getDb() em 28 ocorrências nos routers M3
+
+## Próximos Passos Prioritários
+1. ANTHROPIC_API_KEY no Railway — ativa gerador de conteúdo IA real
+2. Mapa Vivo — página existe no nav mas está vazia
+3. SEO — meta tags dinâmicas por perfil para Google indexar
+4. Mobile — otimização completa
+5. Integração de pagamentos real (módulo já estruturado)
+6. Playwright E2E no CI
 
 ## Sessão 2026-03-29 — M3: Marketing IA, Comunidade, Academia, Memórias
 
@@ -76,33 +106,6 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - **PublicLayout.tsx**: dropdown do usuário com links Contratos / Patrocinadores / Pagamentos
 - **App.tsx**: rotas lazy /contratos, /patrocinadores, /pagamentos
 - 124 testes passando
-
-## Sessão 2026-03-28 — Auditoria + Dashboard Proprietário
-
-### Implementado:
-- Dashboard Proprietário do usuário (/dashboard) — completamente reescrito
-  - 6 KPIs: views do perfil, avaliação média, ofertas, oportunidades, candidaturas, notificações
-  - 5 tabs: Visão Geral | Operação | Reputação | Agenda (coming soon) | Marketing (coming soon)
-  - Visão Geral: perfil card + ProfileStrength + quick actions + opportunity feed + candidaturas
-  - Operação: minhas ofertas (com status/views), minhas oportunidades, candidaturas enviadas
-  - Reputação: avg de avaliações + distribuição + indicadores de confiança + avaliações recentes
-  - Agenda/Marketing: estrutura placeholder rica com coming soon
-- dashboardRouter.summary expandido: review stats, avaliações recentes, receivedApplicationsCount, profileViewCount
-- PublicLayout: botão "Dashboard" na navbar desktop quando autenticado; mobile nav completo com Dashboard + Conta + Sair
-- OwnerDashboard: fix COLORS (var(--o500)/var(--g500) → var(--ouro)/var(--verde)) — gráficos não quebravam mais
-- MEMORY.md: corrigido índice errado (dizia "turquesa" quando o design é dourado)
-
-### Pendente (próximas sessões):
-1. Página de edição de perfil com todos os novos campos funcionais (cachê, duração, cidades, instrumentos, showTypes)
-2. Agenda/Calendário — módulo completo
-3. Chat básico contextual entre usuários
-4. Módulo de Patrocinadores
-5. Marketing Inteligente Autônomo — estrutura base
-6. Booking/negociação entre partes
-7. Calculadora de cachê com índice por cidade
-8. Meta tags dinâmicas e Open Graph por perfil
-9. Sitemap
-10. Notificações por email (SMTP)
 
 ## Instrução para Claude
 Ao iniciar nova sessão: leia este arquivo primeiro.
