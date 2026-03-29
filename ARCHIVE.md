@@ -39,6 +39,28 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - Monitoramento: Sentry configurado
 - CI/CD: GitHub Actions
 
+## Sessão 2026-03-29 — M3: Marketing IA, Comunidade, Academia, Memórias
+
+### Implementado (M3 completo):
+- **Schema DB**: marketingCampaigns, marketingContents, marketingScores, marketingInsights, communityPosts, communityComments, communityLikes, academyCourses, academyLessons, academyEnrollments, memories — migration aplicada no Neon
+- **marketing.router.ts**: getMyCampaigns, createCampaign, updateCampaign, getMyContents, generateContent (estático + isAiGenerated), updateContent, getMyScores, getMyInsights, dismissInsight, seedInsights
+- **community.router.ts**: getPosts, createPost, deletePost, getComments, addComment, likePost (toggle), getMyLikes
+- **academy.router.ts extendido**: getCourses, getCourseById, enroll, getMyEnrollments, updateProgress, seedCourses (3 cursos demo)
+- **memories.router.ts**: getPublicMemories, getMyMemories, create, update, delete
+- **routers.ts**: marketing, community, memories registrados
+- **MarketingDashboard.tsx**: ScoreGauge SVG, InsightCard com prioridade, CampaignCard, ContentCard com badge IA, ContentGenerator, Termômetro, MarketingDashboard
+- **CommunityFeed.tsx**: PostTypeBadge, CommentItem, PostCard (likes+comentários), NewPostForm, CommunityFeed com filtros
+- **AcademyView.tsx**: CategoryBadge, LevelBadge, LessonItem, CourseCard, CourseDetail (enroll+progresso), AcademyView com filtros
+- **MemoryTimeline.tsx**: MemoryTypeBadge, MemoryCard, NewMemoryForm, MemoryTimeline com linha do tempo vertical
+- **Marketing.tsx**: página /marketing com guard de auth
+- **Community.tsx**: página /comunidade pública com composer para autenticados
+- **Memories.tsx**: página /memorias com guard de auth
+- **Academy.tsx atualizado**: tab "Cursos" (AcademyView) + tab "Artigos & Vídeos" (conteúdo existente)
+- **App.tsx**: rotas lazy /marketing, /comunidade, /memorias
+- **Dashboard.tsx**: tab Marketing → MarketingDashboard; Visão Geral → seção Comunidade (CommunityFeed)
+- **ProfileBySlug.tsx**: MemoryTimeline após ReviewSection (público vê memórias públicas, dono vê tudo)
+- **PublicLayout.tsx**: "Comunidade" no nav principal; "Marketing IA" + "Memórias" no dropdown do usuário
+
 ## Sessão 2026-03-29 — M2: Contratos, Patrocinadores, Pagamentos
 
 ### Implementado (M2 completo):

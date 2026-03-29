@@ -12,6 +12,8 @@ import {
   Search, BookOpen, Play, Clock, Lock, X, GraduationCap, AlertCircle,
 } from "lucide-react";
 import { ACADEMY_CATEGORIES } from "@shared/pnsp";
+import AcademyView from "@/components/AcademyView";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const CONTENT_TYPES: Record<string, string> = {
   artigo: "Artigo",
@@ -50,6 +52,11 @@ function AcademySkeleton() {
 }
 
 export default function Academy() {
+  const { user } = useAuth();
+  const profileQ = trpc.profiles.getMyProfile.useQuery(undefined, { enabled: !!user });
+  const myProfileId = profileQ.data?.id;
+
+  const [mainTab, setMainTab] = useState<"conteudo" | "cursos">("cursos");
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
@@ -118,6 +125,35 @@ export default function Academy() {
         </div>
       </div>
 
+      {/* ─── Main Tabs ─────────────────────────────────────────────────── */}
+      <div className="container pt-6 pb-2">
+        <div className="flex gap-4 border-b" style={{ borderColor: "var(--n800)" }}>
+          {([
+            { key: "cursos", label: "Cursos" },
+            { key: "conteudo", label: "Artigos & Vídeos" },
+          ] as const).map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setMainTab(key)}
+              className="pb-3 text-sm font-semibold transition-colors"
+              style={{
+                color: mainTab === key ? "var(--ouro, var(--o500))" : "var(--n400)",
+                borderBottom: mainTab === key ? "2px solid var(--ouro, var(--o500))" : "2px solid transparent",
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {mainTab === "cursos" && (
+        <div className="container py-8">
+          <AcademyView myProfileId={myProfileId} />
+        </div>
+      )}
+
+      {mainTab === "conteudo" && (
       <div className="container py-8">
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3 mb-6">
@@ -305,6 +341,7 @@ export default function Academy() {
           </div>
         )}
       </div>
+      )}
     </PublicLayout>
   );
 }

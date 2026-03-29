@@ -23,6 +23,9 @@ import { notificationsRouter as notifRouter } from "./routers/notifications.rout
 import { contractsRouter } from "./routers/contracts.router";
 import { sponsorsRouter } from "./routers/sponsors.router";
 import { payRecordsRouter } from "./routers/payrecords.router";
+import { marketingRouter } from "./routers/marketing.router";
+import { communityRouter } from "./routers/community.router";
+import { memoriesRouter } from "./routers/memories.router";
 import {
   mapRouter,
   notificationsRouter,
@@ -58,6 +61,9 @@ export const appRouter = router({
   contracts: contractsRouter,
   sponsors: sponsorsRouter,
   pay: payRecordsRouter,
+  marketing: marketingRouter,
+  community: communityRouter,
+  memories: memoriesRouter,
   map: mapRouter,
   notifications: notificationsRouter,
   imageGen: imageGenRouter,

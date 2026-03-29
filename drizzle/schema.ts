@@ -715,3 +715,233 @@ export const paymentRecords = pgTable("payment_records", {
 ]);
 
 export type PaymentRecord = typeof paymentRecords.$inferSelect;
+
+// ─── M3: MARKETING ────────────────────────────────────────────────────────────
+export const marketingObjectiveEnum = pgEnum("marketing_objective", [
+  "awareness", "engajamento", "conversao", "retencao",
+]);
+
+export const marketingCampaignStatusEnum = pgEnum("marketing_campaign_status", [
+  "rascunho", "ativa", "pausada", "finalizada",
+]);
+
+export const marketingContentTypeEnum = pgEnum("marketing_content_type", [
+  "post", "story", "reels", "video", "artigo", "email",
+]);
+
+export const marketingPlatformEnum = pgEnum("marketing_platform", [
+  "instagram", "facebook", "youtube", "tiktok", "twitter", "email", "whatsapp",
+]);
+
+export const marketingContentStatusEnum = pgEnum("marketing_content_status", [
+  "rascunho", "agendado", "publicado", "arquivado",
+]);
+
+export const marketingScoreTypeEnum = pgEnum("marketing_score_type", [
+  "perfil", "conteudo", "engajamento", "alcance", "conversao",
+]);
+
+export const marketingInsightTypeEnum = pgEnum("marketing_insight_type", [
+  "oportunidade", "alerta", "sugestao", "conquista",
+]);
+
+export const marketingInsightPriorityEnum = pgEnum("marketing_insight_priority", [
+  "alta", "media", "baixa",
+]);
+
+export const marketingCampaigns = pgTable("marketing_campaigns", {
+  id:          serial("id").primaryKey(),
+  profileId:   integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  title:       varchar("title", { length: 200 }).notNull(),
+  objective:   marketingObjectiveEnum("objective").notNull().default("awareness"),
+  status:      marketingCampaignStatusEnum("status").notNull().default("rascunho"),
+  startDate:   varchar("startDate", { length: 10 }),
+  endDate:     varchar("endDate", { length: 10 }),
+  budget:      integer("budget"),
+  platforms:   jsonb("platforms").$type<string[]>(),
+  notes:       text("notes"),
+  createdAt:   timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:   timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
+}, (t) => [
+  index("mktcampaign_profile_idx").on(t.profileId),
+]);
+
+export type MarketingCampaign = typeof marketingCampaigns.$inferSelect;
+
+export const marketingContents = pgTable("marketing_contents", {
+  id:           serial("id").primaryKey(),
+  campaignId:   integer("campaignId").references(() => marketingCampaigns.id, { onDelete: "set null" }),
+  profileId:    integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  contentType:  marketingContentTypeEnum("contentType").notNull().default("post"),
+  platform:     marketingPlatformEnum("platform").notNull().default("instagram"),
+  status:       marketingContentStatusEnum("status").notNull().default("rascunho"),
+  title:        varchar("title", { length: 200 }),
+  body:         text("body"),
+  imageUrl:     text("imageUrl"),
+  hashtags:     jsonb("hashtags").$type<string[]>(),
+  isAiGenerated: boolean("isAiGenerated").default(false),
+  scheduledAt:  timestamp("scheduledAt"),
+  publishedAt:  timestamp("publishedAt"),
+  createdAt:    timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("mktcontent_profile_idx").on(t.profileId),
+  index("mktcontent_campaign_idx").on(t.campaignId),
+]);
+
+export type MarketingContent = typeof marketingContents.$inferSelect;
+
+export const marketingScores = pgTable("marketing_scores", {
+  id:          serial("id").primaryKey(),
+  profileId:   integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  scoreType:   marketingScoreTypeEnum("scoreType").notNull(),
+  score:       integer("score").notNull().default(0),
+  calculatedAt: timestamp("calculatedAt").defaultNow().notNull(),
+}, (t) => [
+  index("mktscore_profile_idx").on(t.profileId),
+]);
+
+export type MarketingScore = typeof marketingScores.$inferSelect;
+
+export const marketingInsights = pgTable("marketing_insights", {
+  id:          serial("id").primaryKey(),
+  profileId:   integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  insightType: marketingInsightTypeEnum("insightType").notNull().default("sugestao"),
+  priority:    marketingInsightPriorityEnum("priority").notNull().default("media"),
+  title:       varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  actionLabel: varchar("actionLabel", { length: 100 }),
+  actionUrl:   varchar("actionUrl", { length: 300 }),
+  isRead:      boolean("isRead").default(false),
+  isDismissed: boolean("isDismissed").default(false),
+  createdAt:   timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("mktinsight_profile_idx").on(t.profileId),
+]);
+
+export type MarketingInsight = typeof marketingInsights.$inferSelect;
+
+// ─── M3: COMMUNITY ────────────────────────────────────────────────────────────
+export const communityPostTypeEnum = pgEnum("community_post_type", [
+  "texto", "imagem", "video", "evento", "oportunidade", "conquista",
+]);
+
+export const communityPosts = pgTable("community_posts", {
+  id:          serial("id").primaryKey(),
+  profileId:   integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  postType:    communityPostTypeEnum("postType").notNull().default("texto"),
+  title:       varchar("title", { length: 200 }),
+  body:        text("body").notNull(),
+  imageUrl:    text("imageUrl"),
+  videoUrl:    text("videoUrl"),
+  tags:        jsonb("tags").$type<string[]>(),
+  likesCount:  integer("likesCount").notNull().default(0),
+  commentsCount: integer("commentsCount").notNull().default(0),
+  isPinned:    boolean("isPinned").default(false),
+  createdAt:   timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:   timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
+}, (t) => [
+  index("communitypost_profile_idx").on(t.profileId),
+  index("communitypost_created_idx").on(t.createdAt),
+]);
+
+export type CommunityPost = typeof communityPosts.$inferSelect;
+
+export const communityComments = pgTable("community_comments", {
+  id:        serial("id").primaryKey(),
+  postId:    integer("postId").notNull().references(() => communityPosts.id, { onDelete: "cascade" }),
+  profileId: integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  body:      text("body").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("communitycomment_post_idx").on(t.postId),
+]);
+
+export type CommunityComment = typeof communityComments.$inferSelect;
+
+export const communityLikes = pgTable("community_likes", {
+  id:        serial("id").primaryKey(),
+  postId:    integer("postId").notNull().references(() => communityPosts.id, { onDelete: "cascade" }),
+  profileId: integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  unique("community_likes_unique").on(t.postId, t.profileId),
+]);
+
+export type CommunityLike = typeof communityLikes.$inferSelect;
+
+// ─── M3: ACADEMY COURSES ──────────────────────────────────────────────────────
+export const academyCourses = pgTable("academy_courses", {
+  id:            serial("id").primaryKey(),
+  slug:          varchar("slug", { length: 120 }).unique().notNull(),
+  title:         varchar("title", { length: 200 }).notNull(),
+  description:   text("description"),
+  category:      academyCategoryEnum("category").notNull().default("tecnica"),
+  level:         levelEnum("level").notNull().default("iniciante"),
+  coverUrl:      text("coverUrl"),
+  instructorName: varchar("instructorName", { length: 200 }),
+  instructorAvatarUrl: text("instructorAvatarUrl"),
+  durationMinutes: integer("durationMinutes"),
+  price:         integer("price").notNull().default(0),
+  isFree:        boolean("isFree").default(true),
+  isPublished:   boolean("isPublished").default(false),
+  enrollmentsCount: integer("enrollmentsCount").notNull().default(0),
+  createdAt:     timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:     timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
+}, (t) => [
+  index("academycourse_category_idx").on(t.category),
+]);
+
+export type AcademyCourse = typeof academyCourses.$inferSelect;
+
+export const academyLessons = pgTable("academy_lessons", {
+  id:          serial("id").primaryKey(),
+  courseId:    integer("courseId").notNull().references(() => academyCourses.id, { onDelete: "cascade" }),
+  order:       integer("order").notNull().default(0),
+  title:       varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  videoUrl:    text("videoUrl"),
+  durationMinutes: integer("durationMinutes"),
+  isFree:      boolean("isFree").default(false),
+  createdAt:   timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("academylesson_course_idx").on(t.courseId),
+]);
+
+export type AcademyLesson = typeof academyLessons.$inferSelect;
+
+export const academyEnrollments = pgTable("academy_enrollments", {
+  id:          serial("id").primaryKey(),
+  courseId:    integer("courseId").notNull().references(() => academyCourses.id, { onDelete: "cascade" }),
+  profileId:   integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  progress:    integer("progress").notNull().default(0),
+  completedAt: timestamp("completedAt"),
+  enrolledAt:  timestamp("enrolledAt").defaultNow().notNull(),
+}, (t) => [
+  unique("academy_enrollment_unique").on(t.courseId, t.profileId),
+]);
+
+export type AcademyEnrollment = typeof academyEnrollments.$inferSelect;
+
+// ─── M3: MEMORIES ─────────────────────────────────────────────────────────────
+export const memoryTypeEnum = pgEnum("memory_type", [
+  "show", "gravacao", "conquista", "colaboracao", "formacao", "outro",
+]);
+
+export const memories = pgTable("memories", {
+  id:          serial("id").primaryKey(),
+  profileId:   integer("profileId").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  memoryType:  memoryTypeEnum("memoryType").notNull().default("outro"),
+  title:       varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  date:        varchar("date", { length: 10 }).notNull(),
+  location:    varchar("location", { length: 200 }),
+  imageUrl:    text("imageUrl"),
+  tags:        jsonb("tags").$type<string[]>(),
+  isPublic:    boolean("isPublic").default(true),
+  createdAt:   timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("memories_profile_idx").on(t.profileId),
+  index("memories_date_idx").on(t.date),
+]);
+
+export type Memory = typeof memories.$inferSelect;

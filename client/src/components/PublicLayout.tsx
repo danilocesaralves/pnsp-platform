@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Menu, X, User, Briefcase, Music2, MapPin, BookOpen,
   Mic2, LayoutDashboard, LogOut, Settings, Shield, MessageSquare, FileText, DollarSign,
+  Users, TrendingUp, Star,
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/BookingFlow";
 
@@ -20,6 +21,7 @@ const NAV_LINKS = [
   { href: "/mapa",         label: "Mapa Vivo",      icon: MapPin },
   { href: "/academia",     label: "Academia",       icon: BookOpen },
   { href: "/estudios",     label: "Estúdios",       icon: Mic2 },
+  { href: "/comunidade",   label: "Comunidade",     icon: Users },
 ];
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -281,6 +283,17 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                   <DropdownMenuItem asChild>
                     <Link href="/pagamentos">
                       <DollarSign style={{ width: 14, height: 14, marginRight: 8 }} />Pagamentos
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/marketing">
+                      <TrendingUp style={{ width: 14, height: 14, marginRight: 8 }} />Marketing IA
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/memorias">
+                      <Star style={{ width: 14, height: 14, marginRight: 8 }} />Memórias
                     </Link>
                   </DropdownMenuItem>
                   {(user.role === "admin" || user.role === "owner" || user.email === "composisamba@gmail.com") && (

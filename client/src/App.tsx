@@ -43,6 +43,9 @@ const Bookings = lazy(() => import("./pages/Bookings"));
 const Contracts = lazy(() => import("./pages/Contracts"));
 const Sponsors = lazy(() => import("./pages/Sponsors"));
 const Payments = lazy(() => import("./pages/Payments"));
+const Marketing = lazy(() => import("./pages/Marketing"));
+const Community = lazy(() => import("./pages/Community"));
+const Memories = lazy(() => import("./pages/Memories"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // ─── Page loading fallback ───────────────────────────────────────────────────
@@ -92,6 +95,9 @@ function Router() {
         <Route path="/contratos" component={Contracts} />
         <Route path="/patrocinadores" component={Sponsors} />
         <Route path="/pagamentos" component={Payments} />
+        <Route path="/marketing" component={Marketing} />
+        <Route path="/comunidade" component={Community} />
+        <Route path="/memorias" component={Memories} />
 
         {/* Admin */}
         <Route path="/admin" component={AdminDashboard} />

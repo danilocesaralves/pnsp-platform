@@ -7,6 +7,8 @@ import { ProfileStrength } from "@/components/ProfileStrength";
 import { OpportunityFeed } from "@/components/OpportunityFeed";
 import AgendaTab from "@/components/AgendaTab";
 import { BookingCard, BookingStatusBadge } from "@/components/BookingFlow";
+import MarketingDashboard from "@/components/MarketingDashboard";
+import CommunityFeed from "@/components/CommunityFeed";
 import { PROFILE_TYPES, OFFERING_CATEGORIES, OPPORTUNITY_CATEGORIES } from "@shared/pnsp";
 import {
   User, Briefcase, Target, Bell, Plus, Eye, Star, TrendingUp,
@@ -525,6 +527,19 @@ export default function Dashboard() {
                 <OpportunityFeed />
               </div>
 
+              {/* Comunidade */}
+              <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                  <span style={{ fontSize: "var(--text-xs)", fontWeight: 700, color: "var(--ouro)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    Comunidade
+                  </span>
+                  <Link href="/comunidade">
+                    <span style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)", cursor: "pointer", borderBottom: "1px solid var(--creme-20)" }}>Ver todas →</span>
+                  </Link>
+                </div>
+                <CommunityFeed myProfileId={summary?.profile?.id} showComposer={false} />
+              </div>
+
               {/* Candidaturas recentes */}
               {(summary?.recentApplications?.length ?? 0) > 0 && (
                 <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: 20 }}>
@@ -802,35 +817,8 @@ export default function Dashboard() {
         {activeTab === "agenda" && <AgendaTab />}
 
         {/* ═══════════════════════════ MARKETING ════════════════════════════ */}
-        {activeTab === "marketing" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <ComingSoon
-              icon={Sparkles}
-              title="Marketing Inteligente Autônomo"
-              desc="Loop contínuo de crescimento: sensoriamento de tendências → estratégia → criação automática de conteúdo → distribuição → conversão → receita → reinvestimento."
-              items={["Termômetro do ecossistema", "Geração de conteúdo", "Calendário editorial", "Distribuição omnichannel", "CRM e leads", "Mídia paga", "Creator engine", "Reinvestimento programável"]}
-            />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-              {[
-                { icon: BarChart2, title: "Analytics de Perfil", desc: "Visualizações, cliques, taxa de resposta, conversão e ROI por canal", status: "Em breve" },
-                { icon: TrendingUp, title: "Geração de Conteúdo", desc: "Posts, stories, reels e copies gerados automaticamente com IA", status: "Em breve" },
-                { icon: Award,     title: "Dossiê Institucional", desc: "Apresentação profissional automática para marcas e patrocinadores", status: "Em breve" },
-              ].map(({ icon: Icon, title, desc, status }) => (
-                <div key={title} style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: 20 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, background: "var(--ouro-sutil)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <Icon style={{ width: 16, height: 16, color: "var(--ouro)" }} />
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: "var(--text-sm)" }}>{title}</div>
-                      <span style={{ fontSize: 10, color: "var(--creme-50)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>{status}</span>
-                    </div>
-                  </div>
-                  <p style={{ fontSize: "var(--text-sm)", color: "var(--creme-50)", lineHeight: 1.5 }}>{desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        {activeTab === "marketing" && summary?.profile?.id && (
+          <MarketingDashboard profileId={summary.profile.id} />
         )}
 
       </div>

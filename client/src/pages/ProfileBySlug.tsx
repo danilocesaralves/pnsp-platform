@@ -6,6 +6,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { PROFILE_TYPES } from "@shared/pnsp";
 import ReviewSection, { StarDisplay } from "@/components/ReviewSection";
+import MemoryTimeline from "@/components/MemoryTimeline";
 import {
   MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink,
   Pencil, Camera, ImagePlus, Loader2, Calendar, MessageSquare, FileText,
@@ -485,6 +486,8 @@ export default function ProfileBySlug() {
             )}
 
             <ReviewSection profileId={profile.id} isOwner={isOwner} currentUserProfileId={myProfile?.id} />
+
+            <MemoryTimeline profileId={profile.id} isOwner={isOwner} myProfileId={myProfile?.id} />
 
             {portfolio.length > 0 && (
               <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "28px", marginBottom: 20 }}>
