@@ -302,6 +302,13 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
+                        <Link href="/agencia">
+                          <Target style={{ width: 14, height: 14, marginRight: 8, color: "var(--ouro)" }} />
+                          <span style={{ color: "var(--ouro)", fontWeight: 600 }}>Agência Autônoma</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
                         <Link href="/admin">
                           <Shield style={{ width: 14, height: 14, marginRight: 8 }} />Painel Admin
                         </Link>

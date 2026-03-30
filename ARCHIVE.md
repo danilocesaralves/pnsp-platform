@@ -68,6 +68,37 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 2. Integração de pagamentos real (Stripe já estruturado, módulo de pagamentos manual ativo)
 3. PWA offline cache aprimorado
 
+## Sessão 2026-03-30 — M7: Agência de Marketing Autônoma — Growth Loop & Digital Infrastructure
+
+### Conceito: Cérebro operacional da PNSP que observa o ecossistema, reinveste receita automaticamente e escala o crescimento via canais diretos (Email, Push, WhatsApp).
+
+### Implementado (M7 completo):
+- **Schema DB**: agency_campaigns, agency_contents, agency_ecosystem_scores, agency_actions, agency_alerts, agency_reinvestment_rules, agency_platform_metrics, agency_learning_log, prelaunch_waitlist — migrations aplicadas via drizzle-kit push.
+- **Engine (server/lib/marketing-agency.ts)**: 
+  - `executeReinvestment`: Loop de reinvestimento (10/15/20%) disparado por bookings fechados quando atinge R$1.000 acumulados.
+  - `runDailyEngine`: Engine 24/7 que coleta métricas, calcula scores de calor regional, detecta gaps, gera estratégias e conteúdos.
+  - `evaluateCampaignROI`: Aprendizado adaptativo que ajusta os percentuais de reinvestimento baseado no ROI real de 30 dias.
+  - `scheduleEngine`: Scheduler integrado ao lifecycle do servidor (runDailyEngine @ 08:00 BRT + Real-Time Monitor 30m).
+- **Canais de Publicação**:
+  - **Email**: Resend com templates "Noite de Samba" dinâmicos.
+  - **WhatsApp**: Integração Z-API (REST) para notificações diretas.
+  - **Push**: web-push VAPID para engajamento em tempo real.
+- **Atribuição**: Campo `attributionTag` no schema `profiles` + captura automática de `?ref=` no registro para tracking de ROI.
+- **Router (server/routers/agency.router.ts)**:
+  - `joinWaitlist`: Sistema de indicações (referral) com posição na fila e códigos únicos (nanoid).
+  - `getDashboard`: 4 MetricCards, RevenueChart (CSS puro), EcosystemMap (Gap Detection), AlertCard, PendingContents.
+  - `approve/publish`: Workflow de aprovação manual (Semana 1) antes da autonomia total.
+- **Frontend (client/src/pages)**:
+  - **AgencyDashboard.tsx**: Painel administrativo restrito (composisamba@gmail.com) com 5 abas (Visão Geral, Estratégia, Conteúdos, Reinvestimento, Pré-Lançamento).
+  - **PreLaunch.tsx**: Landing page pública `/pre-lancamento` com CountdownTimer, WaitlistForm e SuccessState (referral system).
+- **Integração**:
+  - `bookings.router.ts`: Trigger automático de reinvestimento no método `accept`.
+  - `profiles.router.ts`: Suporte a `attributionTag` na criação de perfis.
+  - `App.tsx`: Rotas lazy `/agencia` e `/pre-lancamento`.
+  - `PublicLayout.tsx`: Link "🎯 Agência Autônoma" no dropdown do usuário autorizado.
+  - `Home.tsx`: Banner de pré-lançamento integrado ao footer.
+- **Seed (server/scripts/seed-agency.ts)**: Regras iniciais de reinvestimento (10% booking, 15% mensal, 20% meta).
+
 ## Sessão 2026-03-30 — M6: SEO/GEO/AEO — Infraestrutura Digital PNSP
 
 ### Posicionamento: PNSP = primeira infraestrutura digital do ecossistema profissional do samba e pagode brasileiro.

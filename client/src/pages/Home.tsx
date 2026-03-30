@@ -636,6 +636,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ BANNER PRÉ-LANÇAMENTO ═══ */}
+      <section style={{ 
+        background: "rgba(212,160,23,0.08)", 
+        borderTop: "1px solid var(--ouro-sutil)",
+        padding: "24px",
+        textAlign: "center"
+      }}>
+        <div style={{ ...S.maxW(1100), display: "flex", justifyContent: "center", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <span style={{ color: "var(--creme-80)", fontSize: "var(--text-sm)", fontWeight: 500 }}>
+            A primeira infraestrutura digital do samba e pagode chega em breve.
+          </span>
+          <Link href="/pre-lancamento">
+            <span style={{ color: "var(--ouro)", fontWeight: 700, fontSize: "var(--text-sm)", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+              Garanta seu lugar no ecossistema agora <ArrowRight style={{ width: 14, height: 14 }} />
+            </span>
+          </Link>
+        </div>
+      </section>
+
       {/* ═══ FOOTER ═══ */}
       <footer style={{ background: "var(--terra-escura)", borderTop: "1px solid var(--creme-10)", padding: "56px 24px 32px" }}>
         <div style={S.maxW()}>

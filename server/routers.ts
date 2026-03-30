@@ -27,6 +27,7 @@ import { marketingRouter } from "./routers/marketing.router";
 import { communityRouter } from "./routers/community.router";
 import { memoriesRouter } from "./routers/memories.router";
 import { pushRouter } from "./routers/push.router";
+import { agencyRouter } from "./routers/agency.router";
 import {
   mapRouter,
   notificationsRouter,
@@ -66,6 +67,7 @@ export const appRouter = router({
   community: communityRouter,
   memories: memoriesRouter,
   push: pushRouter,
+  agency: agencyRouter,
   map: mapRouter,
   notifications: notificationsRouter,
   imageGen: imageGenRouter,

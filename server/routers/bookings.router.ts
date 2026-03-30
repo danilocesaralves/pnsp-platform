@@ -7,6 +7,7 @@ import { bookings, bookingTimeline, notifications, profiles, users } from "../..
 import * as repo from "../repositories";
 import { sendPushToUser } from "./push.router";
 import { sendNewProposalEmail, sendProposalAcceptedEmail } from "../lib/email";
+import { executeReinvestment } from "../lib/marketing-agency";
 
 type BookingNegStatus = "rascunho" | "proposta_enviada" | "contraproposta" | "aceito" | "recusado" | "cancelado";
 
@@ -124,6 +125,14 @@ export const bookingsRouter = router({
             booking.id,
           ).catch(() => {});
         }
+      }
+
+      // Reinvestimento Agency
+      if (updated.finalValue && updated.finalValue > 0) {
+        executeReinvestment("booking_fechado", updated.finalValue, updated.artistProfileId, {
+          bookingId: updated.id,
+          title: updated.title,
+        }).catch((err) => console.error("Agency Reinvestment Error:", err));
       }
 
       return updated;

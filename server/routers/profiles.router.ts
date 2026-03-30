@@ -61,6 +61,7 @@ export const profilesRouter = router({
       instruments: z.array(z.string()).optional(),
       genres: z.array(z.string()).optional(),
       tags: z.array(z.string()).optional(),
+      attributionTag: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const slug = slugify(input.displayName, Date.now());
@@ -72,6 +73,7 @@ export const profilesRouter = router({
         instruments: input.instruments ?? null,
         genres: input.genres ?? null,
         tags: input.tags ?? null,
+        attributionTag: input.attributionTag ?? null,
       });
       return { success: true, slug };
     }),

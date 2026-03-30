@@ -179,6 +179,7 @@ export const profiles = pgTable("profiles", {
   isFeatured: boolean("isFeatured").default(false),
   viewCount: integer("viewCount").default(0),
   status: profileStatusEnum("status").default("active"),
+  attributionTag: text("attributionTag"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull().$onUpdateFn(() => new Date()),
 }, (t) => [
@@ -186,10 +187,13 @@ export const profiles = pgTable("profiles", {
   index("profiles_city_state_idx").on(t.city, t.state),
   index("profiles_slug_idx").on(t.slug),
   index("profiles_created_at_idx").on(t.createdAt),
+  index("profiles_attribution_idx").on(t.attributionTag),
 ]);
 
 export type Profile = typeof profiles.$inferSelect;
 export type InsertProfile = typeof profiles.$inferInsert;
+
+export * from "./schema-agency";
 
 // ─── PORTFOLIO MEDIA ─────────────────────────────────────────────────────────
 export const portfolioItems = pgTable("portfolio_items", {

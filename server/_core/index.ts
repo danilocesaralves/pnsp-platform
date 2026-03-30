@@ -276,6 +276,14 @@ async function startServer() {
 
   server.listen(port, () => {
     serverLogger.info({ port, env: process.env.NODE_ENV || "development" }, `Server running on http://localhost:${port}/`);
+    
+    // 🎭 PNSP Agency Engine
+    import("../lib/marketing-agency").then(({ scheduleEngine }) => {
+      scheduleEngine();
+    }).catch(err => {
+      serverLogger.error({ err }, "Failed to start Agency Engine");
+    });
+
     setupGracefulShutdown(server);
   });
 }

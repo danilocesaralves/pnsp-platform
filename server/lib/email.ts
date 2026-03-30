@@ -9,7 +9,7 @@ const FROM = "PNSP <noticias@pnsp.com.br>";
 const BASE_URL = process.env.VITE_APP_URL ?? "https://pnsp-platform.vercel.app";
 
 // ─── HTML template base ───────────────────────────────────────────────────────
-function emailTemplate(content: string): string {
+export function emailTemplate(content: string): string {
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -54,20 +54,20 @@ function emailTemplate(content: string): string {
 </html>`;
 }
 
-function btn(label: string, url: string): string {
+export function btn(label: string, url: string): string {
   return `<a href="${url}" style="display:inline-block;margin-top:20px;padding:12px 28px;background:#D4920A;color:#0A0800;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;">${label}</a>`;
 }
 
-function heading(text: string): string {
+export function heading(text: string): string {
   return `<h2 style="margin:0 0 16px;font-size:22px;font-weight:700;color:#F5EDD8;line-height:1.2;">${text}</h2>`;
 }
 
-function p(text: string): string {
+export function p(text: string): string {
   return `<p style="margin:0 0 12px;font-size:15px;color:rgba(245,237,216,0.75);line-height:1.65;">${text}</p>`;
 }
 
 // ─── Base send function ───────────────────────────────────────────────────────
-async function sendEmail(to: string, subject: string, html: string): Promise<void> {
+export async function sendEmail(to: string, subject: string, html: string): Promise<void> {
   if (!resend) {
     console.log(`[Email não configurado] ${subject} → ${to}`);
     return;

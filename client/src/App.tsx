@@ -47,6 +47,8 @@ const Marketing = lazy(() => import("./pages/Marketing"));
 const Community = lazy(() => import("./pages/Community"));
 const Memories = lazy(() => import("./pages/Memories"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
+const PreLaunch = lazy(() => import("./pages/PreLaunch"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // ─── Page loading fallback ───────────────────────────────────────────────────
@@ -100,6 +102,8 @@ function Router() {
         <Route path="/marketing" component={Marketing} />
         <Route path="/comunidade" component={Community} />
         <Route path="/memorias" component={Memories} />
+        <Route path="/agencia" component={AgencyDashboard} />
+        <Route path="/pre-lancamento" component={PreLaunch} />
 
         {/* Admin */}
         <Route path="/admin" component={AdminDashboard} />
