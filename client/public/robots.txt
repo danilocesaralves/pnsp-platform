@@ -25,4 +25,4 @@ Disallow: /mensagens
 Disallow: /criar-imagem
 Disallow: /api/
 
-Sitemap: https://pnsp-platform.vercel.app/sitemap.xml
+Sitemap: https://pnsp-platform-production.up.railway.app/sitemap.xml
