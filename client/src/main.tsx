@@ -80,11 +80,11 @@ createRoot(document.getElementById("root")!).render(
   </HelmetProvider>
 );
 
-// ─── PWA Service Worker ─────────────────────────────────────────────────────
-if ("serviceWorker" in navigator && import.meta.env.PROD) {
+// ─── PWA Service Worker + Push Notifications ────────────────────────────────
+if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch((err) => {
-      console.warn("[PWA] Service worker registration failed:", err);
+      console.warn("[SW] Registration failed:", err);
     });
   });
 }

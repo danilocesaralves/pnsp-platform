@@ -3,8 +3,10 @@ import { z } from "zod";
 import { and, desc, eq, or, sql } from "drizzle-orm";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { chatMessages, conversations, profiles } from "../../drizzle/schema";
+import { chatMessages, conversations, profiles, users } from "../../drizzle/schema";
 import * as repo from "../repositories";
+import { sendPushToUser } from "./push.router";
+import { sendNewMessageEmail } from "../lib/email";
 
 export const chatRouter = router({
 
@@ -161,6 +163,37 @@ export const chatRouter = router({
       await db.update(conversations)
         .set({ lastMessageAt: new Date() })
         .where(eq(conversations.id, input.conversationId));
+
+      // Notifica o destinatário (outra parte da conversa)
+      const otherId = conv.participantA === myProfile.id ? conv.participantB : conv.participantA;
+      const [otherProfile] = await db
+        .select({ userId: profiles.userId })
+        .from(profiles)
+        .where(eq(profiles.id, otherId))
+        .limit(1);
+
+      if (otherProfile) {
+        sendPushToUser(otherProfile.userId, {
+          title: `Nova mensagem de ${myProfile.displayName}`,
+          body: input.content.substring(0, 80),
+          url: "/mensagens",
+        }).catch(() => {});
+
+        const [otherUser] = await db
+          .select({ email: users.email })
+          .from(users)
+          .where(eq(users.id, otherProfile.userId))
+          .limit(1);
+
+        if (otherUser?.email) {
+          sendNewMessageEmail(
+            otherUser.email,
+            myProfile.displayName,
+            input.conversationId,
+            otherProfile.userId,
+          ).catch(() => {});
+        }
+      }
 
       return msg;
     }),

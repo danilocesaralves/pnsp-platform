@@ -26,6 +26,7 @@ import { payRecordsRouter } from "./routers/payrecords.router";
 import { marketingRouter } from "./routers/marketing.router";
 import { communityRouter } from "./routers/community.router";
 import { memoriesRouter } from "./routers/memories.router";
+import { pushRouter } from "./routers/push.router";
 import {
   mapRouter,
   notificationsRouter,
@@ -64,6 +65,7 @@ export const appRouter = router({
   marketing: marketingRouter,
   community: communityRouter,
   memories: memoriesRouter,
+  push: pushRouter,
   map: mapRouter,
   notifications: notificationsRouter,
   imageGen: imageGenRouter,

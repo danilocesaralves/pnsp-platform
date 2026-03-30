@@ -3,8 +3,10 @@ import { z } from "zod";
 import { and, asc, desc, eq, or } from "drizzle-orm";
 import { protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { bookings, bookingTimeline, notifications, profiles } from "../../drizzle/schema";
+import { bookings, bookingTimeline, notifications, profiles, users } from "../../drizzle/schema";
 import * as repo from "../repositories";
+import { sendPushToUser } from "./push.router";
+import { sendNewProposalEmail, sendProposalAcceptedEmail } from "../lib/email";
 
 type BookingNegStatus = "rascunho" | "proposta_enviada" | "contraproposta" | "aceito" | "recusado" | "cancelado";
 
@@ -105,6 +107,23 @@ export const bookingsRouter = router({
           `${myProfile.displayName} enviou uma proposta: "${booking.title}"`,
           `/negociacoes`,
         );
+        // Push + Email
+        sendPushToUser(artistProfile.userId, {
+          title: "Nova proposta de contratação",
+          body: `${myProfile.displayName}: "${booking.title}"`,
+          url: "/negociacoes",
+        }).catch(() => {});
+        const [artistUser] = await db.select({ email: users.email, name: users.name }).from(users).where(eq(users.id, artistProfile.userId)).limit(1);
+        if (artistUser?.email) {
+          sendNewProposalEmail(
+            artistUser.email,
+            artistUser.name ?? artistProfile.displayName,
+            myProfile.displayName,
+            booking.title,
+            booking.proposedValue,
+            booking.id,
+          ).catch(() => {});
+        }
       }
 
       return updated;
@@ -151,6 +170,11 @@ export const bookingsRouter = router({
           `${myProfile.displayName} enviou uma contraproposta para "${booking.title}"`,
           `/negociacoes`,
         );
+        sendPushToUser(contractorProfile.userId, {
+          title: "Contraproposta recebida",
+          body: `${myProfile.displayName}: "${booking.title}"`,
+          url: "/negociacoes",
+        }).catch(() => {});
       }
 
       return updated;
@@ -200,7 +224,28 @@ export const bookingsRouter = router({
           `"${booking.title}" foi aceito por ${myProfile.displayName}`,
           `/negociacoes`,
         );
+        sendPushToUser(otherProfile.userId, {
+          title: "Proposta aceita! 🎉",
+          body: `"${booking.title}" por ${myProfile.displayName}`,
+          url: "/negociacoes",
+        }).catch(() => {});
+        const [otherUser] = await db.select({ email: users.email, name: users.name }).from(users).where(eq(users.id, otherProfile.userId)).limit(1);
+        if (otherUser?.email) {
+          sendProposalAcceptedEmail(
+            otherUser.email,
+            otherUser.name ?? otherProfile.displayName,
+            booking.title,
+            booking.id,
+          ).catch(() => {});
+        }
       }
+      // Notifica o próprio usuário que aceitou
+      sendProposalAcceptedEmail(
+        ctx.user.email ?? "",
+        ctx.user.name ?? myProfile.displayName,
+        booking.title,
+        booking.id,
+      ).catch(() => {});
 
       return updated;
     }),

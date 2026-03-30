@@ -3,8 +3,10 @@ import { z } from "zod";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { reviews, profiles } from "../../drizzle/schema";
+import { reviews, profiles, users } from "../../drizzle/schema";
 import * as repo from "../repositories";
+import { sendPushToUser } from "./push.router";
+import { sendNewReviewEmail } from "../lib/email";
 
 export const reviewsRouter = router({
 
@@ -41,6 +43,37 @@ export const reviewsRouter = router({
           throw new TRPCError({ code: "CONFLICT", message: "Você já avaliou este perfil neste contexto" });
         }
         throw e;
+      }
+
+      // Push + Email para o avaliado
+      const [reviewedProfile] = await db
+        .select({ userId: profiles.userId, displayName: profiles.displayName })
+        .from(profiles)
+        .where(eq(profiles.id, input.reviewedId))
+        .limit(1);
+
+      if (reviewedProfile) {
+        sendPushToUser(reviewedProfile.userId, {
+          title: `Nova avaliação: ${input.rating}⭐`,
+          body: `${reviewerProfile.displayName} avaliou seu perfil`,
+          url: "/dashboard",
+        }).catch(() => {});
+
+        const [reviewedUser] = await db
+          .select({ email: users.email })
+          .from(users)
+          .where(eq(users.id, reviewedProfile.userId))
+          .limit(1);
+
+        if (reviewedUser?.email) {
+          sendNewReviewEmail(
+            reviewedUser.email,
+            reviewerProfile.displayName,
+            input.rating,
+            input.reviewedId,
+            reviewedProfile.userId,
+          ).catch(() => {});
+        }
       }
 
       return { success: true };

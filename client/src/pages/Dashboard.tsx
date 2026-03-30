@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import PublicLayout from "@/components/PublicLayout";
 import { ProfileStrength } from "@/components/ProfileStrength";
+import PushNotificationManager from "@/components/PushNotificationManager";
 import { OpportunityFeed } from "@/components/OpportunityFeed";
 import AgendaTab from "@/components/AgendaTab";
 import { BookingCard, BookingStatusBadge } from "@/components/BookingFlow";
@@ -366,7 +367,8 @@ export default function Dashboard() {
               Olá, {firstName} — central de operações da sua presença na PNSP
             </p>
           </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+            <PushNotificationManager />
             {!profile && (
               <Link href="/criar-perfil">
                 <span className="pnsp-btn-primary" style={{ padding: "10px 20px", fontSize: "var(--text-sm)" }}>

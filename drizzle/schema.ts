@@ -945,3 +945,18 @@ export const memories = pgTable("memories", {
 ]);
 
 export type Memory = typeof memories.$inferSelect;
+
+// ─── PUSH SUBSCRIPTIONS ───────────────────────────────────────────────────────
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id:        serial("id").primaryKey(),
+  userId:    integer("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  endpoint:  text("endpoint").notNull(),
+  p256dh:    text("p256dh").notNull(),
+  auth:      text("auth").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (t) => [
+  index("push_sub_user_idx").on(t.userId),
+  unique("push_sub_endpoint_unique").on(t.endpoint),
+]);
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;

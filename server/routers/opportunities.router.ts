@@ -1,8 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { eq } from "drizzle-orm";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { adminProcedure } from "../lib/guards";
 import * as repo from "../repositories";
+import { getDb } from "../db";
+import { profiles, users } from "../../drizzle/schema";
+import { sendOpportunityMatchEmail } from "../lib/email";
 
 const CATEGORY_ENUM = z.enum([
   "vaga_grupo","show","evento","projeto","aula","producao","estudio","servico","outro",
@@ -56,6 +60,54 @@ export const opportunitiesRouter = router({
         deadline: input.deadline ? new Date(input.deadline) : null,
         status: "active",
       });
+
+      // Notify matching profiles (async, fire-and-forget, max 10)
+      ;(async () => {
+        try {
+          const db = await getDb();
+          if (!db) return;
+
+          // Fetch the newly created opportunity to get its id
+          const { opportunities: oppsTable } = await import("../../drizzle/schema");
+          const { desc: descOrd } = await import("drizzle-orm");
+          const [newOpp] = await db
+            .select({ id: oppsTable.id })
+            .from(oppsTable)
+            .orderBy(descOrd(oppsTable.createdAt))
+            .limit(1);
+          const oppId = newOpp?.id ?? 0;
+
+          const matchType = input.requiredType === "qualquer" ? undefined : input.requiredType;
+          const matchingProfiles = await repo.listProfiles({
+            profileType: matchType,
+            state: input.state,
+            limit: 10,
+            offset: 0,
+          });
+
+          for (const profile of matchingProfiles.slice(0, 10)) {
+            if (profile.userId === ctx.user.id) continue;
+            const [user] = await db
+              .select({ email: users.email, name: users.name })
+              .from(users)
+              .where(eq(users.id, profile.userId))
+              .limit(1);
+            if (user?.email) {
+              sendOpportunityMatchEmail(
+                user.email,
+                user.name ?? profile.displayName,
+                input.title,
+                input.city ?? null,
+                oppId,
+                profile.userId,
+              ).catch(() => {});
+            }
+          }
+        } catch {
+          // fire and forget — never throw
+        }
+      })();
+
       return { success: true };
     }),
 

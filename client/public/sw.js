@@ -1,4 +1,40 @@
-// PNSP Service Worker — PWA Offline Support
+// PNSP Service Worker — PWA Offline Support + Push Notifications
+
+// ─── Push Notifications ──────────────────────────────────────────────────────
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+  try {
+    const d = event.data.json();
+    event.waitUntil(
+      self.registration.showNotification(d.title ?? "PNSP", {
+        body:  d.body  ?? "",
+        icon:  d.icon  ?? "/logo-pnsp-crop.png",
+        badge: "/logo-pnsp-crop.png",
+        data:  { url: d.url ?? "/" },
+        vibrate: [200, 100, 200],
+      })
+    );
+  } catch {
+    // ignore malformed push payloads
+  }
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url ?? "/";
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const client of list) {
+        if (client.url.includes(self.location.origin) && "focus" in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      return clients.openWindow(url);
+    })
+  );
+});
+
 const CACHE_NAME = "pnsp-v1";
 const OFFLINE_URL = "/";
 

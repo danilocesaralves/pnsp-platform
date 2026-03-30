@@ -16,6 +16,7 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - Avatares: DiceBear initials douradas (#D4A017)
 - Deploy: Vercel (frontend) + Railway (backend) + Neon PostgreSQL
 - M4: Mapa Vivo (Leaflet), SEO (react-helmet-async), PIX QR Code (qrcode.react), Playwright E2E
+- M5: Push Notifications (web-push VAPID), Email Transacional (Resend com rate limiting)
 
 ## Design System
 - COR PRIMÁRIA: #D4A017 (dourado — tema Noite de Samba aprovado)
@@ -105,6 +106,39 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 - **PublicLayout.tsx**: dropdown do usuário com links Contratos / Patrocinadores / Pagamentos
 - **App.tsx**: rotas lazy /contratos, /patrocinadores, /pagamentos
 - 124 testes passando
+
+## Variáveis de Ambiente — configurar no Railway → Variables
+
+```
+ANTHROPIC_API_KEY=sk-ant-...       → Ativa gerador de conteúdo IA real
+RESEND_API_KEY=re_...              → Cadastre grátis em resend.com (3000 emails/mês free)
+VAPID_PUBLIC_KEY=BPOEwaz...        → Gerado com: npx tsx server/scripts/generate-vapid.ts
+VAPID_PRIVATE_KEY=rQt8GoM3...      → Mesmo script acima
+VAPID_EMAIL=mailto:admin@pnsp.com.br → Identifica o sender VAPID
+```
+
+Nota: VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY devem ser gerados **uma vez** e nunca regenerados
+(subscriptions salvas no banco deixarão de funcionar se as chaves mudarem).
+
+## M5 — Push Notifications + Email Transacional
+
+### Implementado:
+- **Schema DB**: push_subscriptions (id, userId, endpoint, p256dh, auth) — migration aplicada no Neon
+- **push.router.ts**: getPublicKey, subscribe (upsert), unsubscribe; sendPushToUser (interno com remoção auto de subs expiradas)
+- **server/lib/email.ts**: template HTML Noite de Samba, Resend instance, rate limiting em memória, sendWelcome/sendNewProposal/sendProposalAccepted/sendNewMessage/sendNewReview/sendOpportunityMatch
+- **Integração eventos**:
+  - bookings.sendProposal → push + email para artista
+  - bookings.sendCounter → push para contratante
+  - bookings.accept → push + email para ambas as partes
+  - chat.sendMessage → push + email para destinatário (rate limit 1/h por conversa)
+  - reviews.create → push + email para avaliado (rate limit 1/dia)
+  - opportunities.create → email para até 10 perfis compatíveis (rate limit 1/dia por oportunidade)
+  - context.ts first-login → sendWelcomeEmail
+- **PushNotificationManager.tsx**: PermissionButton + manager; mostra botão se não pediu, "✓ Notificações ativas" se concedido, nada se negado
+- **Dashboard.tsx**: PushNotificationManager no header
+- **sw.js**: push + notificationclick listeners adicionados ao service worker existente
+- **main.tsx**: SW registrado em todos os ambientes (não só PROD)
+- **server/scripts/generate-vapid.ts**: gera VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY
 
 ## Instrução para Claude
 Ao iniciar nova sessão: leia este arquivo primeiro.

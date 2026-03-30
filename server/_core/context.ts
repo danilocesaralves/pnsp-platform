@@ -3,6 +3,7 @@ import type { User } from "../../drizzle/schema";
 import { auth } from "./auth";
 import { fromNodeHeaders } from "better-auth/node";
 import { getUserByEmail, upsertUser } from "../repositories/users.repo";
+import { sendWelcomeEmail } from "../lib/email";
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -34,6 +35,8 @@ export async function createContext(
           lastSignedIn: new Date(),
         });
         user = (await getUserByEmail(session.user.email)) ?? null;
+        // Welcome email on first login (fire-and-forget)
+        sendWelcomeEmail(session.user.email, session.user.name ?? "Artista").catch(() => {});
       }
     }
   } catch {
