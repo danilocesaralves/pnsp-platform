@@ -648,7 +648,7 @@ export default function Home() {
             </div>
             {[
               { title: "Plataforma", links: [["Perfis", "/perfis"], ["Ofertas", "/ofertas"], ["Oportunidades", "/oportunidades"], ["Estúdios", "/estudios"]] },
-              { title: "Conteúdo", links: [["Academia", "/academia"], ["Mapa Vivo", "/mapa"]] },
+              { title: "Conteúdo", links: [["Academia", "/academia"], ["Mapa Vivo", "/mapa"], ["FAQ", "/faq"]] },
               { title: "Conta", links: [["Entrar", "/entrar"], ["Dashboard", "/dashboard"]] },
             ].map(col => (
               <div key={col.title}>

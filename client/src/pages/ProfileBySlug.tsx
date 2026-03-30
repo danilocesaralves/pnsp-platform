@@ -8,6 +8,8 @@ import { PROFILE_TYPES } from "@shared/pnsp";
 import ReviewSection, { StarDisplay } from "@/components/ReviewSection";
 import MemoryTimeline from "@/components/MemoryTimeline";
 import SEO from "@/components/SEO";
+import SchemaOrg from "@/components/SchemaOrg";
+import ShareButton from "@/components/ShareButton";
 import {
   MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink,
   Pencil, Camera, ImagePlus, Loader2, Calendar, MessageSquare, FileText,
@@ -228,6 +230,15 @@ export default function ProfileBySlug() {
         title={profile.displayName}
         description={profile.bio ?? undefined}
         image={profile.avatarUrl ?? undefined}
+      />
+      <SchemaOrg
+        type={profile.profileType === "grupo_banda" ? "musicgroup" : "person"}
+        name={profile.displayName}
+        description={profile.bio ?? undefined}
+        image={profile.avatarUrl ?? undefined}
+        url={`https://pnsp-platform.vercel.app/perfil/${profile.slug}`}
+        genres={genres}
+        city={profile.city ?? undefined}
       />
 
       {/* ─── CAPA + AVATAR ──────────────────────────────────────────────────── */}
@@ -459,6 +470,7 @@ export default function ProfileBySlug() {
                 <Globe style={{ width: 13, height: 13 }} />
               </ActionBtn>
             )}
+            <ShareButton slug={profile.slug} name={profile.displayName} />
           </div>
         </div>
       </div>

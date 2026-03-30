@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import SchemaOrg from "@/components/SchemaOrg";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -463,6 +464,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       )}
 
       {/* Main */}
+      <SchemaOrg type="organization" />
       <main style={{ flex: 1 }}>
         {children}
       </main>

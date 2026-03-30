@@ -46,6 +46,7 @@ const Payments = lazy(() => import("./pages/Payments"));
 const Marketing = lazy(() => import("./pages/Marketing"));
 const Community = lazy(() => import("./pages/Community"));
 const Memories = lazy(() => import("./pages/Memories"));
+const FAQ = lazy(() => import("./pages/FAQ"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // ─── Page loading fallback ───────────────────────────────────────────────────
@@ -77,6 +78,7 @@ function Router() {
         <Route path="/oportunidades" component={Opportunities} />
         <Route path="/oportunidades/:id" component={OpportunityDetail} />
         <Route path="/mapa" component={MapaVivo} />
+        <Route path="/faq" component={FAQ} />
         <Route path="/academia" component={Academy} />
         <Route path="/academia/:id" component={AcademyDetail} />
         <Route path="/estudios" component={Studios} />

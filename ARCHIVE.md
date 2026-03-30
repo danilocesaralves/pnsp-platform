@@ -66,8 +66,26 @@ React 19 + TypeScript + Vite + TailwindCSS + shadcn/ui + tRPC + Drizzle ORM + Po
 ## Próximos Passos Prioritários
 1. ANTHROPIC_API_KEY no Railway — adicionar variável de ambiente `ANTHROPIC_API_KEY` para ativar gerador de conteúdo IA real (generateContent atualmente usa fallback estático com `isAiGenerated: true`)
 2. Integração de pagamentos real (Stripe já estruturado, módulo de pagamentos manual ativo)
-3. Push notifications para chat/bookings
-4. PWA offline cache aprimorado
+3. PWA offline cache aprimorado
+
+## Sessão 2026-03-30 — M6: SEO/GEO/AEO — Infraestrutura Digital PNSP
+
+### Posicionamento: PNSP = primeira infraestrutura digital do ecossistema profissional do samba e pagode brasileiro.
+Linguagem obrigatória: "ecossistema", "infraestrutura", "profissionais", "mercado". Nunca: "plataforma de samba", "app de samba", "rede social de samba".
+
+### Implementado (M6 completo):
+- **server/routes/sitemap.ts**: GET /sitemap.xml — queries profiles + opportunities do Neon, gera XML com prioridades (home=1.0, faq=0.9, perfis=0.9, oportunidades=0.8, academia=0.8, /perfil/:slug=0.7), Cache-Control public max-age=3600
+- **server/routes/og-meta.ts**: GET /og/perfil/:slug — retorna HTML com og:tags completos + `window.location.replace()` para redirect; usado pelo WhatsApp/Telegram scrapers; Cache-Control public max-age=300; HTML escapado para XSS safety
+- **server/_core/index.ts**: registra sitemap + og-meta via dynamic import antes do tRPC (passo 8 → 9 → 10)
+- **client/public/robots.txt**: Allow rotas públicas, Disallow rotas privadas, Sitemap: https://pnsp-platform.vercel.app/sitemap.xml
+- **client/src/components/SchemaOrg.tsx**: Helmet JSON-LD, tipos: organization (PublicLayout), person (ProfileBySlug), musicgroup (ProfileBySlug grupo_banda), faq (FAQ), course (Academy)
+- **client/src/components/ShareButton.tsx**: ShareOption subcomponent; opções WhatsApp (usa OG URL do Railway), copiar link, native share; dropdown com backdrop
+- **client/src/pages/FAQ.tsx**: 5 perguntas com linguagem "infraestrutura digital", FAQItem subcomponent, SEO + SchemaOrg faq, CTA "Entrar no ecossistema"
+- **client/src/components/PublicLayout.tsx**: SchemaOrg organization em todas as páginas
+- **client/src/pages/ProfileBySlug.tsx**: SchemaOrg person/musicgroup + ShareButton nos action buttons
+- **client/src/pages/Academy.tsx**: SchemaOrg course
+- **client/src/App.tsx**: lazy route /faq → FAQ
+- **client/src/pages/Home.tsx**: FAQ link na coluna "Conteúdo" do footer
 
 ## Sessão 2026-03-29 — M3: Marketing IA, Comunidade, Academia, Memórias
 

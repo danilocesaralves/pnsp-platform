@@ -240,7 +240,13 @@ async function startServer() {
   // ── 7. Better-auth routes ────────────────────────────────────────────────
   app.all("/api/auth/*", toNodeHandler(auth));
 
-  // ── 8. tRPC ───────────────────────────────────────────────────────────────
+  // ── 8. Custom routes (sitemap, OG meta) ──────────────────────────────────
+  const { registerSitemapRoute } = await import("../routes/sitemap");
+  const { registerOgMetaRoute } = await import("../routes/og-meta");
+  registerSitemapRoute(app);
+  registerOgMetaRoute(app);
+
+  // ── 9. tRPC ───────────────────────────────────────────────────────────────
   app.use(
     "/api/trpc",
     createExpressMiddleware({
@@ -254,7 +260,7 @@ async function startServer() {
     })
   );
 
-  // ── 9. Frontend ───────────────────────────────────────────────────────────
+  // ── 10. Frontend ─────────────────────────────────────────────────────────
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
   } else {

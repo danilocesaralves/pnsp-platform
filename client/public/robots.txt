@@ -1,7 +1,28 @@
 User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /proprietario/
+Allow: /perfis
+Allow: /perfil/
+Allow: /oportunidades
+Allow: /academia
+Allow: /mapa
+Allow: /estudios
+Allow: /comunidade
+Allow: /faq
 
-Sitemap: https://pnsp-samba-bc6pj8ks.manus.space/sitemap.xml
+Disallow: /dashboard
+Disallow: /minha-conta
+Disallow: /criar-perfil
+Disallow: /editar-perfil/
+Disallow: /admin
+Disallow: /proprietario
+Disallow: /negociacoes
+Disallow: /contratos
+Disallow: /patrocinadores
+Disallow: /pagamentos
+Disallow: /marketing
+Disallow: /memorias
+Disallow: /mensagens
+Disallow: /criar-imagem
+Disallow: /api/
+
+Sitemap: https://pnsp-platform.vercel.app/sitemap.xml
