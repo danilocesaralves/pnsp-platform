@@ -25,6 +25,18 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://pnsp-platform-production.up.railway.app/sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "https://pnsp-platform-production.up.railway.app/robots.txt",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",
