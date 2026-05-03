@@ -1,6 +1,6 @@
 {
-  "installCommand": "cd client && pnpm install --legacy-peer-deps",
-  "buildCommand": "cd client && pnpm build",
-  "outputDirectory": "client/dist",
+  "installCommand": "pnpm install --legacy-peer-deps",
+  "buildCommand": "pnpm build",
+  "outputDirectory": "dist",
   "framework": null
 }
