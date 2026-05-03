@@ -646,7 +646,7 @@ export default function Home() {
           overflow: "hidden",
         }}>
           <img
-            src="/hero-musicians.jpg"
+            src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920&q=80"
             alt="Músicos de samba"
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
           />
