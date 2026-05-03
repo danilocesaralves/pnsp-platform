@@ -4,6 +4,10 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { PROFILE_TYPES } from "@shared/pnsp";
 import SEO from "@/components/SEO";
+import {
+  Play, ArrowRight, Music2, Target, Mic2, Users, BookOpen,
+  MapPin, ChevronRight,
+} from "lucide-react";
 
 /* ─── Smart Search ──────────────────────────────────────────────────────────── */
 const SEARCH_TYPES = [
@@ -33,11 +37,11 @@ function SmartSearch() {
   const inputBase: React.CSSProperties = {
     flex: 1,
     padding: "12px 16px",
-    background: "var(--preto)",
-    border: "1px solid var(--creme-10)",
-    borderRadius: "var(--radius-md)",
-    color: "var(--creme)",
-    fontSize: "var(--text-sm)",
+    background: "#0a0a0a",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: 10,
+    color: "#fff",
+    fontSize: "0.875rem",
     fontFamily: "var(--font-body)",
     outline: "none",
     transition: "border-color .2s",
@@ -46,19 +50,19 @@ function SmartSearch() {
 
   return (
     <div style={{
-      background: "var(--terra)",
-      border: "1px solid var(--creme-10)",
+      background: "#1a1a1a",
+      border: "1px solid #2a2a2a",
       borderRadius: 16,
       padding: 8,
-      boxShadow: "0 8px 40px rgba(0,0,0,0.50)",
+      boxShadow: "0 8px 40px rgba(0,0,0,0.60)",
       display: "flex",
       gap: 8,
       flexWrap: "wrap",
       alignItems: "center",
     }}>
-      {/* Query */}
       <input
-        style={{ ...inputBase, borderColor: qFocus ? "var(--ouro)" : "var(--creme-10)", flex: "2 1 200px" }}
+        data-testid="search-input"
+        style={{ ...inputBase, borderColor: qFocus ? "#d4a817" : "rgba(255,255,255,0.08)", flex: "2 1 200px" }}
         placeholder="Buscar artistas, produtores, estúdios..."
         value={q}
         onChange={e => setQ(e.target.value)}
@@ -66,7 +70,6 @@ function SmartSearch() {
         onBlur={() => setQFocus(false)}
         onKeyDown={e => e.key === "Enter" && handleSearch()}
       />
-      {/* Tipo */}
       <select
         style={{ ...inputBase, flex: "1 1 140px", cursor: "pointer" }}
         value={type}
@@ -74,9 +77,8 @@ function SmartSearch() {
       >
         {SEARCH_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
       </select>
-      {/* Cidade */}
       <input
-        style={{ ...inputBase, borderColor: cityFocus ? "var(--ouro)" : "var(--creme-10)", flex: "1 1 140px" }}
+        style={{ ...inputBase, borderColor: cityFocus ? "#d4a817" : "rgba(255,255,255,0.08)", flex: "1 1 140px" }}
         placeholder="Cidade"
         value={city}
         onChange={e => setCity(e.target.value)}
@@ -84,11 +86,24 @@ function SmartSearch() {
         onBlur={() => setCityFocus(false)}
         onKeyDown={e => e.key === "Enter" && handleSearch()}
       />
-      {/* Botão */}
       <button
         onClick={handleSearch}
-        className="pnsp-btn-primary"
-        style={{ padding: "12px 28px", whiteSpace: "nowrap", flex: "0 0 auto" }}
+        style={{
+          padding: "12px 28px",
+          background: "#d4a817",
+          color: "#0a0a0a",
+          fontWeight: 700,
+          fontFamily: "var(--font-body)",
+          fontSize: "0.875rem",
+          borderRadius: 10,
+          border: "none",
+          cursor: "pointer",
+          whiteSpace: "nowrap",
+          flex: "0 0 auto",
+          transition: "background 0.2s",
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#e8c042"; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#d4a817"; }}
       >
         Buscar
       </button>
@@ -113,83 +128,90 @@ function useCountUp(target: number, duration = 1200, enabled = false) {
   return count;
 }
 
-/* ─── Inline style helpers ──────────────────────────────────────────────────── */
-const S = {
-  section: (bg?: string): React.CSSProperties => ({
-    padding: "96px 24px",
-    background: bg ?? "var(--preto)",
-  }),
-  maxW: (w = 1280): React.CSSProperties => ({
-    maxWidth: w,
-    margin: "0 auto",
-    width: "100%",
-  }),
-  sectionHead: (): React.CSSProperties => ({
-    textAlign: "center",
-    marginBottom: 56,
-  }),
-  h2: (): React.CSSProperties => ({
-    fontFamily: "var(--font-display)",
-    fontSize: "clamp(2rem, 5vw, 3.5rem)",
-    fontWeight: 700,
-    marginBottom: 14,
-    lineHeight: 1.1,
-    letterSpacing: "-0.02em",
-  }),
-  sub: (): React.CSSProperties => ({
-    color: "var(--creme-50)",
-    fontSize: "var(--text-lg)",
-    maxWidth: 480,
-    margin: "0 auto",
-    lineHeight: 1.65,
-  }),
-};
+/* ─── Feature cards ─────────────────────────────────────────────────────────── */
+const FEATURES = [
+  { icon: Music2,   title: "Talentos",      desc: "Artistas, grupos e músicos de todo o Brasil", href: "/perfis" },
+  { icon: Target,   title: "Oportunidades", desc: "Shows, gravações e parcerias em aberto",       href: "/oportunidades" },
+  { icon: Mic2,     title: "Estúdios",      desc: "Os melhores estúdios do samba nacional",       href: "/estudios" },
+  { icon: Users,    title: "Comunidade",    desc: "Conecte-se e colabore com o ecossistema",      href: "/comunidade" },
+  { icon: BookOpen, title: "Conteúdos",     desc: "Academia, tutoriais e material exclusivo",      href: "/academia" },
+];
 
-/* ─── Stat item ─────────────────────────────────────────────────────────────── */
-function StatItem({ num, label, enabled }: { num: number; label: string; enabled: boolean }) {
-  const count = useCountUp(num, 1200, enabled);
+function FeatureCard({ feat }: { feat: typeof FEATURES[0] }) {
+  const [h, setH] = useState(false);
+  const Icon = feat.icon;
   return (
-    <div style={{ textAlign: "center" }}>
-      <div style={{
-        fontFamily: "var(--font-display)",
-        fontSize: "clamp(3rem, 6vw, 5rem)",
-        fontWeight: 700,
-        color: "var(--preto)",
-        lineHeight: 1,
-      }}>
-        {enabled && num > 0 ? `${count}+` : num > 0 ? `${num}+` : "—"}
+    <Link href={feat.href}>
+      <div
+        onMouseEnter={() => setH(true)}
+        onMouseLeave={() => setH(false)}
+        style={{
+          background: "#1a1a1a",
+          border: `1px solid ${h ? "#d4a817" : "#2a2a2a"}`,
+          borderRadius: 16,
+          padding: "32px 24px",
+          cursor: "pointer",
+          transition: "border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+          flex: "1 1 180px",
+          transform: h ? "translateY(-4px)" : "translateY(0)",
+          boxShadow: h ? "0 8px 32px rgba(212,168,23,0.15)" : "none",
+        }}
+      >
+        <div style={{
+          width: 48, height: 48,
+          background: "rgba(212,168,23,0.10)",
+          borderRadius: 12,
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <Icon style={{ width: 22, height: 22, color: "#d4a817" }} />
+        </div>
+        <div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", fontWeight: 600, color: "#fff", marginBottom: 6 }}>
+            {feat.title}
+          </div>
+          <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.50)", lineHeight: 1.6 }}>
+            {feat.desc}
+          </div>
+        </div>
+        <div style={{
+          display: "flex", alignItems: "center", gap: 4,
+          color: h ? "#d4a817" : "rgba(255,255,255,0.20)",
+          transition: "color 0.2s",
+          fontSize: "0.78rem", fontWeight: 600, marginTop: "auto",
+        }}>
+          <span>Explorar</span>
+          <ChevronRight style={{ width: 13, height: 13 }} />
+        </div>
       </div>
-      <div style={{ fontSize: "var(--text-base)", color: "rgba(12,10,8,0.65)", marginTop: 8, fontWeight: 500 }}>
-        {label}
-      </div>
-    </div>
+    </Link>
   );
 }
 
-/* ─── Profile card (home featured) ─────────────────────────────────────────── */
+/* ─── Profile card ──────────────────────────────────────────────────────────── */
 function ProfileCard({ profile }: { profile: any }) {
-  const [hovered, setHovered] = useState(false);
+  const [h, setH] = useState(false);
   return (
     <Link href={`/perfil/${profile.slug?.toLowerCase()}`}>
       <div
         style={{
-          display: "block",
-          background: "var(--terra)",
-          border: `1px solid ${hovered ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
-          borderRadius: "var(--radius-lg)",
+          background: "#1a1a1a",
+          border: `1px solid ${h ? "#d4a817" : "#2a2a2a"}`,
+          borderRadius: 16,
           overflow: "hidden",
-          transition: "var(--transition-slow)",
-          transform: hovered ? "translateY(-8px)" : "translateY(0)",
-          boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.7), 0 4px 32px rgba(212,146,10,0.25)" : "none",
+          transition: "all 0.3s ease",
+          transform: h ? "translateY(-8px)" : "translateY(0)",
+          boxShadow: h ? "0 20px 60px rgba(0,0,0,0.7), 0 4px 32px rgba(212,168,23,0.20)" : "none",
           cursor: "pointer",
         }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onMouseEnter={() => setH(true)}
+        onMouseLeave={() => setH(false)}
       >
-        {/* Avatar */}
         <div style={{
           aspectRatio: "4/3",
-          background: "linear-gradient(135deg, var(--terra-escura), var(--terra-clara))",
+          background: "linear-gradient(135deg, #111, #2a2a2a)",
           overflow: "hidden",
           display: "flex",
           alignItems: "center",
@@ -200,47 +222,51 @@ function ProfileCard({ profile }: { profile: any }) {
             <img
               src={profile.avatarUrl}
               alt={profile.displayName}
-              style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease", transform: hovered ? "scale(1.06)" : "scale(1)" }}
+              style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease", transform: h ? "scale(1.06)" : "scale(1)" }}
             />
           ) : (
             <div style={{
-              width: 80, height: 80, borderRadius: "50%",
-              background: "linear-gradient(135deg, var(--ouro), var(--vermelho))",
+              width: 72, height: 72, borderRadius: "50%",
+              background: "linear-gradient(135deg, #d4a817, #8B6110)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 700, color: "var(--preto)",
+              fontFamily: "var(--font-display)", fontSize: "1.8rem", fontWeight: 700, color: "#0a0a0a",
             }}>
               {profile.displayName?.[0]?.toUpperCase()}
             </div>
           )}
-          {/* hover overlay */}
           <div style={{
             position: "absolute", inset: 0,
-            background: "linear-gradient(to top, rgba(0,0,0,0.75), transparent)",
-            opacity: hovered ? 1 : 0,
+            background: "linear-gradient(to top, rgba(0,0,0,0.80), transparent)",
+            opacity: h ? 1 : 0,
             transition: "opacity 0.3s ease",
-            display: "flex", alignItems: "flex-end", padding: "16px",
+            display: "flex", alignItems: "flex-end", padding: 16,
           }}>
-            <span style={{ color: "var(--creme)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
-              Ver perfil →
-            </span>
+            <span style={{ color: "#fff", fontSize: "0.82rem", fontWeight: 600 }}>Ver perfil →</span>
           </div>
         </div>
-        {/* Info */}
-        <div style={{ padding: "20px" }}>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        <div style={{ padding: 20 }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 600, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "#fff" }}>
             {profile.displayName}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
-            <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 4,
+              padding: "3px 10px", borderRadius: 999,
+              fontSize: "0.72rem", fontWeight: 600,
+              background: "rgba(212,168,23,0.10)", color: "#d4a817",
+              border: "1px solid rgba(212,168,23,0.25)",
+            }}>
               {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
             </span>
             {profile.city && (
-              <span style={{ color: "var(--creme-50)", fontSize: "var(--text-xs)" }}>📍 {profile.city}</span>
+              <span style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.75rem", display: "flex", alignItems: "center", gap: 3 }}>
+                <MapPin style={{ width: 11, height: 11 }} />{profile.city}
+              </span>
             )}
           </div>
           {profile.bio && (
             <p style={{
-              color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.5,
+              color: "rgba(255,255,255,0.45)", fontSize: "0.82rem", lineHeight: 1.5,
               display: "-webkit-box", WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical", overflow: "hidden",
             }}>
@@ -255,13 +281,13 @@ function ProfileCard({ profile }: { profile: any }) {
 
 function ProfileSkeleton() {
   return (
-    <div style={{ background: "var(--terra)", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--creme-10)" }}>
+    <div style={{ background: "#1a1a1a", borderRadius: 16, overflow: "hidden", border: "1px solid #2a2a2a" }}>
       <div className="skeleton" style={{ aspectRatio: "4/3" }} />
-      <div style={{ padding: "20px" }}>
-        <div className="skeleton" style={{ height: 22, width: "70%", marginBottom: 12 }} />
-        <div className="skeleton" style={{ height: 16, width: "40%", borderRadius: 9999, marginBottom: 10 }} />
-        <div className="skeleton" style={{ height: 13, width: "90%", marginBottom: 6 }} />
-        <div className="skeleton" style={{ height: 13, width: "65%" }} />
+      <div style={{ padding: 20 }}>
+        <div className="skeleton" style={{ height: 20, width: "70%", marginBottom: 12 }} />
+        <div className="skeleton" style={{ height: 14, width: "40%", borderRadius: 999, marginBottom: 10 }} />
+        <div className="skeleton" style={{ height: 12, width: "90%", marginBottom: 6 }} />
+        <div className="skeleton" style={{ height: 12, width: "65%" }} />
       </div>
     </div>
   );
@@ -273,22 +299,22 @@ function HowItWorksCard({ step }: { step: { num: string; title: string; desc: st
   return (
     <div
       style={{
-        background: "var(--terra)",
-        border: `1px solid ${h ? "rgba(212,146,10,0.35)" : "var(--creme-10)"}`,
-        borderRadius: "var(--radius-lg)",
-        padding: "40px 36px",
-        transition: "var(--transition)",
+        background: "#1a1a1a",
+        border: `1px solid ${h ? "#d4a817" : "#2a2a2a"}`,
+        borderRadius: 16,
+        padding: "40px 32px",
+        transition: "all 0.3s ease",
         transform: h ? "translateY(-8px)" : "translateY(0)",
-        boxShadow: h ? "var(--shadow-ouro)" : "none",
+        boxShadow: h ? "0 8px 32px rgba(212,168,23,0.15)" : "none",
       }}
       onMouseEnter={() => setH(true)}
       onMouseLeave={() => setH(false)}
     >
-      <div style={{ fontFamily: "var(--font-display)", fontSize: "5rem", fontWeight: 700, color: "var(--ouro-sutil)", lineHeight: 1, marginBottom: 24, userSelect: "none" }}>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: "4.5rem", fontWeight: 900, color: "rgba(212,168,23,0.10)", lineHeight: 1, marginBottom: 24, userSelect: "none" }}>
         {step.num}
       </div>
-      <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", marginBottom: 12 }}>{step.title}</h3>
-      <p style={{ color: "var(--creme-50)", lineHeight: 1.65 }}>{step.desc}</p>
+      <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 600, marginBottom: 12, color: "#fff" }}>{step.title}</h3>
+      <p style={{ color: "rgba(255,255,255,0.50)", lineHeight: 1.7, fontSize: "0.9rem" }}>{step.desc}</p>
     </div>
   );
 }
@@ -306,41 +332,57 @@ function OfferingCard({ offering }: { offering: any }) {
     <Link href={`/ofertas/${offering.id}`}>
       <div
         style={{
-          background: "var(--terra)",
-          border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
-          borderRadius: "var(--radius-lg)",
+          background: "#1a1a1a",
+          border: `1px solid ${h ? "#d4a817" : "#2a2a2a"}`,
+          borderRadius: 16,
           padding: 24,
           cursor: "pointer",
-          transition: "var(--transition-slow)",
+          transition: "all 0.3s ease",
           transform: h ? "translateY(-6px)" : "translateY(0)",
-          boxShadow: h ? "var(--shadow-ouro)" : "none",
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
+          boxShadow: h ? "0 8px 32px rgba(212,168,23,0.15)" : "none",
+          display: "flex", flexDirection: "column", gap: 12,
         }}
         onMouseEnter={() => setH(true)}
         onMouseLeave={() => setH(false)}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>
+          <span style={{
+            display: "inline-flex", padding: "3px 10px", borderRadius: 999,
+            fontSize: "0.72rem", fontWeight: 600,
+            background: "rgba(212,168,23,0.10)", color: "#d4a817",
+            border: "1px solid rgba(212,168,23,0.25)",
+          }}>
             {offering.category?.replace(/_/g, " ")}
           </span>
           {offering.price && (
-            <span style={{ color: "var(--verde)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
+            <span style={{ color: "#1B6B3A", fontSize: "0.85rem", fontWeight: 700 }}>
               R$ {Number(offering.price).toLocaleString("pt-BR")}
             </span>
           )}
         </div>
-        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, lineHeight: 1.2 }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 600, lineHeight: 1.25, color: "#fff" }}>
           {offering.title}
         </h3>
         {offering.city && (
-          <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
-            📍 {offering.city}, {offering.state}
+          <span style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.82rem", display: "flex", alignItems: "center", gap: 4 }}>
+            <MapPin style={{ width: 12, height: 12 }} />{offering.city}, {offering.state}
           </span>
         )}
       </div>
     </Link>
+  );
+}
+
+/* ─── Stat item ─────────────────────────────────────────────────────────────── */
+function StatItem({ num, label, enabled }: { num: number; label: string; enabled: boolean }) {
+  const count = useCountUp(num, 1200, enabled);
+  return (
+    <div style={{ textAlign: "center" }}>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem,5vw,4rem)", fontWeight: 700, color: "#0a0a0a", lineHeight: 1 }}>
+        {enabled && num > 0 ? `${count}+` : num > 0 ? `${num}+` : "—"}
+      </div>
+      <div style={{ fontSize: "0.9rem", color: "rgba(10,10,10,0.60)", marginTop: 8, fontWeight: 500 }}>{label}</div>
+    </div>
   );
 }
 
@@ -364,7 +406,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ background: "var(--preto)", minHeight: "100vh" }}>
+    <div style={{ background: "#0a0a0a", minHeight: "100vh" }}>
       <SEO />
 
       {/* ═══ HEADER ═══ */}
@@ -372,194 +414,358 @@ export default function Home() {
         position: "fixed",
         top: 0, left: 0, right: 0,
         zIndex: 50,
-        background: "rgba(10,8,0,0.92)",
+        background: "rgba(10,10,10,0.92)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        borderBottom: "1px solid rgba(212,160,23,0.15)",
+        borderBottom: "1px solid rgba(212,168,23,0.12)",
         minHeight: 72,
         display: "flex",
         alignItems: "center",
         padding: "0 24px",
-        overflow: "visible",
       }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", overflow: "visible" }}>
-          <Link href="/" style={{ display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
             <img
               src="/logo-pnsp-crop.png"
               alt="PNSP"
-              style={{ height: 64, width: "auto", display: "block", flexShrink: 0, objectFit: "contain", filter: "invert(1) brightness(1.2)", cursor: "pointer" }}
+              style={{ height: 56, width: "auto", objectFit: "contain", filter: "brightness(0) invert(1)", cursor: "pointer" }}
             />
           </Link>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <a href="/entrar" style={{ padding: "8px 18px", color: "var(--creme-80)", fontSize: "var(--text-sm)", fontWeight: 500, fontFamily: "var(--font-body)", borderRadius: "var(--radius-md)" }}>
+
+          {/* Nav desktop */}
+          <nav style={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {[
+              { href: "/perfis", label: "Perfis" },
+              { href: "/oportunidades", label: "Oportunidades" },
+              { href: "/estudios", label: "Estúdios" },
+              { href: "/academia", label: "Academia" },
+              { href: "/comunidade", label: "Comunidade" },
+            ].map(({ href, label }) => (
+              <Link key={href} href={href}>
+                <span className="nav-link">{label}</span>
+              </Link>
+            ))}
+          </nav>
+
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <a href="/entrar" style={{
+              padding: "9px 20px",
+              color: "rgba(255,255,255,0.80)",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              fontFamily: "var(--font-body)",
+              border: "1px solid rgba(255,255,255,0.20)",
+              borderRadius: 10,
+              transition: "all 0.2s",
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.50)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.20)"; }}
+            >
               Entrar
             </a>
-            <a href="/entrar" style={{ padding: "8px 18px", background: "var(--ouro)", color: "var(--preto)", fontSize: "var(--text-sm)", fontWeight: 700, fontFamily: "var(--font-body)", borderRadius: "var(--radius-md)", whiteSpace: "nowrap" }}>
-              Cadastrar grátis
+            <a href="/entrar" style={{
+              padding: "9px 20px",
+              background: "#d4a817",
+              color: "#0a0a0a",
+              fontSize: "0.875rem",
+              fontWeight: 700,
+              fontFamily: "var(--font-body)",
+              borderRadius: 10,
+              whiteSpace: "nowrap",
+              transition: "background 0.2s",
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#e8c042"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#d4a817"; }}
+            >
+              Criar conta
             </a>
           </div>
         </div>
       </header>
 
-      {/* ═══ HERO ═══ */}
+      {/* ═══ HERO (duas colunas) ═══ */}
       <section style={{
         minHeight: "100vh",
         display: "flex",
-        alignItems: "center",
         position: "relative",
         overflow: "hidden",
-        padding: "120px 24px 80px",
+        paddingTop: 72,
       }}>
-        {/* Blob ouro */}
-        <div className="float" style={{
-          position: "absolute", top: "10%", left: "-10%",
-          width: 700, height: 700,
-          background: "radial-gradient(circle, rgba(212,146,10,0.14) 0%, transparent 70%)",
-          filter: "blur(80px)", pointerEvents: "none",
-        }} />
-        {/* Blob vermelho */}
-        <div className="float-slow" style={{
-          position: "absolute", bottom: "5%", right: "-15%",
-          width: 600, height: 600,
-          background: "radial-gradient(circle, rgba(184,50,50,0.10) 0%, transparent 70%)",
-          filter: "blur(100px)", pointerEvents: "none",
-        }} />
-        {/* Linha decorativa */}
+        {/* Coluna esquerda — texto */}
         <div style={{
-          position: "absolute", top: "50%", left: 0, right: 0, height: 1,
-          background: "linear-gradient(90deg, transparent, rgba(212,146,10,0.15), transparent)",
-          pointerEvents: "none",
-        }} />
-        {/* Wave bottom */}
-        <svg style={{ position: "absolute", bottom: 0, left: 0, right: 0, width: "100%" }}
-          viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <path d="M0 30 C360 60 720 0 1080 30 C1260 45 1350 40 1440 30 L1440 60 L0 60 Z"
-            fill="var(--terra-escura)" />
-        </svg>
-
-        <div style={{ ...S.maxW(), display: "grid", gridTemplateColumns: "1fr", gap: 80, alignItems: "center", position: "relative", zIndex: 1 }}>
-          <div>
-            {/* Tag */}
-            <div className="animate-fade-up section-tag" style={{ marginBottom: 32 }}>
-              <span className="section-tag-dot" />
-              <span className="section-tag-text">A revolução digital do samba brasileiro</span>
-            </div>
-
-            {/* H1 */}
-            <h1 className="animate-fade-up delay-1" style={{
-              fontSize: "var(--text-hero)",
-              fontFamily: "var(--font-display)",
+          width: "45%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: "80px 0 80px clamp(24px, 4vw, 80px)",
+          position: "relative",
+          zIndex: 2,
+          flexShrink: 0,
+        }}>
+          {/* Overline */}
+          <div className="animate-fade-up" style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 28,
+          }}>
+            <span style={{
+              color: "#d4a817",
+              fontSize: "0.72rem",
               fontWeight: 700,
-              lineHeight: 1.0,
-              marginBottom: 28,
-              letterSpacing: "-0.03em",
-              color: "var(--creme)",
+              letterSpacing: "0.20em",
+              textTransform: "uppercase",
+              fontFamily: "var(--font-body)",
             }}>
-              O ecossistema digital do{" "}
-              <em style={{ color: "var(--ouro)", fontStyle: "italic" }}>samba</em>
-              {" "}e do{" "}
-              <em style={{ color: "var(--verde)", fontStyle: "italic" }}>pagode</em>
-              {" "}brasileiro
-            </h1>
+              O RITMO QUE MOVE O BRASIL
+            </span>
+          </div>
 
-            {/* Sub */}
-            <p className="animate-fade-up delay-2" style={{
-              fontSize: "var(--text-xl)",
-              color: "var(--creme-50)",
-              maxWidth: 560,
-              lineHeight: 1.65,
-              marginBottom: 44,
-            }}>
-              Conectamos artistas, grupos, produtores, estúdios, contratantes e toda a cadeia do samba nacional em uma única plataforma.
-            </p>
+          {/* Título */}
+          <h1 className="animate-fade-up delay-1" style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 400,
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+            marginBottom: 28,
+          }}>
+            <span style={{ fontSize: "clamp(2.8rem,5.5vw,4.5rem)", color: "#ffffff", display: "block" }}>
+              A plataforma nacional do
+            </span>
+            <em style={{ fontSize: "clamp(2.8rem,5.5vw,4.5rem)", color: "#d4a817", fontStyle: "italic", display: "block" }}>
+              samba e do pagode.
+            </em>
+          </h1>
 
-            {/* CTAs */}
-            <div className="animate-fade-up delay-3" style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 56 }}>
-              {isAuthenticated ? (
-                <Link href="/dashboard">
-                  <span className="pnsp-btn-primary">Acessar Dashboard →</span>
-                </Link>
-              ) : (
-                <a href="/entrar" className="pnsp-btn-primary">
-                  Criar meu perfil grátis →
-                </a>
-              )}
-              <Link href="/perfis">
-                <span className="pnsp-btn-ghost">Explorar a plataforma</span>
+          {/* Subtítulo */}
+          <p className="animate-fade-up delay-2" style={{
+            fontSize: "1.1rem",
+            color: "rgba(255,255,255,0.60)",
+            lineHeight: 1.70,
+            marginBottom: 44,
+            maxWidth: 460,
+            fontFamily: "var(--font-body)",
+          }}>
+            Conectamos artistas, grupos, produtores, estúdios e contratantes em uma única infraestrutura digital para o samba brasileiro.
+          </p>
+
+          {/* CTAs */}
+          <div className="animate-fade-up delay-3" style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 56 }}>
+            {isAuthenticated ? (
+              <Link href="/dashboard">
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  padding: "15px 36px",
+                  background: "#d4a817", color: "#0a0a0a",
+                  fontWeight: 700, fontSize: "1rem",
+                  borderRadius: 12, border: "none", cursor: "pointer",
+                  fontFamily: "var(--font-body)",
+                  boxShadow: "0 4px 24px rgba(212,168,23,0.30)",
+                  transition: "background 0.2s, transform 0.2s",
+                }}>
+                  Acessar Dashboard <ArrowRight style={{ width: 16, height: 16 }} />
+                </span>
               </Link>
-            </div>
-
-            {/* Stats strip */}
-            <div className="animate-fade-up delay-4" style={{
-              display: "flex", gap: 40, flexWrap: "wrap",
-              paddingTop: 32,
-              borderTop: "1px solid var(--creme-10)",
-            }}>
-              {[
-                { num: stats?.profileCount ?? 0, label: "Artistas" },
-                { num: stats?.studioCount ?? 0, label: "Estúdios" },
-                { num: stats?.opportunityCount ?? 0, label: "Oportunidades" },
-                { num: stats?.cityCount ?? 0, label: "Cidades" },
-              ].map(s => (
-                <div key={s.label}>
-                  <div style={{ fontSize: "var(--text-2xl)", fontWeight: 700, color: "var(--ouro)", fontFamily: "var(--font-display)" }}>
-                    {s.num > 0 ? `${s.num}+` : "—"}
-                  </div>
-                  <div style={{ fontSize: "var(--text-sm)", color: "var(--creme-50)", marginTop: 2 }}>{s.label}</div>
+            ) : (
+              <a href="/entrar" style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "15px 36px",
+                background: "#d4a817", color: "#0a0a0a",
+                fontWeight: 700, fontSize: "1rem",
+                borderRadius: 12, border: "none", cursor: "pointer",
+                fontFamily: "var(--font-body)",
+                boxShadow: "0 4px 24px rgba(212,168,23,0.30)",
+                textDecoration: "none",
+                transition: "background 0.2s",
+              }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#e8c042"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#d4a817"; }}
+              >
+                Criar minha conta <ArrowRight style={{ width: 16, height: 16 }} />
+              </a>
+            )}
+            <Link href="/perfis">
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 10,
+                padding: "15px 32px",
+                border: "1px solid rgba(255,255,255,0.25)", color: "rgba(255,255,255,0.85)",
+                fontWeight: 500, fontSize: "1rem",
+                borderRadius: 12, cursor: "pointer",
+                fontFamily: "var(--font-body)",
+                transition: "border-color 0.2s, color 0.2s",
+                background: "transparent",
+              }}>
+                <div style={{
+                  width: 28, height: 28,
+                  background: "rgba(255,255,255,0.12)",
+                  borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <Play style={{ width: 10, height: 10, fill: "#fff" }} />
                 </div>
-              ))}
+                Como funciona
+              </span>
+            </Link>
+          </div>
+
+          {/* Stats strip */}
+          <div className="animate-fade-up delay-4" style={{
+            display: "flex", gap: 0, flexWrap: "wrap",
+            paddingTop: 28,
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+          }}>
+            {[
+              { icon: "🎵", stat: "+25 mil", label: "artistas" },
+              { icon: "🎯", stat: "+3 mil",  label: "oportunidades" },
+              { icon: "🗺️", stat: "Todo",    label: "o Brasil conectado" },
+            ].map((s, i) => (
+              <div key={s.label} style={{ display: "flex", alignItems: "center" }}>
+                {i > 0 && (
+                  <div style={{ width: 1, height: 36, background: "rgba(255,255,255,0.12)", margin: "0 20px" }} />
+                )}
+                <div>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+                    <span style={{ fontSize: "1.1rem" }}>{s.icon}</span>
+                    <span style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 700, color: "#d4a817" }}>
+                      {s.stat}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)", marginTop: 2 }}>{s.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Coluna direita — imagem */}
+        <div style={{
+          position: "absolute",
+          top: 0, right: 0,
+          width: "62%",
+          height: "100%",
+          overflow: "hidden",
+        }}>
+          <img
+            src="/hero-musicians.jpg"
+            alt="Músicos de samba"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+          />
+          {/* Gradiente da esquerda (preto) para transparente */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to right, #0a0a0a 0%, #0a0a0a 8%, rgba(10,10,10,0.85) 30%, rgba(10,10,10,0.40) 60%, transparent 100%)",
+          }} />
+          {/* Gradiente do topo para escurecer */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to bottom, rgba(10,10,10,0.5) 0%, transparent 30%)",
+          }} />
+        </div>
+      </section>
+
+      {/* ═══ FEATURE CARDS ═══ */}
+      <section style={{ padding: "80px 24px", background: "#111111" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
+              <span style={{
+                color: "#d4a817",
+                fontSize: "0.72rem", fontWeight: 700,
+                letterSpacing: "0.18em", textTransform: "uppercase",
+                fontFamily: "var(--font-body)",
+              }}>
+                Tudo em um só lugar
+              </span>
             </div>
+            <h2 style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(1.8rem,4vw,2.8rem)",
+              fontWeight: 400,
+              color: "#fff",
+              lineHeight: 1.1,
+            }}>
+              Uma plataforma, infinitas possibilidades
+            </h2>
+          </div>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+            {FEATURES.map(feat => <FeatureCard key={feat.title} feat={feat} />)}
           </div>
         </div>
       </section>
 
       {/* ═══ SMART SEARCH ═══ */}
-      <section style={{ padding: "0 24px", marginTop: -40, position: "relative", zIndex: 10 }}>
+      <section style={{ padding: "0 24px", marginTop: -32, position: "relative", zIndex: 10 }}>
         <div style={{ maxWidth: 860, margin: "0 auto" }}>
           <SmartSearch />
         </div>
       </section>
 
-      {/* ═══ COMO FUNCIONA ═══ */}
-      <section style={{ ...S.section("var(--terra-escura)") }}>
-        <div style={S.maxW(1100)}>
-          <div style={S.sectionHead()}>
-            <div className="section-tag" style={{ display: "inline-flex", marginBottom: 20 }}>
-              <span className="section-tag-dot" /><span className="section-tag-text">Como funciona</span>
-            </div>
-            <h2 style={S.h2()}>Três passos para o ecossistema</h2>
-            <p style={S.sub()}>Da criação do perfil às oportunidades reais — simples e direto.</p>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-            {HOW_IT_WORKS.map(step => <HowItWorksCard key={step.num} step={step} />)}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ PERFIS EM DESTAQUE ═══ */}
-      <section style={S.section()}>
-        <div style={S.maxW()}>
+      {/* ═══ DESTAQUES DA PLATAFORMA ═══ */}
+      <section style={{ padding: "96px 24px 80px", background: "#0a0a0a" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
             <div>
-              <div className="section-tag" style={{ display: "inline-flex", marginBottom: 16 }}>
-                <span className="section-tag-dot" /><span className="section-tag-text">Destaques</span>
+              <div style={{ marginBottom: 12 }}>
+                <span style={{
+                  color: "#d4a817",
+                  fontSize: "0.72rem", fontWeight: 700,
+                  letterSpacing: "0.20em", textTransform: "uppercase",
+                  fontFamily: "var(--font-body)",
+                }}>
+                  EM ALTA NA PNSP
+                </span>
               </div>
-              <h2 style={{ ...S.h2(), marginBottom: 8 }}>Quem está transformando o samba</h2>
-              <p style={{ color: "var(--creme-50)", marginTop: 8 }}>Artistas, produtores e estúdios do ecossistema nacional</p>
+              <h2 style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(1.8rem,4vw,2.8rem)",
+                fontWeight: 400,
+                color: "#fff",
+                lineHeight: 1.1,
+                marginBottom: 8,
+              }}>
+                Destaques da plataforma
+              </h2>
+              <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.9rem" }}>
+                Artistas, produtores e estúdios do ecossistema nacional
+              </p>
             </div>
             <Link href="/perfis">
-              <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600, borderBottom: "1px solid rgba(212,146,10,0.4)", paddingBottom: 2 }}>
-                Ver todos os perfis →
+              <span
+                data-testid="filter-artista"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  padding: "10px 22px",
+                  border: "1px solid rgba(255,255,255,0.20)",
+                  borderRadius: 10,
+                  color: "rgba(255,255,255,0.80)",
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s, color 0.2s",
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "#d4a817";
+                  (e.currentTarget as HTMLElement).style.color = "#d4a817";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.20)";
+                  (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.80)";
+                }}
+              >
+                Ver todos <ArrowRight style={{ width: 14, height: 14 }} />
               </span>
             </Link>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
+          <div data-testid="search-results" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
             {loadingProfiles
               ? Array.from({ length: 6 }).map((_, i) => <ProfileSkeleton key={i} />)
               : featuredProfiles?.length
               ? featuredProfiles.map(p => <ProfileCard key={p.id} profile={p} />)
               : (
-                <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "48px 0", color: "var(--creme-50)" }}>
+                <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "48px 0", color: "rgba(255,255,255,0.35)" }}>
                   Nenhum perfil em destaque ainda.
                 </div>
               )}
@@ -567,28 +773,62 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ COMO FUNCIONA ═══ */}
+      <section style={{ padding: "80px 24px", background: "#111111" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <div style={{ marginBottom: 12 }}>
+              <span style={{ color: "#d4a817", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-body)" }}>
+                Como funciona
+              </span>
+            </div>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 400, color: "#fff", marginBottom: 14, lineHeight: 1.1 }}>
+              Três passos para o ecossistema
+            </h2>
+            <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "1rem", maxWidth: 440, margin: "0 auto", lineHeight: 1.65 }}>
+              Da criação do perfil às oportunidades reais — simples e direto.
+            </p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+            {HOW_IT_WORKS.map(step => <HowItWorksCard key={step.num} step={step} />)}
+          </div>
+        </div>
+      </section>
+
       {/* ═══ OFERTAS ═══ */}
       {(loadingOfferings || (recentOfferings && recentOfferings.length > 0)) && (
-        <section style={{ ...S.section("var(--terra-escura)") }}>
-          <div style={S.maxW()}>
+        <section style={{ padding: "80px 24px", background: "#0a0a0a" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 48, flexWrap: "wrap", gap: 16 }}>
               <div>
-                <div className="section-tag" style={{ display: "inline-flex", marginBottom: 16 }}>
-                  <span className="section-tag-dot" /><span className="section-tag-text">Marketplace</span>
+                <div style={{ marginBottom: 12 }}>
+                  <span style={{ color: "#d4a817", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "var(--font-body)" }}>
+                    Marketplace
+                  </span>
                 </div>
-                <h2 style={{ ...S.h2(), marginBottom: 8 }}>Ofertas recentes</h2>
-                <p style={{ color: "var(--creme-50)" }}>Serviços disponíveis no ecossistema</p>
+                <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 400, color: "#fff", marginBottom: 8, lineHeight: 1.1 }}>
+                  Ofertas recentes
+                </h2>
+                <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.9rem" }}>Serviços disponíveis no ecossistema</p>
               </div>
               <Link href="/ofertas">
-                <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600, borderBottom: "1px solid rgba(212,146,10,0.4)", paddingBottom: 2 }}>
-                  Ver todas →
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  padding: "10px 22px",
+                  border: "1px solid rgba(255,255,255,0.20)",
+                  borderRadius: 10,
+                  color: "rgba(255,255,255,0.80)",
+                  fontSize: "0.875rem", fontWeight: 500,
+                  fontFamily: "var(--font-body)", cursor: "pointer",
+                }}>
+                  Ver todas <ArrowRight style={{ width: 14, height: 14 }} />
                 </span>
               </Link>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
               {loadingOfferings
                 ? Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} style={{ background: "var(--terra)", borderRadius: "var(--radius-lg)", border: "1px solid var(--creme-10)", padding: 24 }}>
+                    <div key={i} style={{ background: "#1a1a1a", borderRadius: 16, border: "1px solid #2a2a2a", padding: 24 }}>
                       {[80, 60, 40, 32].map((h, j) => (
                         <div key={j} className="skeleton" style={{ height: h, marginBottom: 12, borderRadius: 8 }} />
                       ))}
@@ -600,12 +840,12 @@ export default function Home() {
         </section>
       )}
 
-      {/* ═══ STATS — fundo ouro ═══ */}
+      {/* ═══ STATS — fundo dourado ═══ */}
       <section ref={statsRef} style={{
         padding: "64px 24px",
-        background: "linear-gradient(135deg, var(--ouro) 0%, #8B6110 100%)",
+        background: "linear-gradient(135deg, #d4a817 0%, #8B6110 100%)",
       }}>
-        <div style={{ ...S.maxW(1100), display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 40, textAlign: "center" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 40, textAlign: "center" }}>
           <StatItem num={stats?.profileCount ?? 0} label="Artistas cadastrados" enabled={counted} />
           <StatItem num={stats?.studioCount ?? 0} label="Estúdios parceiros" enabled={counted} />
           <StatItem num={stats?.opportunityCount ?? 0} label="Oportunidades abertas" enabled={counted} />
@@ -614,72 +854,85 @@ export default function Home() {
       </section>
 
       {/* ═══ CTA FINAL ═══ */}
-      <section style={{ ...S.section(), textAlign: "center", position: "relative", overflow: "hidden" }}>
+      <section style={{ padding: "96px 24px", background: "#0a0a0a", textAlign: "center", position: "relative", overflow: "hidden" }}>
         <div style={{
           position: "absolute", top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
+          transform: "translate(-50%,-50%)",
           width: 600, height: 600,
-          background: "radial-gradient(circle, rgba(212,146,10,0.12) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(212,168,23,0.10) 0%, transparent 70%)",
           pointerEvents: "none",
         }} />
-        <div style={{ ...S.maxW(680), position: "relative" }}>
-          <div className="section-tag" style={{ display: "inline-flex", marginBottom: 24 }}>
-            <span className="section-tag-dot" /><span className="section-tag-text">100% gratuito</span>
+        <div style={{ maxWidth: 640, margin: "0 auto", position: "relative" }}>
+          <div style={{ marginBottom: 24 }}>
+            <span style={{ color: "#d4a817", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.20em", textTransform: "uppercase", fontFamily: "var(--font-body)" }}>
+              100% gratuito
+            </span>
           </div>
-          <h2 style={S.h2()}>Faça parte da maior plataforma do samba</h2>
-          <p style={{ ...S.sub(), maxWidth: "none", marginBottom: 44 }}>
-            Mais de 50 artistas e profissionais já estão no ecossistema. Venha você também.
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem,5vw,3.2rem)", fontWeight: 400, color: "#fff", marginBottom: 16, lineHeight: 1.1 }}>
+            Faça parte da maior plataforma do samba
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.50)", fontSize: "1rem", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 44px" }}>
+            Artistas e profissionais já estão no ecossistema. Venha você também.
           </p>
-          <a href="/entrar" className="pnsp-btn-primary" style={{ animation: "pulse-ring 3s ease-out infinite", fontSize: "var(--text-lg)", padding: "20px 48px" }}>
-            Criar perfil grátis agora →
+          <a href="/entrar" style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            padding: "18px 48px",
+            background: "#d4a817", color: "#0a0a0a",
+            fontWeight: 700, fontSize: "1.05rem",
+            borderRadius: 12, border: "none", cursor: "pointer",
+            fontFamily: "var(--font-body)", textDecoration: "none",
+            boxShadow: "0 4px 32px rgba(212,168,23,0.30)",
+            animation: "pulse-ring 3s ease-out infinite",
+          }}>
+            Criar perfil grátis agora <ArrowRight style={{ width: 18, height: 18 }} />
           </a>
         </div>
       </section>
 
       {/* ═══ BANNER PRÉ-LANÇAMENTO ═══ */}
-      <section style={{ 
-        background: "rgba(212,160,23,0.08)", 
-        borderTop: "1px solid var(--ouro-sutil)",
-        padding: "24px",
-        textAlign: "center"
+      <section style={{
+        background: "rgba(212,168,23,0.06)",
+        borderTop: "1px solid rgba(212,168,23,0.12)",
+        padding: "20px 24px",
+        textAlign: "center",
       }}>
-        <div style={{ ...S.maxW(1100), display: "flex", justifyContent: "center", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-          <span style={{ color: "var(--creme-80)", fontSize: "var(--text-sm)", fontWeight: 500 }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "center", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <span style={{ color: "rgba(255,255,255,0.70)", fontSize: "0.875rem", fontWeight: 400 }}>
             A primeira infraestrutura digital do samba e pagode chega em breve.
           </span>
           <Link href="/pre-lancamento">
-            <span style={{ color: "var(--ouro)", fontWeight: 700, fontSize: "var(--text-sm)", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-              Garanta seu lugar no ecossistema agora <ArrowRight style={{ width: 14, height: 14 }} />
+            <span style={{ color: "#d4a817", fontWeight: 700, fontSize: "0.875rem", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+              Garanta seu lugar agora <ArrowRight style={{ width: 13, height: 13 }} />
             </span>
           </Link>
         </div>
       </section>
 
       {/* ═══ FOOTER ═══ */}
-      <footer style={{ background: "var(--terra-escura)", borderTop: "1px solid var(--creme-10)", padding: "56px 24px 32px" }}>
-        <div style={S.maxW()}>
+      <footer style={{ background: "#111111", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "56px 24px 32px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 40, marginBottom: 48 }}>
             <div style={{ gridColumn: "span 2" }}>
-              <img src="/logo-pnsp-crop.png" alt="PNSP - Plataforma Nacional do Samba e Pagode" style={{ height: 80, width: "auto", marginBottom: 12, filter: "invert(1) brightness(1.2)", objectFit: "contain", display: "block", background: "none" }} />
-              <p style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", lineHeight: 1.6, maxWidth: 260 }}>
+              <img src="/logo-pnsp-crop.png" alt="PNSP" style={{ height: 64, width: "auto", marginBottom: 14, filter: "brightness(0) invert(1)", objectFit: "contain", display: "block" }} />
+              <p style={{ color: "rgba(255,255,255,0.40)", fontSize: "0.85rem", lineHeight: 1.7, maxWidth: 260 }}>
                 Plataforma Nacional do Samba e do Pagode — o ecossistema digital que conecta toda a cadeia do samba brasileiro.
               </p>
             </div>
             {[
               { title: "Plataforma", links: [["Perfis", "/perfis"], ["Ofertas", "/ofertas"], ["Oportunidades", "/oportunidades"], ["Estúdios", "/estudios"]] },
-              { title: "Conteúdo", links: [["Academia", "/academia"], ["Mapa Vivo", "/mapa"], ["FAQ", "/faq"]] },
-              { title: "Conta", links: [["Entrar", "/entrar"], ["Dashboard", "/dashboard"]] },
+              { title: "Conteúdo",  links: [["Academia", "/academia"], ["Mapa Vivo", "/mapa"], ["FAQ", "/faq"]] },
+              { title: "Conta",     links: [["Entrar", "/entrar"], ["Dashboard", "/dashboard"]] },
             ].map(col => (
               <div key={col.title}>
-                <div style={{ fontSize: "var(--text-xs)", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ouro)", marginBottom: 16 }}>
+                <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#d4a817", marginBottom: 16, fontFamily: "var(--font-body)" }}>
                   {col.title}
                 </div>
                 {col.links.map(([label, href]) => (
                   <div key={label} style={{ marginBottom: 10 }}>
                     <Link href={href}>
-                      <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", cursor: "pointer", transition: "color 0.2s" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme)"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
+                      <span style={{ color: "rgba(255,255,255,0.40)", fontSize: "0.875rem", cursor: "pointer", transition: "color 0.2s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#fff"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.40)"; }}
                       >{label}</span>
                     </Link>
                   </div>
@@ -687,11 +940,11 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <div style={{ borderTop: "1px solid var(--creme-10)", paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-            <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+            <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.82rem" }}>
               © 2026 PNSP — Plataforma Nacional do Samba e do Pagode
             </span>
-            <span style={{ color: "var(--ouro)", fontSize: "var(--text-sm)", fontWeight: 600 }}>
+            <span style={{ color: "#d4a817", fontSize: "0.82rem", fontWeight: 600 }}>
               Feito com 🥁 no Brasil
             </span>
           </div>

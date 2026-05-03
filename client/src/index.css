@@ -12,26 +12,26 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* ── Paleta Noite de Samba ─────────────────────────────────────────────── */
-  --preto:          #0C0A08;
-  --terra-escura:   #141008;
-  --terra:          #1C160C;
-  --terra-clara:    #261E10;
-  --ouro:           #D4920A;
-  --ouro-claro:     #F0B429;
-  --ouro-brilho:    rgba(212, 146, 10, 0.25);
-  --ouro-sutil:     rgba(212, 146, 10, 0.10);
+  /* ── Paleta Cinematográfica PNSP ──────────────────────────────────────── */
+  --preto:          #0a0a0a;
+  --terra-escura:   #111111;
+  --terra:          #1a1a1a;
+  --terra-clara:    #2a2a2a;
+  --ouro:           #d4a817;
+  --ouro-claro:     #e8c042;
+  --ouro-brilho:    rgba(212, 168, 23, 0.25);
+  --ouro-sutil:     rgba(212, 168, 23, 0.10);
   --vermelho:       #B83232;
   --verde:          #1B6B3A;
-  --creme:          #F5EDD8;
-  --creme-80:       rgba(245, 237, 216, 0.80);
-  --creme-50:       rgba(245, 237, 216, 0.50);
-  --creme-20:       rgba(245, 237, 216, 0.12);
-  --creme-10:       rgba(245, 237, 216, 0.06);
+  --creme:          #ffffff;
+  --creme-80:       rgba(255, 255, 255, 0.80);
+  --creme-50:       rgba(255, 255, 255, 0.50);
+  --creme-20:       rgba(255, 255, 255, 0.12);
+  --creme-10:       rgba(255, 255, 255, 0.06);
 
   /* ── Tipografia ────────────────────────────────────────────────────────── */
-  --font-display:   'Cormorant Garamond', Georgia, serif;
-  --font-body:      'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display:   'Fraunces', Georgia, serif;
+  --font-body:      'DM Sans', system-ui, -apple-system, sans-serif;
 
   /* ── Escala tipográfica ────────────────────────────────────────────────── */
   --text-xs:    0.75rem;
@@ -61,8 +61,8 @@
   --shadow-sm:   0 2px 8px rgba(0,0,0,0.40);
   --shadow-md:   0 4px 24px rgba(0,0,0,0.60);
   --shadow-lg:   0 8px 48px rgba(0,0,0,0.80);
-  --shadow-ouro: 0 4px 32px rgba(212,146,10,0.30);
-  --shadow-card: 0 2px 16px rgba(0,0,0,0.50), inset 0 1px 0 rgba(245,237,216,0.04);
+  --shadow-ouro: 0 4px 32px rgba(212,168,23,0.30);
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.04);
 
   /* ── Transições ────────────────────────────────────────────────────────── */
   --ease:            cubic-bezier(0.4, 0, 0.2, 1);
@@ -76,40 +76,40 @@
   --z-overlay:  60;
   --z-modal:    70;
 
-  /* ── Shadcn/ui semantic tokens (mapeados à paleta Noite de Samba) ────── */
+  /* ── Shadcn/ui semantic tokens (paleta cinematográfica) ──────────────── */
   --radius:                   0.875rem;
-  --background:               #0C0A08;
-  --foreground:               #F5EDD8;
-  --card:                     #1C160C;
-  --card-foreground:          #F5EDD8;
-  --popover:                  #1C160C;
-  --popover-foreground:       #F5EDD8;
-  --primary:                  #D4920A;
-  --primary-foreground:       #0C0A08;
-  --secondary:                #261E10;
-  --secondary-foreground:     #F5EDD8;
-  --muted:                    #261E10;
-  --muted-foreground:         rgba(245,237,216,0.50);
-  --accent:                   rgba(212,146,10,0.15);
-  --accent-foreground:        #F0B429;
+  --background:               #0a0a0a;
+  --foreground:               #ffffff;
+  --card:                     #1a1a1a;
+  --card-foreground:          #ffffff;
+  --popover:                  #1a1a1a;
+  --popover-foreground:       #ffffff;
+  --primary:                  #d4a817;
+  --primary-foreground:       #0a0a0a;
+  --secondary:                #2a2a2a;
+  --secondary-foreground:     #ffffff;
+  --muted:                    #2a2a2a;
+  --muted-foreground:         rgba(255,255,255,0.50);
+  --accent:                   rgba(212,168,23,0.15);
+  --accent-foreground:        #e8c042;
   --destructive:              #B83232;
-  --destructive-foreground:   #F5EDD8;
-  --border:                   rgba(245,237,216,0.10);
-  --input:                    rgba(245,237,216,0.08);
-  --ring:                     #D4920A;
-  --sidebar:                  #141008;
-  --sidebar-foreground:       #F5EDD8;
-  --sidebar-primary:          #D4920A;
-  --sidebar-primary-foreground: #0C0A08;
-  --sidebar-accent:           #261E10;
-  --sidebar-accent-foreground:#F5EDD8;
-  --sidebar-border:           rgba(245,237,216,0.08);
-  --sidebar-ring:             #D4920A;
-  --chart-1: #D4920A;
+  --destructive-foreground:   #ffffff;
+  --border:                   rgba(255,255,255,0.10);
+  --input:                    rgba(255,255,255,0.08);
+  --ring:                     #d4a817;
+  --sidebar:                  #111111;
+  --sidebar-foreground:       #ffffff;
+  --sidebar-primary:          #d4a817;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent:           #2a2a2a;
+  --sidebar-accent-foreground:#ffffff;
+  --sidebar-border:           rgba(255,255,255,0.08);
+  --sidebar-ring:             #d4a817;
+  --chart-1: #d4a817;
   --chart-2: #1B6B3A;
   --chart-3: #B83232;
   --chart-4: #8B6110;
-  --chart-5: #F0B429;
+  --chart-5: #e8c042;
 }
 
 /* ── Shadcn @theme inline ────────────────────────────────────────────────── */
