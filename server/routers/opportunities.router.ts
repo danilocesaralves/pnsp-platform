@@ -1,11 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { adminProcedure } from "../lib/guards";
 import * as repo from "../repositories";
 import { getDb } from "../db";
-import { profiles, users } from "../../drizzle/schema";
+import { users } from "../../drizzle/schema";
 import { sendOpportunityMatchEmail } from "../lib/email";
 
 const CATEGORY_ENUM = z.enum([
@@ -85,22 +85,32 @@ export const opportunitiesRouter = router({
             offset: 0,
           });
 
-          for (const profile of matchingProfiles.slice(0, 10)) {
-            if (profile.userId === ctx.user.id) continue;
-            const [user] = await db
-              .select({ email: users.email, name: users.name })
+          const targets = matchingProfiles
+            .filter(p => p.userId !== ctx.user.id)
+            .slice(0, 10);
+
+          if (targets.length > 0) {
+            // Batch-fetch users to avoid N+1
+            const userIds = targets.map(p => p.userId);
+            const matchedUsers = await db
+              .select({ id: users.id, email: users.email, name: users.name })
               .from(users)
-              .where(eq(users.id, profile.userId))
-              .limit(1);
-            if (user?.email) {
-              sendOpportunityMatchEmail(
-                user.email,
-                user.name ?? profile.displayName,
-                input.title,
-                input.city ?? null,
-                oppId,
-                profile.userId,
-              ).catch(() => {});
+              .where(inArray(users.id, userIds));
+
+            const userMap = new Map(matchedUsers.map(u => [u.id, u]));
+
+            for (const profile of targets) {
+              const user = userMap.get(profile.userId);
+              if (user?.email) {
+                sendOpportunityMatchEmail(
+                  user.email,
+                  user.name ?? profile.displayName,
+                  input.title,
+                  input.city ?? null,
+                  oppId,
+                  profile.userId,
+                ).catch(() => {});
+              }
             }
           }
         } catch {
@@ -169,6 +179,16 @@ export const opportunitiesRouter = router({
       coverLetter: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
+      const existing = await repo.getApplicationByUserAndOpportunity(
+        ctx.user.id,
+        input.opportunityId,
+      );
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Você já se candidatou a esta oportunidade.",
+        });
+      }
       await repo.createApplication({
         opportunityId: input.opportunityId,
         userId: ctx.user.id,

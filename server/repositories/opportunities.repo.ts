@@ -70,6 +70,22 @@ export async function getOpportunityCount(status?: string) {
   return Number(result[0]?.count ?? 0);
 }
 
+export async function getApplicationByUserAndOpportunity(userId: number, opportunityId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db
+    .select({ id: opportunityApplications.id })
+    .from(opportunityApplications)
+    .where(
+      and(
+        eq(opportunityApplications.userId, userId),
+        eq(opportunityApplications.opportunityId, opportunityId),
+      )
+    )
+    .limit(1);
+  return result[0] ?? null;
+}
+
 export async function createApplication(data: typeof opportunityApplications.$inferInsert) {
   const db = await getDb();
   if (!db) throw new Error("DB not available");

@@ -164,15 +164,30 @@ export const adminRouter = router({
     .query(() => repo.getProfileGrowthData()),
 
   getRevenueData: adminProcedure
-    .query(() => ({
-      mrr: 0,
-      arr: 0,
-      totalRevenue: 0,
-      totalTransactions: 0,
-      avgTicket: 0,
-      projectedRevenue: 0,
-      projectedArr: 0,
-    })),
+    .query(async () => {
+      const [totalRevenue, records] = await Promise.all([
+        repo.getTotalRevenue(),
+        repo.getFinancialRecords(500),
+      ]);
+      const revenueRecords = records.filter(r => r.type === "receita");
+      const totalTransactions = revenueRecords.length;
+      const avgTicket = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+      // MRR estimado: média dos últimos 3 meses de receita
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      const recent = revenueRecords.filter(r => new Date(r.recordedAt) >= threeMonthsAgo);
+      const recentTotal = recent.reduce((s, r) => s + Number(r.amount), 0);
+      const mrr = recent.length > 0 ? recentTotal / 3 : 0;
+      return {
+        mrr: Math.round(mrr * 100) / 100,
+        arr: Math.round(mrr * 12 * 100) / 100,
+        totalRevenue,
+        totalTransactions,
+        avgTicket: Math.round(avgTicket * 100) / 100,
+        projectedRevenue: Math.round(mrr * 12 * 100) / 100,
+        projectedArr: Math.round(mrr * 12 * 100) / 100,
+      };
+    }),
 });
 
 // ─── OWNER DASHBOARD ─────────────────────────────────────────────────────────

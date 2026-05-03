@@ -484,7 +484,7 @@ export default function Home() {
       </header>
 
       {/* ═══ HERO (duas colunas) ═══ */}
-      <section style={{
+      <section className="hero-section" style={{
         minHeight: "100vh",
         display: "flex",
         position: "relative",
@@ -492,7 +492,7 @@ export default function Home() {
         paddingTop: 72,
       }}>
         {/* Coluna esquerda — texto */}
-        <div style={{
+        <div className="hero-text-col" style={{
           width: "45%",
           display: "flex",
           flexDirection: "column",
@@ -609,7 +609,7 @@ export default function Home() {
           </div>
 
           {/* Stats strip */}
-          <div className="animate-fade-up delay-4" style={{
+          <div className="animate-fade-up delay-4 hero-stats-strip" style={{
             display: "flex", gap: 0, flexWrap: "wrap",
             paddingTop: 28,
             borderTop: "1px solid rgba(255,255,255,0.08)",
@@ -638,13 +638,7 @@ export default function Home() {
         </div>
 
         {/* Coluna direita — imagem */}
-        <div style={{
-          position: "absolute",
-          top: 0, right: 0,
-          width: "62%",
-          height: "100%",
-          overflow: "hidden",
-        }}>
+        <div className="hero-image-col">
           <img
             src="/hero-musicians.jpg"
             alt="Músicos de samba"

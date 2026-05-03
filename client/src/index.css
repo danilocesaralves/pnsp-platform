@@ -493,6 +493,47 @@ button { cursor: pointer; font-family: inherit; }
   .show-mobile   { display: flex  !important; }
 }
 
+/* ── Hero responsivo (duas colunas → coluna única em mobile) ────────────────── */
+.hero-image-col {
+  position: absolute;
+  top: 0; right: 0;
+  width: 62%;
+  height: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .hero-image-col {
+    position: relative !important;
+    width: 100% !important;
+    height: 260px !important;
+    order: -1;
+    flex-shrink: 0;
+  }
+  .hero-text-col {
+    width: 100% !important;
+    padding: 40px 20px 48px !important;
+  }
+  .hero-section {
+    flex-direction: column !important;
+    min-height: auto !important;
+  }
+  .hero-stats-strip {
+    gap: 0 !important;
+    flex-wrap: wrap !important;
+  }
+  .hero-ctas {
+    flex-direction: column !important;
+  }
+}
+
+/* ── Spin keyframe (usado em <Loader2> sem Tailwind) ─────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin { animation: spin 1s linear infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
