@@ -28,7 +28,7 @@ A PNSP conecta artistas, grupos, bandas, duplas, comunidades, rodas de samba, pr
 | Pagamentos | Stripe (Checkout Sessions + Webhooks) |
 | Mapas | Google Maps JavaScript API (proxy Manus) |
 | Geração de Imagens | Manus Forge API (IA generativa) |
-| Testes | Vitest (90 testes, 100% passando) |
+| Testes | Vitest (unit) + Playwright (E2E) |
 | CI/CD | GitHub Actions |
 | Deploy | Manus Hosting (PWA) / Docker (self-hosted) |
 
@@ -90,9 +90,20 @@ pnpm dev
 | `BUILT_IN_FORGE_API_KEY` | Sim | Manus Forge API Key (server) |
 | `VITE_FRONTEND_FORGE_API_KEY` | Sim | Manus Forge API Key (client) |
 | `VITE_FRONTEND_FORGE_API_URL` | Sim | Manus Forge API URL (client) |
+| `BETTER_AUTH_SECRET` | Sim | Segredo da sessão better-auth (≥32 chars) |
+| `BETTER_AUTH_URL` | Sim | URL pública da aplicação |
 | `STRIPE_SECRET_KEY` | Pagamentos | `sk_live_...` ou `sk_test_...` |
 | `STRIPE_WEBHOOK_SECRET` | Pagamentos | `whsec_...` |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | Pagamentos | `pk_live_...` ou `pk_test_...` |
+| `R2_ACCOUNT_ID` | Upload | Cloudflare R2 account ID |
+| `R2_ACCESS_KEY_ID` | Upload | Cloudflare R2 access key |
+| `R2_SECRET_ACCESS_KEY` | Upload | Cloudflare R2 secret key |
+| `R2_BUCKET_NAME` | Upload | Nome do bucket R2 |
+| `R2_PUBLIC_URL` | Upload | URL pública do bucket R2 |
+| `RESEND_API_KEY` | E-mail | API key do Resend para e-mail transacional |
+| `CORS_ORIGIN` | Produção | Domínios permitidos separados por vírgula |
+| `VITE_ANALYTICS_ENDPOINT` | Analytics | URL do Umami self-hosted |
+| `VITE_ANALYTICS_WEBSITE_ID` | Analytics | ID do site no Umami |
 
 ---
 
