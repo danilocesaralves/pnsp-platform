@@ -17,7 +17,7 @@ import {
   profiles,
   bookings
 } from "../../drizzle/schema";
-import { runDailyEngine, publishContent, evaluateReinvestment, executeReinvestment } from "../lib/marketing-agency";
+import { runDailyEngine, publishContent, executeReinvestment } from "../lib/marketing-agency";
 
 // ─── AGENCY ROUTER ────────────────────────────────────────────────────────────
 
@@ -131,6 +131,7 @@ export const agencyRouter = router({
     .input(z.object({ days: z.enum(["7", "30", "90"]) }))
     .query(async ({ input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       return db.select().from(agencyPlatformMetrics)
         .orderBy(desc(agencyPlatformMetrics.date))
         .limit(parseInt(input.days));
@@ -140,6 +141,7 @@ export const agencyRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       await db.update(agencyAlerts).set({ isRead: true }).where(eq(agencyAlerts.id, input.id));
       return { success: true };
     }),
@@ -148,6 +150,7 @@ export const agencyRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       await db.update(agencyContents).set({ status: "aprovado" }).where(eq(agencyContents.id, input.id));
       return { success: true };
     }),
@@ -155,6 +158,7 @@ export const agencyRouter = router({
   approveAllContents: protectedProcedure
     .mutation(async () => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       await db.update(agencyContents).set({ status: "aprovado" }).where(eq(agencyContents.status, "rascunho"));
       return { success: true };
     }),

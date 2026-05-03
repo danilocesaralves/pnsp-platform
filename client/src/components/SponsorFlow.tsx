@@ -25,7 +25,7 @@ interface Deliverable {
   sponsorId: number;
   description: string;
   dueDate?: string | null;
-  isDone: boolean;
+  isDone: boolean | null;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

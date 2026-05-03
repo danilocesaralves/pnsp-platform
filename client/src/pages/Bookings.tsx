@@ -134,7 +134,7 @@ export default function Bookings() {
             ) : bookingList.length === 0 ? (
               <EmptyState filter={filter} />
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div data-testid="bookings-list" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {bookingList.map((b: any) => (
                   <BookingCard
                     key={b.id}

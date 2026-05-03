@@ -8,7 +8,6 @@ import {
   marketingContents,
   marketingScores,
   marketingInsights,
-  profiles,
 } from "../../drizzle/schema";
 import * as repo from "../repositories";
 
@@ -18,7 +17,6 @@ const CONTENT_TYPE_ENUM = z.enum(["post", "story", "reels", "video", "artigo", "
 const PLATFORM_ENUM = z.enum(["instagram", "facebook", "youtube", "tiktok", "twitter", "email", "whatsapp"]);
 const CONTENT_STATUS_ENUM = z.enum(["rascunho", "agendado", "publicado", "arquivado"]);
 
-// ─── Static AI content templates ─────────────────────────────────────────────
 const CONTENT_TEMPLATES: Record<string, Record<string, string[]>> = {
   post: {
     instagram: [
@@ -45,11 +43,7 @@ const CONTENT_TEMPLATES: Record<string, Record<string, string[]>> = {
   },
 };
 
-function generateStaticContent(
-  contentType: string,
-  platform: string,
-  profileName: string,
-): string {
+function generateStaticContent(contentType: string, platform: string, profileName: string): string {
   const templates = CONTENT_TEMPLATES[contentType]?.[platform];
   if (templates && templates.length > 0) {
     const idx = Math.floor(Math.random() * templates.length);
@@ -76,6 +70,7 @@ export const marketingRouter = router({
     }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -99,6 +94,7 @@ export const marketingRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -130,6 +126,7 @@ export const marketingRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const [campaign] = await db.select().from(marketingCampaigns).where(eq(marketingCampaigns.id, input.id));
       if (!campaign) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -150,6 +147,7 @@ export const marketingRouter = router({
     }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -169,6 +167,7 @@ export const marketingRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -197,6 +196,7 @@ export const marketingRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const [content] = await db.select().from(marketingContents).where(eq(marketingContents.id, input.id));
       if (!content) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -216,6 +216,7 @@ export const marketingRouter = router({
     .input(z.object({ profileId: z.number() }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -227,6 +228,7 @@ export const marketingRouter = router({
     .input(z.object({ profileId: z.number() }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -243,6 +245,7 @@ export const marketingRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const [insight] = await db.select().from(marketingInsights).where(eq(marketingInsights.id, input.id));
       if (!insight) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -257,14 +260,13 @@ export const marketingRouter = router({
     .input(z.object({ profileId: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
       }
-      // Calculate score based on profile completeness
       const overallScore = calcScore(myProfile as { bio?: string | null; avatarUrl?: string | null; instagramUrl?: string | null; genres?: string[] | null });
 
-      // Upsert score
       const existing = await db.select().from(marketingScores)
         .where(and(eq(marketingScores.profileId, input.profileId), eq(marketingScores.scoreType, "perfil")));
       if (existing.length === 0) {
@@ -273,7 +275,6 @@ export const marketingRouter = router({
         await db.update(marketingScores).set({ score: overallScore }).where(eq(marketingScores.id, existing[0].id));
       }
 
-      // Delete existing non-dismissed insights and recreate
       await db.update(marketingInsights)
         .set({ isDismissed: true })
         .where(and(eq(marketingInsights.profileId, input.profileId), eq(marketingInsights.isDismissed, false)));

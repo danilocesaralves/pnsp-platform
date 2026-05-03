@@ -83,7 +83,7 @@ export function ProfileStrength({ profile }: ProfileStrengthProps) {
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--creme)', marginBottom: 2 }}>Força do Perfil</div>
           <div style={{ fontSize: 11, color: level.color, fontWeight: 700 }}>{level.name}</div>
         </div>
-        <div style={{ position: 'relative', width: 52, height: 52 }}>
+        <div style={{ position: 'relative', width: 52, height: 52 }} data-testid="profile-strength-gauge">
           <svg width="52" height="52" viewBox="0 0 52 52" style={{ transform: 'rotate(-90deg)' }}>
             <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
             <circle cx="26" cy="26" r="22" fill="none" stroke={level.color} strokeWidth="4"

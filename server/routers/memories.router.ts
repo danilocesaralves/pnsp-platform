@@ -17,6 +17,7 @@ export const memoriesRouter = router({
     }))
     .query(async ({ input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       return db.select().from(memories)
         .where(and(eq(memories.profileId, input.profileId), eq(memories.isPublic, true)))
         .orderBy(desc(memories.date), desc(memories.createdAt))
@@ -33,6 +34,7 @@ export const memoriesRouter = router({
     }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -60,6 +62,7 @@ export const memoriesRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -92,6 +95,7 @@ export const memoriesRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const [memory] = await db.select().from(memories).where(eq(memories.id, input.id));
       if (!memory) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -107,6 +111,7 @@ export const memoriesRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const [memory] = await db.select().from(memories).where(eq(memories.id, input.id));
       if (!memory) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);

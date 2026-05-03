@@ -67,7 +67,7 @@ export async function executeReinvestment(
       const budget = (currentAccumulated * Number(rule.reinvestmentPct)) / 100;
       
       // 1. Create Campaign
-      const strategy = await generateCampaignStrategy(rule.targetObjective, rule.targetRegion, budget);
+      const strategy = await generateCampaignStrategy(rule.targetObjective, rule.targetRegion ?? undefined, budget);
       
       // 2. Generate Contents (3 platforms)
       await generateCampaignContents(strategy.id, {
@@ -202,7 +202,7 @@ async function calculateEcosystemScores() {
   const scores: any[] = [];
   const gaps: any[] = [];
 
-  for (const row of (cityStats.rows as any)) {
+  for (const row of (Array.isArray(cityStats) ? cityStats : (cityStats as any).rows ?? []) as any[]) {
     const oferta = Number(row.profile_count);
     const demanda = Number(row.opportunity_count);
     const atividade = Number(row.activity_count);
@@ -256,7 +256,7 @@ async function detectAlerts(scores: any[], metrics: any) {
       .limit(1);
 
     if (!exists) {
-      await db.insert(agencyAlerts).values(alert);
+      await db.insert(agencyAlerts).values({ ...alert, severity: alert.severity as "info" | "aviso" | "critico" | "urgente" });
       if (alert.severity === "critico" || alert.severity === "urgente") {
         await sendEmail("composisamba@gmail.com", `🚨 ALERTA PNSP: ${alert.title}`, emailTemplate(`
           ${heading(alert.title)}

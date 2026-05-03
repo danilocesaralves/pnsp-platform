@@ -68,6 +68,7 @@ export default function EntrarPage() {
                 autoComplete="email"
                 placeholder="seu@email.com"
                 {...register("email")}
+                data-testid="email-input"
               />
               {errors.email && (
                 <p className="text-sm text-destructive">{errors.email.message}</p>
@@ -82,6 +83,7 @@ export default function EntrarPage() {
                 autoComplete="current-password"
                 placeholder="••••••••"
                 {...register("password")}
+                data-testid="password-input"
               />
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
@@ -92,7 +94,7 @@ export default function EntrarPage() {
               <p className="text-sm text-destructive text-center">{serverError}</p>
             )}
 
-            <Button type="submit" className="w-full font-body font-semibold" disabled={isSubmitting}>
+            <Button type="submit" className="w-full font-body font-semibold" disabled={isSubmitting} data-testid="login-button">
               {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Entrar
             </Button>

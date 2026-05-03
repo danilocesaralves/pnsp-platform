@@ -18,6 +18,7 @@ export const communityRouter = router({
     }))
     .query(async ({ input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const where = input.postType ? eq(communityPosts.postType, input.postType) : undefined;
       const rows = await db
         .select({
@@ -50,6 +51,7 @@ export const communityRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -70,6 +72,7 @@ export const communityRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const [post] = await db.select().from(communityPosts).where(eq(communityPosts.id, input.id));
       if (!post) throw new TRPCError({ code: "NOT_FOUND" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
@@ -85,6 +88,7 @@ export const communityRouter = router({
     .input(z.object({ postId: z.number() }))
     .query(async ({ input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       return db
         .select({
           comment: communityComments,
@@ -108,6 +112,7 @@ export const communityRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -133,6 +138,7 @@ export const communityRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) {
         throw new TRPCError({ code: "FORBIDDEN" });
@@ -140,14 +146,12 @@ export const communityRouter = router({
       const existing = await db.select().from(communityLikes)
         .where(and(eq(communityLikes.postId, input.postId), eq(communityLikes.profileId, input.profileId)));
       if (existing.length > 0) {
-        // Unlike
         await db.delete(communityLikes).where(eq(communityLikes.id, existing[0].id));
         await db.update(communityPosts)
           .set({ likesCount: sql`GREATEST(${communityPosts.likesCount} - 1, 0)` })
           .where(eq(communityPosts.id, input.postId));
         return { liked: false };
       }
-      // Like
       await db.insert(communityLikes).values({ postId: input.postId, profileId: input.profileId });
       await db.update(communityPosts)
         .set({ likesCount: sql`${communityPosts.likesCount} + 1` })
@@ -159,6 +163,7 @@ export const communityRouter = router({
     .input(z.object({ profileId: z.number(), postIds: z.array(z.number()) }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       const myProfile = await repo.getProfileByUserId(ctx.user.id);
       if (!myProfile || myProfile.id !== input.profileId) return [];
       if (input.postIds.length === 0) return [];

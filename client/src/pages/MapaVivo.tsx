@@ -51,7 +51,7 @@ function stateIcon(count: number) {
 
 // ─── ProfileMapCard — outside export default ──────────────────────────────────
 function ProfileMapCard({ profile }: { profile: any }) {
-  const typeLabel = PROFILE_TYPES.find((t: any) => t.value === profile.profileType)?.label ?? profile.profileType;
+  const typeLabel = PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] ?? profile.profileType;
   return (
     <Link href={`/perfil/${profile.slug}`}>
       <div style={{

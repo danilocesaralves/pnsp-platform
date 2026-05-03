@@ -36,7 +36,7 @@ function CountdownTimer() {
   }, []);
 
   return (
-    <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 40 }}>
+    <div data-testid="countdown-timer" style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 40 }}>
       {[
         { val: timeLeft.days, label: "dias" },
         { val: timeLeft.hours, label: "horas" },
@@ -85,7 +85,7 @@ function WaitlistForm({ referralCode, onResult }: { referralCode?: string; onRes
   };
 
   return (
-    <div style={{ background: "#1a1200", padding: "32px", borderRadius: 16, border: "1px solid rgba(212,146,10,0.15)", maxWidth: 460, margin: "0 auto" }}>
+    <div data-testid="waitlist-form" style={{ background: "#1a1200", padding: "32px", borderRadius: 16, border: "1px solid rgba(212,146,10,0.15)", maxWidth: 460, margin: "0 auto" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <div>
           <label style={{ display: "block", fontSize: 12, color: "var(--creme-50)", marginBottom: 6 }}>Nome Completo</label>
@@ -193,7 +193,7 @@ export default function PreLaunch() {
         {/* Brand */}
         <div style={{ marginBottom: 40 }}>
            <img src="/logo-pnsp-crop.png" alt="PNSP" style={{ height: 100, margin: "0 auto 24px", filter: "invert(1) brightness(1.2)" }} />
-           <h1 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-5xl)", fontWeight: 800, lineHeight: 1, marginBottom: 16 }}>
+           <h1 data-testid="prelaunch-title" style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-5xl)", fontWeight: 800, lineHeight: 1, marginBottom: 16 }}>
              O ecossistema profissional do <span style={{ color: "var(--ouro)" }}>samba e pagode</span> chegou.
            </h1>
            <p style={{ fontSize: "var(--text-xl)", color: "var(--creme-50)", maxWidth: 540, margin: "0 auto" }}>

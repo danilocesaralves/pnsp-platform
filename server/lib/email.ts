@@ -85,7 +85,7 @@ const emailRateLimit = new Map<string, number>();
 // Clean up stale entries every hour
 setInterval(() => {
   const cutoff = Date.now() - 24 * 60 * 60 * 1000;
-  for (const [key, ts] of emailRateLimit) {
+  for (const [key, ts] of Array.from(emailRateLimit)) {
     if (ts < cutoff) emailRateLimit.delete(key);
   }
 }, 60 * 60 * 1000);

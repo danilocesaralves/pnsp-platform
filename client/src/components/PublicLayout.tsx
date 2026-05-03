@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Menu, X, User, Briefcase, Music2, MapPin, BookOpen,
   Mic2, LayoutDashboard, LogOut, Settings, Shield, MessageSquare, FileText, DollarSign,
-  Users, TrendingUp, Star,
+  Users, TrendingUp, Star, Target,
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/BookingFlow";
 
@@ -207,7 +207,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button style={{
+                  <button 
+                    data-testid="user-menu"
+                    style={{
                     display: "flex", alignItems: "center", gap: 8,
                     padding: "6px 10px 6px 6px",
                     borderRadius: "var(--radius-full)",
@@ -321,7 +323,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                     </>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => logout()} style={{ color: "var(--vermelho)" }}>
+                  <DropdownMenuItem data-testid="logout-button" onClick={() => logout()} style={{ color: "var(--vermelho)" }}>
                     <LogOut style={{ width: 14, height: 14, marginRight: 8 }} />Sair
                   </DropdownMenuItem>
                 </DropdownMenuContent>

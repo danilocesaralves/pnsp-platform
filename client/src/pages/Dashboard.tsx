@@ -350,7 +350,7 @@ export default function Dashboard() {
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 32 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-              <h1 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-3xl)", fontWeight: 700, lineHeight: 1 }}>
+              <h1 data-testid="dashboard-title" style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-3xl)", fontWeight: 700, lineHeight: 1 }}>
                 Dashboard Proprietário
               </h1>
               <span style={{
@@ -426,7 +426,7 @@ export default function Dashboard() {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                     <span style={{ fontSize: "var(--text-xs)", fontWeight: 700, color: "var(--ouro)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Meu Perfil</span>
                     <Link href={`/editar-perfil/${profile.id}`}>
-                      <span style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)", cursor: "pointer", borderBottom: "1px solid var(--creme-20)" }}>Editar</span>
+                      <span data-testid="edit-profile-button" style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)", cursor: "pointer", borderBottom: "1px solid var(--creme-20)" }}>Editar</span>
                     </Link>
                   </div>
                   <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 16 }}>

@@ -328,7 +328,7 @@ export default function ProfileBySlug() {
           {/* Name & meta */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 8 }}>
-              <h1 style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 800, lineHeight: 1.1, color: "var(--creme)" }}>
+              <h1 data-testid="profile-name" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 800, lineHeight: 1.1, color: "var(--creme)" }}>
                 {profile.displayName}
               </h1>
               {profile.isVerified && (
@@ -345,7 +345,7 @@ export default function ProfileBySlug() {
               </div>
             )}
             <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
-              <span className="pnsp-badge">
+              <span data-testid="profile-type-badge" className="pnsp-badge">
                 {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
               </span>
               {profile.city && (
@@ -384,6 +384,7 @@ export default function ProfileBySlug() {
             {!isOwner && user && myProfile && (
               <button
                 type="button"
+                data-testid="booking-button"
                 onClick={() => setShowBookingForm(v => !v)}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 6,
@@ -470,7 +471,7 @@ export default function ProfileBySlug() {
                 <Globe style={{ width: 13, height: 13 }} />
               </ActionBtn>
             )}
-            <ShareButton slug={profile.slug} name={profile.displayName} />
+            <ShareButton slug={profile.slug ?? ""} name={profile.displayName} />
           </div>
         </div>
       </div>

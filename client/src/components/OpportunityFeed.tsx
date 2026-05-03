@@ -38,6 +38,7 @@ function OppCard({ opp }: { opp: any }) {
   return (
     <Link href={`/oportunidades/${opp.id}`}>
       <div
+        data-testid="opportunity-item"
         onMouseEnter={() => setHov(true)}
         onMouseLeave={() => setHov(false)}
         style={{
@@ -90,7 +91,7 @@ export function OpportunityFeed() {
   const visible = filtered.slice(0, 10);
 
   return (
-    <div style={{ background: 'var(--terra)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, overflow: 'hidden' }}>
+    <div data-testid="opportunity-feed" style={{ background: 'var(--terra)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, overflow: 'hidden' }}>
       {/* Header */}
       <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
