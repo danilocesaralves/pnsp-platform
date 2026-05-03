@@ -2,7 +2,8 @@
  * Additional unit tests — edge cases, input validation, new routes
  * These complement server/pnsp.test.ts without duplicating it.
  */
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import * as repo from "./repositories";
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
@@ -317,6 +318,75 @@ describe("academy.adminDelete", () => {
   it("requires authentication", async () => {
     const caller = appRouter.createCaller(makePublicCtx());
     await expect(caller.academy.adminDelete({ id: 1 })).rejects.toThrow();
+  });
+});
+
+// ── opportunities.submitApplication — duplicate check ────────────────────────
+describe("opportunities.submitApplication — duplicate", () => {
+  it("throws CONFLICT when user already applied to same opportunity", async () => {
+    const spy = vi.spyOn(repo, "getApplicationByUserAndOpportunity")
+      .mockResolvedValueOnce({ id: 99 } as any);
+
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(
+      caller.opportunities.submitApplication({ opportunityId: 1 }),
+    ).rejects.toMatchObject({ code: "CONFLICT" });
+
+    spy.mockRestore();
+  });
+
+  it("succeeds when no previous application exists", async () => {
+    const checkSpy = vi.spyOn(repo, "getApplicationByUserAndOpportunity")
+      .mockResolvedValueOnce(null);
+    const createSpy = vi.spyOn(repo, "createApplication")
+      .mockResolvedValueOnce(undefined as any);
+
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(
+      caller.opportunities.submitApplication({ opportunityId: 1 }),
+    ).resolves.toEqual({ success: true });
+
+    checkSpy.mockRestore();
+    createSpy.mockRestore();
+  });
+});
+
+// ── admin KPIs — dados reais (etapa 8) ───────────────────────────────────────
+describe("admin.getStats — KPIs reais do banco", () => {
+  it("rejeita usuário sem role admin", async () => {
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(caller.admin.getStats()).rejects.toThrow();
+  });
+
+  it("retorna shape correto de KPIs para admin", async () => {
+    const caller = appRouter.createCaller(makeCtx("admin"));
+    const result = await caller.admin.getStats();
+    // getAdminStats retorna totalProfiles/totalUsers (não userCount/profileCount)
+    expect(typeof result.totalProfiles).toBe("number");
+    expect(typeof result.totalUsers).toBe("number");
+    expect(typeof result.totalOfferings).toBe("number");
+    expect(typeof result.totalOpportunities).toBe("number");
+    expect(typeof result.totalStudios).toBe("number");
+    expect(typeof result.totalCities).toBe("number");
+    expect(typeof result.verifiedProfiles).toBe("number");
+    expect(result.totalProfiles).toBeGreaterThanOrEqual(0);
+  });
+
+  it("getRevenueData retorna shape financeiro correto", async () => {
+    const caller = appRouter.createCaller(makeCtx("admin"));
+    const result = await caller.admin.getRevenueData();
+    expect(typeof result.mrr).toBe("number");
+    expect(typeof result.arr).toBe("number");
+    expect(typeof result.totalRevenue).toBe("number");
+    expect(typeof result.totalTransactions).toBe("number");
+    expect(typeof result.avgTicket).toBe("number");
+    expect(result.arr).toBeGreaterThanOrEqual(0);
+    expect(result.totalTransactions).toBeGreaterThanOrEqual(0);
+  });
+
+  it("getRevenueData rejeita usuário sem role admin", async () => {
+    const caller = appRouter.createCaller(makeCtx("user"));
+    await expect(caller.admin.getRevenueData()).rejects.toThrow();
   });
 });
 
