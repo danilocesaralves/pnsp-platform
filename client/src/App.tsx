@@ -1,11 +1,12 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Loader2 } from "lucide-react";
 import { ToastContainer } from "./components/Toast";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 // ─── Lazy-loaded pages (code splitting) ─────────────────────────────────────
 const Home = lazy(() => import("./pages/Home"));
@@ -54,20 +55,39 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 // ─── Page loading fallback ───────────────────────────────────────────────────
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--n950)" }}>
-      <div className="flex flex-col items-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin" style={{ color: "var(--o500)" }} />
-        <p className="text-sm font-body" style={{ color: "var(--n400)" }}>Carregando...</p>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0a" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+        <Loader2 style={{ width: 32, height: 32, color: "#d4a817", animation: "spin 1s linear infinite" }} />
+        <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.40)", fontFamily: "var(--font-body)" }}>Carregando...</p>
       </div>
     </div>
   );
+}
+
+// ─── Admin guard — redireciona se não autenticado ou sem permissão ────────────
+function AdminGuard({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, user, loading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isAuthenticated) { setLocation("/entrar"); return; }
+    const ok = user?.role === "admin" || user?.role === "owner" || user?.email === "composisamba@gmail.com";
+    if (!ok) setLocation("/");
+  }, [loading, isAuthenticated, user?.role, user?.email]);
+
+  if (loading) return <PageLoader />;
+  if (!isAuthenticated) return null;
+  const ok = user?.role === "admin" || user?.role === "owner" || user?.email === "composisamba@gmail.com";
+  if (!ok) return null;
+  return <>{children}</>;
 }
 
 function Router() {
   return (
     <Suspense fallback={<PageLoader />}>
       <Switch>
-        {/* Public */}
+        {/* ── Público — funciona sem login ─────────────────────────────────── */}
         <Route path="/" component={Home} />
         <Route path="/perfis" component={Profiles} />
         <Route path="/explorar" component={Profiles} />
@@ -85,8 +105,9 @@ function Router() {
         <Route path="/academia/:id" component={AcademyDetail} />
         <Route path="/estudios" component={Studios} />
         <Route path="/estudios/:id" component={StudioDetail} />
+        <Route path="/pre-lancamento" component={PreLaunch} />
 
-        {/* User */}
+        {/* ── Usuário autenticado (redirecionam internamente se não logado) ── */}
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/minha-conta" component={MyAccount} />
         <Route path="/criar-perfil" component={CreateProfile} />
@@ -103,20 +124,18 @@ function Router() {
         <Route path="/comunidade" component={Community} />
         <Route path="/memorias" component={Memories} />
         <Route path="/agencia" component={AgencyDashboard} />
-        <Route path="/pre-lancamento" component={PreLaunch} />
 
-        {/* Admin */}
-        <Route path="/admin" component={AdminDashboard} />
-        <Route path="/admin/usuarios" component={AdminUsers} />
-        <Route path="/admin/ofertas" component={AdminOfferings} />
-        <Route path="/admin/oportunidades" component={AdminOpportunities} />
-        <Route path="/admin/conteudo" component={AdminContent} />
-        <Route path="/admin/logs" component={AdminLogs} />
+        {/* ── Admin — exige autenticação + role admin/owner ─────────────────── */}
+        <Route path="/admin">{() => <AdminGuard><AdminDashboard /></AdminGuard>}</Route>
+        <Route path="/admin/painel">{() => <AdminGuard><AdminPanel /></AdminGuard>}</Route>
+        <Route path="/admin/usuarios">{() => <AdminGuard><AdminUsers /></AdminGuard>}</Route>
+        <Route path="/admin/ofertas">{() => <AdminGuard><AdminOfferings /></AdminGuard>}</Route>
+        <Route path="/admin/oportunidades">{() => <AdminGuard><AdminOpportunities /></AdminGuard>}</Route>
+        <Route path="/admin/conteudo">{() => <AdminGuard><AdminContent /></AdminGuard>}</Route>
+        <Route path="/admin/logs">{() => <AdminGuard><AdminLogs /></AdminGuard>}</Route>
+        <Route path="/proprietario">{() => <AdminGuard><OwnerDashboard /></AdminGuard>}</Route>
 
-        {/* Owner */}
-        <Route path="/proprietario" component={OwnerDashboard} />
-
-        {/* 404 */}
+        {/* ── 404 ─────────────────────────────────────────────────────────── */}
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
