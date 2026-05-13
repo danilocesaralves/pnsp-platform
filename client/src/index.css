@@ -501,8 +501,8 @@ button { cursor: pointer; font-family: inherit; }
   height: 100%;
   overflow: hidden;
   background-image: url('/hero-musicians.jpg');
-  background-size: auto 100%;
-  background-position: center center;
+  background-size: cover;
+  background-position: 45% center;
 }
 
 @media (max-width: 768px) {
