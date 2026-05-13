@@ -1,1 +1,1 @@
-{"buildCommand":"pnpm build","outputDirectory":"client/dist","installCommand":"pnpm install","framework":"vite"}  
+{"buildCommand":"pnpm build","outputDirectory":"dist/public","installCommand":"pnpm install","framework":"vite"}  
