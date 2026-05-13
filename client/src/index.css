@@ -497,12 +497,9 @@ button { cursor: pointer; font-family: inherit; }
 .hero-image-col {
   position: absolute;
   top: 0; right: 0;
-  width: 62%;
+  width: 65%;
   height: 100%;
   overflow: hidden;
-}
-.hero-image-col img {
-  max-width: 100%;
 }
 
 @media (max-width: 768px) {
