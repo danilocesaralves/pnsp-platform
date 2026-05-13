@@ -428,7 +428,7 @@ export default function Home() {
             <img
               src="/logo-pnsp-crop.png"
               alt="PNSP"
-              style={{ height: 56, width: "auto", objectFit: "contain", filter: "brightness(0) invert(1)", cursor: "pointer" }}
+              style={{ height: 56, width: "auto", objectFit: "contain", filter: "brightness(0) invert(1) drop-shadow(0 0 0 white)", cursor: "pointer" }}
             />
           </Link>
 
@@ -642,7 +642,7 @@ export default function Home() {
           <img
             src="/hero-musicians.jpg"
             alt="Músicos de samba"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center" }}
           />
           {/* Gradiente da esquerda (preto) para transparente */}
           <div style={{
@@ -907,7 +907,7 @@ export default function Home() {
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 40, marginBottom: 48 }}>
             <div style={{ gridColumn: "span 2" }}>
-              <img src="/logo-pnsp-crop.png" alt="PNSP" style={{ height: 64, width: "auto", marginBottom: 14, filter: "brightness(0) invert(1)", objectFit: "contain", display: "block" }} />
+              <img src="/logo-pnsp-crop.png" alt="PNSP" style={{ height: 64, width: "auto", marginBottom: 14, filter: "brightness(0) invert(1) drop-shadow(0 0 0 white)", objectFit: "contain", display: "block" }} />
               <p style={{ color: "rgba(255,255,255,0.40)", fontSize: "0.85rem", lineHeight: 1.7, maxWidth: 260 }}>
                 Plataforma Nacional do Samba e do Pagode — o ecossistema digital que conecta toda a cadeia do samba brasileiro.
               </p>
@@ -947,3 +947,5 @@ export default function Home() {
     </div>
   );
 }
+
+
