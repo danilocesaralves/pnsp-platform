@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @import "tw-animate-css";
 
 /* ─── Leaflet ──────────────────────────────────────────────────────────────── */
@@ -402,7 +402,7 @@ button { cursor: pointer; font-family: inherit; }
   background: var(--terra);
   border: 1px solid var(--creme-10);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow: hidden; transform: scale(0.85); transform-origin: center center;
   transition: var(--transition-slow);
   text-decoration: none;
   color: inherit;
@@ -499,7 +499,7 @@ button { cursor: pointer; font-family: inherit; }
   top: 0; right: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden; transform: scale(0.85); transform-origin: center center;
 }
 
 @media (max-width: 768px) {
