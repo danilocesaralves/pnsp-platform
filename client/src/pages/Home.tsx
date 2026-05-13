@@ -435,14 +435,15 @@ export default function Home() {
           {/* Nav desktop */}
           <nav style={{ display: "flex", alignItems: "center", gap: 2 }}>
             {[
-              { href: "/perfis", label: "Perfis" },
+              { href: "/",             label: "Início",        active: true },
+              { href: "/perfis",       label: "Talentos" },
               { href: "/oportunidades", label: "Oportunidades" },
-              { href: "/estudios", label: "Estúdios" },
-              { href: "/academia", label: "Academia" },
-              { href: "/comunidade", label: "Comunidade" },
-            ].map(({ href, label }) => (
+              { href: "/estudios",     label: "Estúdios" },
+              { href: "/comunidade",   label: "Comunidade" },
+              { href: "/recursos",     label: "Recursos" },
+            ].map(({ href, label, active }) => (
               <Link key={href} href={href}>
-                <span className="nav-link">{label}</span>
+                <span className={`nav-link${active ? " active" : ""}`}>{label}</span>
               </Link>
             ))}
           </nav>
@@ -642,7 +643,7 @@ export default function Home() {
           <img
             src="/hero-musicians.jpg"
             alt="Músicos de samba"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center" }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }}
           />
           {/* Gradiente da esquerda (preto) para transparente */}
           <div style={{
