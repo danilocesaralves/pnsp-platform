@@ -502,7 +502,14 @@ button { cursor: pointer; font-family: inherit; }
   overflow: hidden;
   background-image: url('/hero-musicians.jpg');
   background-size: cover;
-  background-position: 45% center;
+  background-position: 55% center;
+}
+.hero-image-col::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #0a0a0a 0%, #0a0a0a 5%, rgba(10,10,10,0.75) 25%, rgba(10,10,10,0.20) 55%, transparent 100%);
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -510,6 +517,7 @@ button { cursor: pointer; font-family: inherit; }
     position: relative !important;
     width: 100% !important;
     height: 300px !important;
+    background-position: center center;
     order: -1;
     flex-shrink: 0;
   }

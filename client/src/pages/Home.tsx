@@ -640,12 +640,6 @@ export default function Home() {
 
         {/* Coluna direita — imagem */}
         <div className="hero-image-col">
-          {/* Gradiente da esquerda (preto) para transparente */}
-          <div style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(to right, #0a0a0a 0%, #0a0a0a 8%, rgba(10,10,10,0.85) 30%, rgba(10,10,10,0.40) 60%, transparent 100%)",
-          }} />
           {/* Gradiente do topo para escurecer */}
           <div style={{
             position: "absolute",
