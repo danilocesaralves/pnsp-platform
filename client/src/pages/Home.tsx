@@ -640,11 +640,6 @@ export default function Home() {
 
         {/* Coluna direita — imagem */}
         <div className="hero-image-col">
-          <img
-            src="/hero-musicians.jpg"
-            alt="Músicos de samba"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "40% center" }}
-          />
           {/* Gradiente da esquerda (preto) para transparente */}
           <div style={{
             position: "absolute",
