@@ -428,7 +428,7 @@ export default function Home() {
             <img
               src="/logo-pnsp-crop.png"
               alt="PNSP"
-              style={{ height: 56, width: "auto", objectFit: "contain", filter: "none", cursor: "pointer" }}
+              style={{ height: 56, width: "auto", objectFit: "contain", filter: "none", cursor: "pointer", mixBlendMode: "screen" }}
             />
           </Link>
 
