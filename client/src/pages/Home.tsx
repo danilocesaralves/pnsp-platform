@@ -642,7 +642,7 @@ export default function Home() {
           <img
             src="/hero-musicians.jpg"
             alt="Músicos de samba"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "40% center" }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center" }}
           />
           {/* Gradiente da esquerda (preto) para transparente */}
           <div style={{
