@@ -487,6 +487,7 @@ button { cursor: pointer; font-family: inherit; }
 /* ── Responsive helpers ─────────────────────────────────────────────────────── */
 .hidden-mobile { display: flex !important; }
 .show-mobile   { display: none  !important; }
+.nav-hamburger { display: none; }
 
 @media (max-width: 1023px) {
   .hidden-mobile { display: none  !important; }
@@ -513,26 +514,35 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 @media (max-width: 768px) {
-  .hero-image-col {
-    position: relative !important;
-    width: 100% !important;
-    height: 300px !important;
-    background-position: center center;
-    order: -1;
-    flex-shrink: 0;
-  }
-  .hero-text-col {
-    width: 100% !important;
-    padding: 40px 20px 48px !important;
-  }
+  /* ── Hero mobile ── */
   .hero-section {
     flex-direction: column !important;
     min-height: auto !important;
+    padding-top: 72px !important;
   }
-  .hero-stats-strip {
-    gap: 0 !important;
-    flex-wrap: wrap !important;
+  .hero-image-col {
+    position: relative !important;
+    width: 100% !important;
+    height: 55vw !important;
+    background-position: 78% center;
+    order: -1;
+    flex-shrink: 0;
   }
+  .hero-image-col::before {
+    background: linear-gradient(to bottom, rgba(10,10,10,0.25) 0%, transparent 50%, rgba(10,10,10,0.45) 100%) !important;
+  }
+  .hero-text-col {
+    width: 100% !important;
+    padding: 32px 20px 48px !important;
+  }
+  .hero-text-col h1 > * {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+  }
+  .hero-text-col > p {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+  /* ── CTAs mobile ── */
   .hero-ctas {
     flex-direction: column !important;
   }
@@ -540,11 +550,35 @@ button { cursor: pointer; font-family: inherit; }
   .hero-ctas > span {
     width: 100% !important;
     justify-content: center !important;
+    padding: 16px !important;
+    font-size: 1rem !important;
+    border-radius: 12px !important;
+    box-sizing: border-box;
+    min-height: 48px;
   }
+  /* ── Stats horizontal scroll ── */
+  .hero-stats-strip {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .hero-stats-strip::-webkit-scrollbar { display: none; }
+  /* ── Feature cards: 1 coluna ── */
   .feature-cards-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
   }
+  .feature-cards-grid > a > div {
+    padding: 20px !important;
+  }
+  /* ── Nav mobile ── */
+  .nav-desktop       { display: none !important; }
+  .nav-ctas-desktop  { display: none !important; }
+  .nav-hamburger     { display: flex !important; }
 }
 
 /* ── Spin keyframe (usado em <Loader2> sem Tailwind) ─────────────────────────── */

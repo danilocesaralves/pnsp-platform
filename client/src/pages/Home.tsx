@@ -395,6 +395,7 @@ export default function Home() {
 
   const statsRef = useRef<HTMLDivElement>(null);
   const [counted, setCounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -433,7 +434,7 @@ export default function Home() {
           </Link>
 
           {/* Nav desktop */}
-          <nav style={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <nav className="nav-desktop" style={{ display: "flex", alignItems: "center", gap: 2 }}>
             {[
               { href: "/",             label: "Início",        active: true },
               { href: "/perfis",       label: "Talentos" },
@@ -448,7 +449,7 @@ export default function Home() {
             ))}
           </nav>
 
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <div className="nav-ctas-desktop" style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <a href="/entrar" style={{
               padding: "9px 20px",
               color: "rgba(255,255,255,0.80)",
@@ -481,8 +482,99 @@ export default function Home() {
               Criar conta
             </a>
           </div>
+
+          {/* Hamburger mobile */}
+          <button
+            className="nav-hamburger"
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+            style={{
+              display: "none",
+              background: "none",
+              border: "1px solid rgba(255,255,255,0.20)",
+              color: "#fff",
+              borderRadius: 8,
+              width: 44,
+              height: 44,
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "1.2rem",
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+          >
+            {menuOpen ? "✕" : "☰"}
+          </button>
         </div>
       </header>
+
+      {/* ═══ MOBILE MENU ═══ */}
+      {menuOpen && (
+        <div style={{
+          position: "fixed",
+          top: 72, left: 0, right: 0,
+          zIndex: 49,
+          background: "rgba(10,10,10,0.98)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(212,168,23,0.12)",
+          padding: "8px 20px 20px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 0,
+        }}>
+          {[
+            { href: "/",             label: "Início" },
+            { href: "/perfis",       label: "Talentos" },
+            { href: "/oportunidades", label: "Oportunidades" },
+            { href: "/estudios",     label: "Estúdios" },
+            { href: "/comunidade",   label: "Comunidade" },
+            { href: "/recursos",     label: "Recursos" },
+          ].map(({ href, label }) => (
+            <Link key={href} href={href} onClick={() => setMenuOpen(false)}>
+              <span style={{
+                display: "flex",
+                alignItems: "center",
+                minHeight: 52,
+                padding: "0 4px",
+                color: "rgba(255,255,255,0.80)",
+                fontSize: "1rem",
+                fontWeight: 500,
+                fontFamily: "var(--font-body)",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                cursor: "pointer",
+              }}>
+                {label}
+              </span>
+            </Link>
+          ))}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 16 }}>
+            <a href="/entrar" style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              minHeight: 48, padding: "12px 20px",
+              border: "1px solid rgba(255,255,255,0.20)",
+              borderRadius: 12,
+              color: "rgba(255,255,255,0.80)",
+              fontSize: "1rem", fontWeight: 500,
+              fontFamily: "var(--font-body)",
+              textDecoration: "none",
+            }}>
+              Entrar
+            </a>
+            <a href="/entrar" style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              minHeight: 48, padding: "12px 20px",
+              background: "#d4a817", color: "#0a0a0a",
+              fontSize: "1rem", fontWeight: 700,
+              fontFamily: "var(--font-body)",
+              borderRadius: 12,
+              textDecoration: "none",
+            }}>
+              Criar conta
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* ═══ HERO (duas colunas) ═══ */}
       <section className="hero-section" style={{
