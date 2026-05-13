@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -546,7 +546,7 @@ export default function Home() {
             maxWidth: 460,
             fontFamily: "var(--font-body)",
           }}>
-            Conectamos artistas, grupos, produtores, estúdios e contratantes em uma única infraestrutura digital para o samba brasileiro.
+            Conectamos artistas, oportunidades, produção, visibilidade e crescimento profissional em um só lugar. Do talento ao palco, do estúdio ao mundo.
           </p>
 
           {/* CTAs */}
