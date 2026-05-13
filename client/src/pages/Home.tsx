@@ -551,7 +551,7 @@ export default function Home() {
           </p>
 
           {/* CTAs */}
-          <div className="animate-fade-up delay-3" style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 56 }}>
+          <div className="animate-fade-up delay-3 hero-ctas" style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 56 }}>
             {isAuthenticated ? (
               <Link href="/dashboard">
                 <span style={{
@@ -673,7 +673,7 @@ export default function Home() {
               Uma plataforma, infinitas possibilidades
             </h2>
           </div>
-          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+          <div className="feature-cards-grid" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
             {FEATURES.map(feat => <FeatureCard key={feat.title} feat={feat} />)}
           </div>
         </div>
