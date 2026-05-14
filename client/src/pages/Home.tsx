@@ -119,7 +119,7 @@ button { cursor: pointer; font-family: inherit; }
 /* Hero */
 .h { position:relative;background:#000;padding-top:60px;overflow:hidden; }
 .h::before { content:'';position:absolute;inset:0;z-index:5;pointer-events:none;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); }
-.hp { width:100%;height:62vw;min-height:280px;max-height:420px;background:url('/hero-musicians.jpg') 78% center/cover no-repeat;position:relative;z-index:1; }
+.hp { width:100%;height:58vw;min-height:260px;max-height:400px;background:url('/hero-musicians.jpg') 50% center/cover no-repeat;position:relative;z-index:1; }
 .hp::after { content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 20%,rgba(0,0,0,.6) 60%,#000 100%); }
 .hc { position:relative;z-index:2;padding:28px 20px 0; }
 .ey { font-size:10px;letter-spacing:.2em;color:#C9A84C;font-weight:600;text-transform:uppercase;margin-bottom:14px;display:block;font-family:system-ui,-apple-system,sans-serif; }
@@ -180,7 +180,7 @@ button { cursor: pointer; font-family: inherit; }
   .nh { display:none !important; }
 
   .h { min-height:100vh;display:flex;align-items:stretch; }
-  .hp { position:absolute;right:0;top:0;width:58%;height:100%;max-height:none;min-height:0;background-position:78% center; }
+  .hp { position:absolute;right:0;top:0;width:58%;height:100%;max-height:none;min-height:0;background-position:50% center; }
   .hp::after { background:linear-gradient(to right,#000 0%,rgba(0,0,0,.75) 35%,transparent 65%); }
   .hc { flex:1;width:50%;display:flex;flex-direction:column;justify-content:center;padding:80px clamp(40px,6vw,100px);gap:0; }
   .btn { width:auto;padding:15px 36px;display:inline-flex; }

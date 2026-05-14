@@ -23,7 +23,8 @@
       "Bash(Select-Object FullName)",
       "Bash(git rm *)",
       "Bash(pnpm lint *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npx vercel *)"
     ]
   }
 }
