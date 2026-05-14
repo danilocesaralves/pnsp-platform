@@ -180,7 +180,7 @@ button { cursor: pointer; font-family: inherit; }
   .nh { display:none !important; }
 
   .h { min-height:100vh;display:flex;align-items:stretch; }
-  .hp { position:absolute;right:0;top:0;width:58%;height:100%;max-height:none;min-height:0;background-position:65% center; }
+  .hp { position:absolute;right:0;top:0;width:58%;height:100%;max-height:none;min-height:0;background-position:78% center; }
   .hp::after { background:linear-gradient(to right,#000 0%,rgba(0,0,0,.75) 35%,transparent 65%); }
   .hc { flex:1;width:50%;display:flex;flex-direction:column;justify-content:center;padding:80px clamp(40px,6vw,100px);gap:0; }
   .btn { width:auto;padding:15px 36px;display:inline-flex; }
