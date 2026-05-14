@@ -18,11 +18,11 @@ const NAV_ITEMS = [
 const STATS = [
   {
     value: "+25 mil", label: "artistas",
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
+    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   },
   {
     value: "+3 mil", label: "oportunidades",
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>,
+    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={G} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
   },
   {
     value: "Todo", label: "o Brasil conectado",
@@ -58,13 +58,6 @@ const FEATURES = [
   },
 ];
 
-const FOOTER_LINKS = [
-  ["Perfis",        "/perfis"],
-  ["Oportunidades", "/oportunidades"],
-  ["Estúdios",      "/estudios"],
-  ["Academia",      "/academia"],
-  ["Entrar",        "/entrar"],
-] as const;
 
 /* ─── Inline CSS ─────────────────────────────────────────────────────────────── */
 const CSS = `
@@ -178,7 +171,7 @@ const CSS = `
 /* Stats strip */
 .pn-stats {
   display: flex; gap: 0; padding-top: 28px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 32px;
 }
 .pn-stat { display: flex; align-items: center; }
 .pn-stat-divider {
@@ -195,16 +188,7 @@ const CSS = `
 }
 
 /* Feature section */
-.pn-features { padding: 80px 24px; background: #0a0a0a; }
-.pn-features-hd { text-align: center; margin-bottom: 48px; }
-.pn-tag {
-  color: #C9A84C; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em;
-  text-transform: uppercase; font-family: var(--font-body); margin-bottom: 14px;
-}
-.pn-h2 {
-  font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.6rem);
-  font-weight: 400; color: #fff; line-height: 1.1;
-}
+.pn-features { padding: 56px 24px 72px; background: #0a0a0a; }
 .pn-fc-grid {
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
 }
@@ -267,25 +251,39 @@ const CSS = `
 /* Footer */
 .pn-footer {
   background: #0a0a0a; border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 40px 24px 24px;
+  padding: 56px 24px 32px;
 }
-.pn-footer-inner {
-  max-width: 1280px; margin: 0 auto;
-  display: flex; flex-wrap: wrap; align-items: center;
-  justify-content: space-between; gap: 20px;
+.pn-footer-inner { max-width: 1280px; margin: 0 auto; }
+.pn-footer-top {
+  display: flex; gap: 56px; align-items: flex-start;
+  margin-bottom: 40px; flex-wrap: wrap;
 }
-.pn-footer-logo { height: 48px; width: auto; display: block; object-fit: contain; mix-blend-mode: screen; max-width: none; }
-.pn-footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+.pn-footer-logo { height: 52px; width: auto; display: block; object-fit: contain; mix-blend-mode: screen; max-width: none; flex-shrink: 0; }
+.pn-footer-grid { display: grid; grid-template-columns: repeat(3, auto); gap: 48px; }
+.pn-footer-col-title {
+  color: #C9A84C; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; font-family: var(--font-body); margin-bottom: 16px;
+}
 .pn-fl {
-  color: rgba(255,255,255,0.4); font-size: 0.85rem;
+  display: block; color: rgba(255,255,255,0.4); font-size: 0.85rem;
   font-family: var(--font-body); transition: color 0.2s; cursor: pointer;
+  margin-bottom: 10px;
 }
 .pn-fl:hover { color: #fff; }
 .pn-copy {
   color: rgba(255,255,255,0.3); font-size: 0.8rem; font-family: var(--font-body);
-  width: 100%; padding-top: 20px;
+  display: block; padding-top: 24px;
   border-top: 1px solid rgba(255,255,255,0.06); text-align: center;
 }
+
+/* Animations */
+@keyframes pn-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.pn-hero-anim  { animation: pn-fade-up 0.7s ease-out both; animation-delay: 0.1s; }
+.pn-stats-anim { animation: pn-fade-up 0.7s ease-out both; animation-delay: 0.3s; }
+.pn-ctas-anim  { animation: pn-fade-up 0.7s ease-out both; animation-delay: 0.5s; }
 
 /* ── Mobile ───────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -313,12 +311,13 @@ const CSS = `
     -webkit-overflow-scrolling: touch; padding-right: 20px; padding-bottom: 8px;
   }
   .pn-fc-grid::-webkit-scrollbar { display: none; }
-  .pn-fc-card { flex: 0 0 220px; }
+  .pn-fc-card { flex: 0 0 200px; min-height: 130px; padding: 16px !important; }
 
   .pn-cta-wrap { padding: 64px 20px; }
   .pn-cta-glow { display: none; }
-  .pn-footer { padding: 32px 20px 20px; }
-  .pn-footer-inner { flex-direction: column; align-items: flex-start; }
+  .pn-footer { padding: 40px 20px 24px; }
+  .pn-footer-top { flex-direction: column; gap: 24px; }
+  .pn-footer-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
 }
 `;
 
@@ -401,19 +400,33 @@ export default function Home() {
         {/* ═══ HERO ═══ */}
         <section className="pn-hero">
           <div className="pn-hero-text">
-            <p className="pn-overline">O RITMO QUE MOVE O BRASIL</p>
+            <div className="pn-hero-anim">
+              <p className="pn-overline">O RITMO QUE MOVE O BRASIL</p>
 
-            <h1 className="pn-h1">
-              <span className="pn-h1-white">A plataforma nacional do</span>
-              <em className="pn-h1-gold">samba e do pagode.</em>
-            </h1>
+              <h1 className="pn-h1">
+                <span className="pn-h1-white">A plataforma nacional do</span>
+                <em className="pn-h1-gold">samba e do pagode.</em>
+              </h1>
 
-            <p className="pn-sub">
-              Conectamos artistas, oportunidades, produção, visibilidade e crescimento
-              profissional em um só lugar. Do talento ao palco, do estúdio ao mundo.
-            </p>
+              <p className="pn-sub">
+                Conectamos artistas, oportunidades, produção, visibilidade e crescimento
+                profissional em um só lugar. Do talento ao palco, do estúdio ao mundo.
+              </p>
+            </div>
 
-            <div className="pn-hero-ctas">
+            <div className="pn-stats pn-stats-anim">
+              {STATS.map((s, i) => (
+                <div key={s.label} className="pn-stat">
+                  {i > 0 && <div className="pn-stat-divider" />}
+                  <div>
+                    <div className="pn-stat-val">{s.icon}{s.value}</div>
+                    <div className="pn-stat-lbl">{s.label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pn-hero-ctas pn-ctas-anim">
               {isAuthenticated ? (
                 <Link href="/dashboard">
                   <span className="pn-btn-gold">
@@ -436,18 +449,6 @@ export default function Home() {
                 </span>
               </Link>
             </div>
-
-            <div className="pn-stats">
-              {STATS.map((s, i) => (
-                <div key={s.label} className="pn-stat">
-                  {i > 0 && <div className="pn-stat-divider" />}
-                  <div>
-                    <div className="pn-stat-val">{s.icon}{s.value}</div>
-                    <div className="pn-stat-lbl">{s.label}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="pn-hero-img" role="img" aria-label="Músicos de samba e pagode" />
@@ -455,10 +456,6 @@ export default function Home() {
 
         {/* ═══ FEATURE CARDS ═══ */}
         <section className="pn-features">
-          <div className="pn-features-hd">
-            <p className="pn-tag">Tudo em um só lugar</p>
-            <h2 className="pn-h2">Uma plataforma, infinitas possibilidades</h2>
-          </div>
           <div className="pn-fc-grid">
             {FEATURES.map(f => (
               <Link key={f.title} href={f.href}>
@@ -497,13 +494,28 @@ export default function Home() {
         {/* ═══ FOOTER ═══ */}
         <footer className="pn-footer">
           <div className="pn-footer-inner">
-            <img src="/logo-pnsp-crop.png" alt="PNSP" className="pn-footer-logo" />
-            <div className="pn-footer-links">
-              {FOOTER_LINKS.map(([label, href]) => (
-                <Link key={label} href={href}>
-                  <span className="pn-fl">{label}</span>
-                </Link>
-              ))}
+            <div className="pn-footer-top">
+              <img src="/logo-pnsp-crop.png" alt="PNSP" className="pn-footer-logo" />
+              <div className="pn-footer-grid">
+                <div>
+                  <div className="pn-footer-col-title">PLATAFORMA</div>
+                  {[["Perfis", "/perfis"], ["Ofertas", "/ofertas"], ["Oportunidades", "/oportunidades"], ["Estúdios", "/estudios"]].map(([l, h]) => (
+                    <Link key={l} href={h}><span className="pn-fl">{l}</span></Link>
+                  ))}
+                </div>
+                <div>
+                  <div className="pn-footer-col-title">CONTEÚDO</div>
+                  {[["Academia", "/academia"], ["Mapa Vivo", "/mapa"], ["FAQ", "/faq"]].map(([l, h]) => (
+                    <Link key={l} href={h}><span className="pn-fl">{l}</span></Link>
+                  ))}
+                </div>
+                <div>
+                  <div className="pn-footer-col-title">CONTA</div>
+                  {[["Entrar", "/entrar"], ["Criar conta", "/entrar"], ["Dashboard", "/dashboard"]].map(([l, h]) => (
+                    <Link key={l} href={h}><span className="pn-fl">{l}</span></Link>
+                  ))}
+                </div>
+              </div>
             </div>
             <p className="pn-copy">© 2026 PNSP — Plataforma Nacional do Samba e do Pagode</p>
           </div>
