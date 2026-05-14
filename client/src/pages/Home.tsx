@@ -160,19 +160,19 @@ button { cursor: pointer; font-family: inherit; }
 /* ═══════════════════════════════════════════ */
 
 .pn-overline {
-  color: #C9A84C; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.22em;
-  text-transform: uppercase; font-family: var(--font-body); margin-bottom: 24px;
+  color: #C9A84C; font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; font-family: var(--font-body); margin-bottom: 6px;
   display: block;
 }
 .pn-h1 {
-  font-family: var(--font-display); font-weight: 400; line-height: 1.05;
-  letter-spacing: -0.02em; margin-bottom: 20px;
+  font-family: var(--font-display); font-weight: 400; line-height: 1.06;
+  letter-spacing: -0.02em; margin-bottom: 8px;
 }
-.pn-h1-white { font-size: clamp(2.8rem, 5.5vw, 4.5rem); color: #fff; display: block; }
-.pn-h1-gold  { font-size: clamp(2.8rem, 5.5vw, 4.5rem); color: #C9A84C; font-style: italic; display: block; }
+.pn-h1-white { font-size: clamp(26px, 7.5vw, 56px); color: #fff; display: block; }
+.pn-h1-gold  { font-size: clamp(26px, 7.5vw, 56px); color: #C9A84C; font-style: italic; display: block; }
 .pn-sub {
-  font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65;
-  margin-bottom: 0; max-width: 460px; font-family: var(--font-body);
+  font-size: 13px; color: rgba(255,255,255,0.58); line-height: 1.5;
+  margin-bottom: 14px; max-width: 460px; font-family: var(--font-body);
 }
 
 /* Stats grid */
@@ -180,36 +180,37 @@ button { cursor: pointer; font-family: inherit; }
   display: grid; grid-template-columns: repeat(3,1fr); gap: 0;
   border-top: 1px solid rgba(255,255,255,0.08);
   border-bottom: 1px solid rgba(255,255,255,0.08);
-  padding: 14px 0; margin: 20px 0;
+  padding: 10px 0; margin: 12px 0;
 }
 .pn-stat {
   display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 8px;
 }
 .pn-stat:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.08); }
 .pn-stat-ico { color: #C9A84C; margin-bottom: 4px; display: flex; }
+.pn-stat-ico svg { width: 18px; height: 18px; }
 .pn-stat-val {
-  font-size: 15px; font-weight: 800; color: #C9A84C; line-height: 1;
+  font-size: 14px; font-weight: 800; color: #C9A84C; line-height: 1;
   font-family: system-ui,-apple-system,sans-serif;
 }
 .pn-stat-lbl {
-  font-size: 10px; color: rgba(255,255,255,0.45); text-align: center;
+  font-size: 9px; color: rgba(255,255,255,0.45); text-align: center;
   font-family: system-ui,-apple-system,sans-serif;
 }
 
 /* Hero CTA */
 .pn-hero-ctas { display: flex; flex-direction: column; align-items: stretch; }
 .pn-btn-primary {
-  width: 100%; padding: 16px; font-size: 15px; font-weight: 700;
+  width: 100%; padding: 14px 20px; font-size: 14px; font-weight: 700;
   background: #C9A84C; color: #000; border-radius: 10px; border: none;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s, background 0.15s;
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  font-family: system-ui,-apple-system,sans-serif;
+  font-family: system-ui,-apple-system,sans-serif; margin-bottom: 8px;
 }
 .pn-btn-primary:hover { background: #E8C76A; }
 .pn-btn-primary:active { transform: scale(0.97); }
 .pn-sec-link {
-  font-size: 13px; color: rgba(255,255,255,0.4); padding: 10px 0;
+  font-size: 12px; color: rgba(255,255,255,0.4); padding: 6px 0;
   cursor: pointer; text-align: center; display: block;
   font-family: system-ui,-apple-system,sans-serif;
 }
@@ -363,7 +364,7 @@ button { cursor: pointer; font-family: inherit; }
   .pn-ham { display: flex !important; }
 
   .pn-hero { flex-direction: column; min-height: auto; padding-top: 64px; }
-  .pn-hero-text { width: 100%; padding: 28px 20px 0; order: 2; }
+  .pn-hero-text { width: 100%; padding: 18px 20px 20px; order: 2; }
 
   /* ═══ FOTO HERO MOBILE — ABSOLUTAMENTE INTOCÁVEL ═══ */
   .pn-hero-img { position: relative; width: 100%; height: 55vw; order: 1; }
