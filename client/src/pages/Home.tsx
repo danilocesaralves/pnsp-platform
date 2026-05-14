@@ -433,7 +433,7 @@ export default function Home() {
 
         {/* ═══ STICKY CTA ═══ */}
         <div className={`pn-sticky${scrolled ? " show" : ""}`}>
-          <span className="pn-sticky-logo">PNSP</span>
+          <img src="/logo-pnsp-crop.png" alt="PNSP" style={{ height: 28, width: "auto", display: "block", filter: "brightness(0) invert(1)" }} />
           <button className="pn-sticky-btn" onClick={() => { window.location.href = "/entrar"; }}>
             Criar conta →
           </button>
@@ -518,7 +518,7 @@ export default function Home() {
               {STATS.map((s, i) => (
                 <div key={i} className="pn-stat">
                   <span className="pn-stat-ico">{s.ico}</span>
-                  <span className="pn-stat-val">{s.val}</span>
+                  <span className="pn-stat-val" style={i === 2 ? { fontSize: 14, fontWeight: 800, color: "#C9A84C", whiteSpace: "nowrap" } : undefined}>{s.val}</span>
                   <span className="pn-stat-lbl">{s.lbl}</span>
                 </div>
               ))}
