@@ -190,7 +190,7 @@ button { cursor: pointer; font-family: inherit; }
 .pn-stat-ico svg { width: 18px; height: 18px; }
 .pn-stat-val {
   font-size: 14px; font-weight: 800; color: #C9A84C; line-height: 1;
-  font-family: system-ui,-apple-system,sans-serif;
+  font-family: system-ui,-apple-system,sans-serif; white-space: nowrap;
 }
 .pn-stat-lbl {
   font-size: 9px; color: rgba(255,255,255,0.45); text-align: center;
@@ -201,7 +201,7 @@ button { cursor: pointer; font-family: inherit; }
 .pn-hero-ctas { display: flex; flex-direction: column; align-items: stretch; }
 .pn-btn-primary {
   width: 100%; padding: 14px 20px; font-size: 14px; font-weight: 700;
-  background: #C9A84C; color: #000; border-radius: 10px; border: none;
+  background: linear-gradient(135deg, #E8C76A 0%, #C9A84C 60%, #A8832A 100%); color: #000; border-radius: 10px; border: none;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s, background 0.15s;
   display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -228,7 +228,7 @@ button { cursor: pointer; font-family: inherit; }
 .pn-strip-scroll::-webkit-scrollbar { display: none; }
 .pn-strip-scroll > a { display: contents; }
 .pn-fc {
-  flex: 0 0 78vw; max-width: 280px; min-width: 200px;
+  flex: 0 0 75vw; max-width: 270px; min-width: 200px;
   scroll-snap-align: start; padding: 18px 16px;
   display: flex; flex-direction: column; gap: 8px;
   min-height: 150px; cursor: pointer;
@@ -280,7 +280,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .pn-cta-btn {
   max-width: 340px; width: 100%; margin: 24px auto 0; padding: 16px;
-  font-size: 15px; font-weight: 700; background: #C9A84C; color: #000;
+  font-size: 15px; font-weight: 700; background: linear-gradient(135deg, #E8C76A 0%, #C9A84C 60%, #A8832A 100%); color: #000;
   border-radius: 10px; border: none; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   box-shadow: 0 0 24px rgba(201,168,76,0.2);
@@ -321,6 +321,25 @@ button { cursor: pointer; font-family: inherit; }
   border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;
   font-size: 11px; color: rgba(255,255,255,0.2);
   font-family: system-ui,-apple-system,sans-serif;
+}
+
+/* Sticky CTA */
+.pn-sticky {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+  background: rgba(0,0,0,0.92); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  transform: translateY(-100%); transition: transform 0.3s ease;
+}
+.pn-sticky.show { transform: translateY(0); }
+.pn-sticky-logo { color: #fff; font-size: 14px; font-weight: 700; font-family: system-ui,-apple-system,sans-serif; }
+.pn-sticky-btn {
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  background: linear-gradient(135deg, #E8C76A 0%, #C9A84C 60%, #A8832A 100%);
+  color: #000; border-radius: 6px; border: none; cursor: pointer;
+  font-family: system-ui,-apple-system,sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Animations */
@@ -386,6 +405,7 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDot, setActiveDot] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
   const stripRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -399,11 +419,25 @@ export default function Home() {
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 300);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
       <style>{CSS}</style>
       <div className="pn" style={{ background: "#000", color: "#fff", minHeight: "100vh", fontFamily: "var(--font-body)" }}>
         <SEO />
+
+        {/* ═══ STICKY CTA ═══ */}
+        <div className={`pn-sticky${scrolled ? " show" : ""}`}>
+          <span className="pn-sticky-logo">PNSP</span>
+          <button className="pn-sticky-btn" onClick={() => { window.location.href = "/entrar"; }}>
+            Criar conta →
+          </button>
+        </div>
 
         {/* ═══ HEADER ═══ */}
         <header className="pn-header">
