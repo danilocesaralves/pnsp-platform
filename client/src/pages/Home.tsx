@@ -518,7 +518,7 @@ export default function Home() {
               {STATS.map((s, i) => (
                 <div key={i} className="pn-stat">
                   <span className="pn-stat-ico">{s.ico}</span>
-                  <span className="pn-stat-val" style={i === 2 ? { fontSize: 14, fontWeight: 800, color: "#C9A84C", whiteSpace: "nowrap" } : undefined}>{s.val}</span>
+                  <span className="pn-stat-val" style={{ fontSize: 14, fontWeight: 800, color: "#C9A84C", whiteSpace: "nowrap" }}>{s.val}</span>
                   <span className="pn-stat-lbl">{s.lbl}</span>
                 </div>
               ))}
