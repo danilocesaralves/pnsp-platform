@@ -72,7 +72,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
           {/* Logo */}
           <Link href="/" style={{ display: "flex", alignItems: "center", overflow: "visible", flexShrink: 0 }}>
-            <img src="/logo-pnsp-crop.png" alt="PNSP" title="PNSP - Plataforma Nacional do Samba e Pagode" style={{ height: 64, width: "auto", display: "block", flexShrink: 0, objectFit: "contain", filter: "invert(1) brightness(1.2)", cursor: "pointer" }} />
+            <img src="/logo-pnsp-crop.png" alt="PNSP" title="PNSP - Plataforma Nacional do Samba e Pagode" style={{ height: 64, width: "auto", display: "block", flexShrink: 0, objectFit: "contain", filter: "brightness(0) invert(1)", cursor: "pointer" }} />
           </Link>
 
           {/* Desktop Nav */}

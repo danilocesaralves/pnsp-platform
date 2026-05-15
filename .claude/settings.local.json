@@ -25,7 +25,9 @@
       "Bash(pnpm lint *)",
       "Bash(git commit *)",
       "Bash(npx vercel *)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(railway logs *)",
+      "Bash(railway variables *)"
     ]
   }
 }
