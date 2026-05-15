@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 
 function Avatar({ name }: { name: string }) {
@@ -16,11 +16,11 @@ function Avatar({ name }: { name: string }) {
         height: 32,
         borderRadius: "50%",
         background: "#C9A84C",
-        color: "#0a0a0a",
+        color: "#000",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: 700,
         flexShrink: 0,
         cursor: "pointer",
@@ -51,14 +51,34 @@ function BellIcon() {
 
 export default function MobileHeader() {
   const { user, isAuthenticated, loading } = useAuth();
+  const [, navigate] = useLocation();
 
   return (
-    <header className="mobile-header">
+    <div
+      className="mobile-only"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 56,
+        background: "rgba(0,0,0,0.95)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        zIndex: 999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 16px",
+      }}
+    >
       <Link href="/" style={{ display: "flex", alignItems: "center" }}>
         <img
           src="/logo-pnsp-crop.png"
           alt="PNSP"
-          style={{ height: 32, width: "auto", display: "block" }}
+          height={32}
+          style={{ filter: "brightness(0) invert(1)", display: "block" }}
         />
       </Link>
 
@@ -68,55 +88,45 @@ export default function MobileHeader() {
             <div style={{ display: "flex", alignItems: "center", padding: 4, cursor: "pointer" }}>
               <BellIcon />
             </div>
-            <Link href="/dashboard">
+            <div onClick={() => navigate("/dashboard")} style={{ cursor: "pointer" }}>
               <Avatar name={user.name ?? user.email ?? "U"} />
-            </Link>
+            </div>
           </>
-        ) : !loading ? (
+        ) : (
           <>
-            <Link
-              href="/entrar"
+            <div
+              onClick={() => navigate("/entrar")}
               style={{
-                background: "none",
                 border: "1px solid rgba(255,255,255,0.25)",
+                background: "transparent",
                 color: "#fff",
+                padding: "6px 16px",
                 borderRadius: 8,
-                padding: "0 14px",
-                height: 32,
-                fontSize: 13,
-                fontWeight: 500,
+                fontSize: 14,
                 cursor: "pointer",
                 fontFamily: "var(--font-body)",
-                display: "flex",
-                alignItems: "center",
-                textDecoration: "none",
               }}
             >
               Entrar
-            </Link>
-            <Link
-              href="/cadastrar"
+            </div>
+            <div
+              onClick={() => navigate("/cadastrar")}
               style={{
                 background: "#C9A84C",
-                border: "none",
-                color: "#0a0a0a",
+                color: "#000",
+                fontWeight: 700,
+                padding: "6px 16px",
                 borderRadius: 8,
-                padding: "0 14px",
-                height: 32,
-                fontSize: 13,
-                fontWeight: 600,
+                fontSize: 14,
                 cursor: "pointer",
                 fontFamily: "var(--font-body)",
-                display: "flex",
-                alignItems: "center",
-                textDecoration: "none",
               }}
             >
               Cadastrar
-            </Link>
+            </div>
           </>
-        ) : null}
+        )}
       </div>
-    </header>
+    </div>
   );
 }

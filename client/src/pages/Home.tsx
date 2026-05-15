@@ -440,7 +440,7 @@ export default function Home() {
         </div>
 
         {/* ═══ HEADER ═══ */}
-        <header className="pn-header">
+        <header className="pn-header desktop-only">
           <div className="pn-header-inner">
             <Link href="/">
               <img src="/logo-pnsp-crop.png" alt="PNSP" className="pn-logo" />
