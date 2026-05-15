@@ -3,14 +3,14 @@
   "outputDirectory": "dist/public",
   "installCommand": "pnpm install",
   "framework": "vite",
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "https://pnsp-platform-production.up.railway.app/api/$1"
+      "source": "/api/(.*)",
+      "destination": "https://pnsp-platform-production.up.railway.app/api/$1"
     },
     {
-      "src": "/trpc/(.*)",
-      "dest": "https://pnsp-platform-production.up.railway.app/trpc/$1"
+      "source": "/trpc/(.*)",
+      "destination": "https://pnsp-platform-production.up.railway.app/trpc/$1"
     }
   ]
 }
