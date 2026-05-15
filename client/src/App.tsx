@@ -7,6 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { Loader2 } from "lucide-react";
 import { ToastContainer } from "./components/Toast";
 import { useAuth } from "@/_core/hooks/useAuth";
+import BottomNav from "./components/BottomNav";
+import MobileHeader from "./components/MobileHeader";
 
 // ─── Lazy-loaded pages (code splitting) ─────────────────────────────────────
 const Home = lazy(() => import("./pages/Home"));
@@ -149,7 +151,11 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster richColors position="top-right" />
-          <Router />
+          <MobileHeader />
+          <div className="app-content">
+            <Router />
+          </div>
+          <BottomNav />
           <ToastContainer />
         </TooltipProvider>
       </ThemeProvider>
