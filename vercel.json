@@ -11,10 +11,6 @@
     {
       "src": "/trpc/(.*)",
       "dest": "https://pnsp-platform-production.up.railway.app/trpc/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
     }
   ]
 }
