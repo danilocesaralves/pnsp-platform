@@ -5,18 +5,109 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { PROFILE_TYPES } from "@shared/pnsp";
-import ReviewSection, { StarDisplay } from "@/components/ReviewSection";
+import ReviewSection from "@/components/ReviewSection";
 import MemoryTimeline from "@/components/MemoryTimeline";
 import SEO from "@/components/SEO";
 import SchemaOrg from "@/components/SchemaOrg";
 import ShareButton from "@/components/ShareButton";
 import {
-  MapPin, Globe, Youtube, Award, Phone, Music, ExternalLink,
-  Pencil, Camera, ImagePlus, Loader2, Calendar, MessageSquare, FileText,
+  MapPin, Globe, Youtube, Music, ExternalLink,
+  Pencil, Camera, ImagePlus, Loader2, MessageSquare, FileText,
 } from "lucide-react";
 import { NewBookingForm } from "@/components/BookingFlow";
 
-/* ─── Icons ─────────────────────────────────────────────────────────────────── */
+/* ─── Constants ─────────────────────────────────────────────────────────────── */
+const GOLD = "#C9A84C";
+const GOLD_BORDER = "rgba(201,168,76,0.4)";
+const GOLD_BG = "rgba(201,168,76,0.15)";
+
+/* ─── Helpers ───────────────────────────────────────────────────────────────── */
+const MAX_SIZE = 5 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+type AllowedType = typeof ALLOWED_TYPES[number];
+
+function phoneHref(phone: string) {
+  return `tel:${phone.replace(/[^\d+]/g, "").replace(/(?!^)\+/g, "")}`;
+}
+function instagramHref(url: string) {
+  const t = url.trim();
+  if (/^https?:\/\//i.test(t)) return t;
+  return `https://www.instagram.com/${t.replace(/^@/, "").replace(/^(?:www\.)?instagram\.com\//i, "")}`;
+}
+function validateImage(file: File): string | null {
+  if (!ALLOWED_TYPES.includes(file.type as AllowedType)) return "Formato inválido. Use JPG, PNG ou WebP.";
+  if (file.size > MAX_SIZE) return "Arquivo muito grande. Máximo 5MB.";
+  return null;
+}
+const coverGradient = (type?: string | null) => ({
+  artista_solo:   "linear-gradient(135deg, #2d1800, #0a0a0a)",
+  grupo_banda:    "linear-gradient(135deg, #2d1800, #0a0a0a)",
+  produtor:       "linear-gradient(135deg, #0d0d2d, #0a0a0a)",
+  professor:      "linear-gradient(135deg, #0d0d2d, #0a0a0a)",
+  estudio:        "linear-gradient(135deg, #002d0d, #0a0a0a)",
+  luthier:        "linear-gradient(135deg, #1a1400, #0a0a0a)",
+  contratante:    "linear-gradient(135deg, #1a1400, #0a0a0a)",
+  venue:          "linear-gradient(135deg, #1a001a, #0a0a0a)",
+}[type ?? ""] ?? "linear-gradient(135deg, #1a1a0e, #0a0a0a)");
+
+/* ─── Subcomponents ─────────────────────────────────────────────────────────── */
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      fontSize: 10, fontWeight: 700, letterSpacing: "0.2em",
+      color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
+      marginBottom: 12, fontFamily: "var(--font-body)",
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function TagChip({ children }: { children: React.ReactNode }) {
+  return (
+    <span style={{
+      background: "rgba(255,255,255,0.06)",
+      border: "1px solid rgba(255,255,255,0.12)",
+      borderRadius: 20, padding: "6px 14px",
+      fontSize: 13, color: "#fff",
+      whiteSpace: "nowrap", fontFamily: "var(--font-body)",
+      flexShrink: 0,
+    }}>
+      {children}
+    </span>
+  );
+}
+
+function PortfolioCard({ item }: { item: any }) {
+  return (
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        width: 120, height: 120, flexShrink: 0,
+        borderRadius: 12,
+        border: `1px solid rgba(201,168,76,0.3)`,
+        background: "rgba(201,168,76,0.05)",
+        overflow: "hidden", textDecoration: "none",
+      }}
+    >
+      {item.mediaType === "image" ? (
+        <img src={item.url} alt={item.title ?? ""} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, padding: 10 }}>
+          <Music style={{ width: 24, height: 24, color: GOLD }} />
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", textAlign: "center", lineHeight: 1.3, fontFamily: "var(--font-body)" }}>
+            {item.title}
+          </span>
+        </div>
+      )}
+    </a>
+  );
+}
+
 function InstagramIcon({ size = 16 }: { size?: number }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -34,100 +125,15 @@ function InstagramIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-/* ─── Helpers ───────────────────────────────────────────────────────────────── */
-function phoneHref(phone: string) {
-  return `tel:${phone.replace(/[^\d+]/g, "").replace(/(?!^)\+/g, "")}`;
-}
-function instagramHref(url: string) {
-  const t = url.trim();
-  if (/^https?:\/\//i.test(t)) return t;
-  return `https://www.instagram.com/${t.replace(/^@/, "").replace(/^(?:www\.)?instagram\.com\//i, "")}`;
-}
-
-const coverGradient = (type?: string | null) => ({
-  artista_solo:    "linear-gradient(135deg, #2d1800, #1a0d00)",
-  grupo_banda:     "linear-gradient(135deg, #2d1800, #1a0d00)",
-  produtor:        "linear-gradient(135deg, #0d0d2d, #060617)",
-  professor:       "linear-gradient(135deg, #0d0d2d, #060617)",
-  estudio:         "linear-gradient(135deg, #002d0d, #001a06)",
-  luthier:         "linear-gradient(135deg, #1a1400, #2d2000)",
-  contratante:     "linear-gradient(135deg, #1a1400, #2d2000)",
-  venue:           "linear-gradient(135deg, #1a001a, #2d002d)",
-}[type ?? ""] ?? "linear-gradient(135deg, #1a1400, #2d2000)");
-
-const MAX_SIZE = 5 * 1024 * 1024;
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
-type AllowedType = typeof ALLOWED_TYPES[number];
-
-function validateImage(file: File): string | null {
-  if (!ALLOWED_TYPES.includes(file.type as AllowedType)) return "Formato inválido. Use JPG, PNG ou WebP.";
-  if (file.size > MAX_SIZE) return "Arquivo muito grande. Máximo 5MB.";
-  return null;
-}
-
-/* ─── PortfolioItem ──────────────────────────────────────────────────────────── */
-function PortfolioItem({ item }: { item: any }) {
-  const [h, setH] = useState(false);
+function WhatsAppIcon() {
   return (
-    <a
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        display: "block", aspectRatio: "1/1", borderRadius: "var(--radius-md)",
-        overflow: "hidden",
-        border: `1px solid ${h ? "rgba(212,146,10,0.40)" : "var(--creme-10)"}`,
-        background: "var(--terra-escura)", position: "relative",
-        transition: "var(--transition)",
-      }}
-      onMouseEnter={() => setH(true)}
-      onMouseLeave={() => setH(false)}
-    >
-      {item.mediaType === "image" ? (
-        <img
-          src={item.url}
-          alt={item.title ?? ""}
-          style={{
-            width: "100%", height: "100%", objectFit: "cover",
-            transform: h ? "scale(1.06)" : "scale(1)",
-            transition: "transform 0.4s ease",
-          }}
-        />
-      ) : (
-        <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6, padding: 10 }}>
-          <Music style={{ width: 28, height: 28, color: "var(--ouro)" }} />
-          <span style={{ fontSize: "var(--text-xs)", color: "var(--creme-50)", textAlign: "center", lineHeight: 1.3 }}>{item.title}</span>
-        </div>
-      )}
-      {h && (
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <ExternalLink style={{ width: 18, height: 18, color: "white" }} />
-        </div>
-      )}
-    </a>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
   );
 }
 
-/* ─── Btn link helper ────────────────────────────────────────────────────────── */
-function ActionBtn({ href, children, primary }: { href?: string; children: React.ReactNode; primary?: boolean; onClick?: () => void }) {
-  const [h, setH] = useState(false);
-  const base: React.CSSProperties = {
-    display: "inline-flex", alignItems: "center", gap: 6,
-    fontSize: "var(--text-sm)",
-    fontWeight: 600,
-    fontFamily: "var(--font-body)",
-    cursor: "pointer",
-    transition: "var(--transition)",
-    textDecoration: "none",
-    ...(primary
-      ? { background: h ? "#c4910f" : "#D4A017", color: "var(--preto)", padding: "12px 28px", borderRadius: 10, boxShadow: h ? "0 6px 24px rgba(212,146,10,0.40)" : "var(--shadow-ouro)", transform: h ? "translateY(-1px)" : "none" }
-      : { background: "none", border: "1px solid var(--creme-20)", color: h ? "var(--ouro)" : "var(--creme-80)", borderColor: h ? "rgba(212,146,10,0.40)" : "var(--creme-20)", padding: "9px 20px", borderRadius: "var(--radius-md)" }),
-  };
-  if (href) return <a href={href} style={base} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{children}</a>;
-  return <button type="button" style={base} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>{children}</button>;
-}
-
-/* ─── Component ──────────────────────────────────────────────────────────────── */
+/* ─── Main component ─────────────────────────────────────────────────────────── */
 export default function ProfileBySlug() {
   const params = useParams<{ slug: string }>();
   const slug = (params.slug ?? "").toLowerCase();
@@ -138,7 +144,6 @@ export default function ProfileBySlug() {
     { slug },
     { enabled: !!slug, staleTime: 5 * 60 * 1000 },
   );
-
   const { data: reviewStats } = trpc.reviews.getStats.useQuery(
     { profileId: profile?.id ?? 0 },
     { enabled: !!profile?.id },
@@ -152,11 +157,15 @@ export default function ProfileBySlug() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [startingChat, setStartingChat] = useState(false);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [bioExpanded, setBioExpanded] = useState(false);
+
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+
   const getPresignedUrl = trpc.upload.getPresignedUrl.useMutation();
   const updateProfile = trpc.profiles.update.useMutation({ onSuccess: () => refetch() });
   const getOrCreateConversation = trpc.chat.getOrCreateConversation.useMutation();
+
   const isOwner = !!user && !!profile && user.id === profile.userId;
 
   async function handleStartChat() {
@@ -184,22 +193,23 @@ export default function ProfileBySlug() {
       if (!res.ok) throw new Error(`Upload falhou: ${res.status}`);
       await updateProfile.mutateAsync({ id: profile!.id, ...(type === "avatar" ? { avatarUrl: publicUrl } : { coverUrl: publicUrl }) });
       toast.success(type === "avatar" ? "Foto atualizada!" : "Capa atualizada!");
-    } catch (e: any) { toast.error(e.message ?? "Erro no upload"); }
-    finally { setUploading(false); }
+    } catch (e: any) {
+      toast.error(e.message ?? "Erro no upload");
+    } finally {
+      setUploading(false);
+    }
   }
 
   /* ── Loading ── */
   if (isLoading) {
     return (
       <PublicLayout>
-        <div className="skeleton" style={{ height: 280 }} />
-        <div style={{ padding: "0 24px", maxWidth: 1280, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 24, marginTop: -56, marginBottom: 32 }}>
-            <div className="skeleton" style={{ width: 112, height: 112, borderRadius: "var(--radius-lg)", flexShrink: 0 }} />
-            <div style={{ flex: 1, paddingBottom: 8 }}>
-              <div className="skeleton" style={{ height: 36, width: 280, marginBottom: 12 }} />
-              <div className="skeleton" style={{ height: 22, width: 120, borderRadius: 9999 }} />
-            </div>
+        <div style={{ background: "#000", minHeight: "100vh", maxWidth: 480, margin: "0 auto" }}>
+          <div className="skeleton" style={{ height: 200 }} />
+          <div style={{ padding: "0 20px", marginTop: -44 }}>
+            <div className="skeleton" style={{ width: 88, height: 88, borderRadius: "50%", marginBottom: 16 }} />
+            <div className="skeleton" style={{ height: 28, width: 200, marginBottom: 10 }} />
+            <div className="skeleton" style={{ height: 22, width: 100, borderRadius: 20 }} />
           </div>
         </div>
       </PublicLayout>
@@ -209,10 +219,12 @@ export default function ProfileBySlug() {
   if (error || !profile) {
     return (
       <PublicLayout>
-        <div style={{ textAlign: "center", padding: "96px 24px" }}>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-3xl)", marginBottom: 12 }}>Perfil não encontrado</div>
-          <p style={{ color: "var(--creme-50)", marginBottom: 28 }}>O perfil que você procura não existe ou foi removido.</p>
-          <a href="/perfis" className="pnsp-btn-ghost" style={{ padding: "10px 24px" }}>← Ver todos os perfis</a>
+        <div style={{ background: "#000", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "96px 24px", textAlign: "center" }}>
+          <div style={{ fontFamily: "Georgia, serif", fontSize: 28, marginBottom: 12, color: "#fff" }}>Perfil não encontrado</div>
+          <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: 28, fontFamily: "var(--font-body)" }}>O perfil que você procura não existe ou foi removido.</p>
+          <a href="/perfis" style={{ padding: "10px 24px", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 10, color: "rgba(255,255,255,0.8)", textDecoration: "none", fontFamily: "var(--font-body)" }}>
+            ← Ver todos os perfis
+          </a>
         </div>
       </PublicLayout>
     );
@@ -223,6 +235,11 @@ export default function ProfileBySlug() {
   const genres = Array.isArray(profile.genres) ? profile.genres as string[] : [];
   const portfolio = Array.isArray(profile.portfolio) ? profile.portfolio : [];
   const memberYear = profile.createdAt ? new Date(profile.createdAt).getFullYear() : null;
+  const allTags = [...genres, ...specialties, ...instruments];
+  const bioText = profile.bio
+    ? (bioExpanded || profile.bio.length <= 200 ? profile.bio : profile.bio.slice(0, 200) + "…")
+    : null;
+  const hasPriceInfo = (profile as any).priceMin != null || (profile as any).durationMin || (profile as any).cities;
 
   return (
     <PublicLayout>
@@ -241,388 +258,492 @@ export default function ProfileBySlug() {
         city={profile.city ?? undefined}
       />
 
-      {/* ─── CAPA + AVATAR ──────────────────────────────────────────────────── */}
-      <div style={{ position: "relative", overflow: "visible" }}>
-        <div style={{
-          height: 240,
-          width: "100%",
-          position: "relative",
-          overflow: "hidden",
-          background: coverGradient(profile.profileType),
-        }}>
-          {profile.coverUrl && (
-            <img src={profile.coverUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          )}
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, rgba(10,8,0,0.85) 100%)" }} />
-          {isOwner && (
-            <button
-              type="button"
-              onClick={() => coverInputRef.current?.click()}
-              disabled={uploadingCover}
-              style={{
-                position: "absolute", top: 16, right: 16,
-                display: "flex", alignItems: "center", gap: 6,
-                padding: "7px 14px",
-                background: "rgba(10,8,0,0.70)",
-                backdropFilter: "blur(8px)",
-                border: "1px solid var(--creme-20)",
-                borderRadius: "var(--radius-full)",
-                color: "var(--creme-80)",
-                fontSize: "var(--text-xs)",
-                fontWeight: 600,
-                fontFamily: "var(--font-body)",
-                cursor: "pointer",
-                transition: "var(--transition)",
-              }}
-            >
-              {uploadingCover ? <Loader2 style={{ width: 13, height: 13, animation: "spin 1s linear infinite" }} /> : <ImagePlus style={{ width: 13, height: 13 }} />}
-              Trocar capa
-            </button>
-          )}
-          <input ref={coverInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: "none" }}
-            onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f, "cover", setUploadingCover); e.target.value = ""; }} />
-        </div>
+      <div style={{ background: "#000", minHeight: "100vh", color: "#fff" }}>
+        <div style={{ maxWidth: 480, margin: "0 auto", paddingBottom: 100 }}>
 
-        {/* Avatar — bottom:-52px sobe sobre a capa */}
-        <div style={{ position: "absolute", bottom: -52, left: 32, zIndex: 3 }}>
-          <div style={{ position: "relative" }}>
-            <img
-              src={profile.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=D4A017&textColor=0a0a0a&fontWeight=700&fontSize=40&radius=50`}
-              alt={profile.displayName}
-              style={{
-                width: 104, height: 104,
-                borderRadius: "50%",
-                objectFit: "cover",
-                border: "3px solid #D4A017",
-                boxShadow: profile.isVerified ? "0 0 0 4px rgba(212,146,10,0.20)" : "none",
-                background: "var(--terra)",
-              }}
-            />
+          {/* ── 1. HERO COVER ──────────────────────────────────────────────── */}
+          <div style={{ position: "relative", height: 200, overflow: "hidden", background: coverGradient(profile.profileType) }}>
+            {profile.coverUrl && (
+              <img
+                src={profile.coverUrl}
+                alt=""
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            )}
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%)",
+            }} />
             {isOwner && (
               <button
                 type="button"
-                onClick={() => avatarInputRef.current?.click()}
-                disabled={uploadingAvatar}
+                onClick={() => coverInputRef.current?.click()}
+                disabled={uploadingCover}
                 style={{
-                  position: "absolute", bottom: -6, right: -6,
-                  width: 28, height: 28, borderRadius: "50%",
-                  background: "var(--ouro)", color: "var(--preto)",
-                  border: "none", display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: "var(--shadow-md)", cursor: "pointer",
+                  position: "absolute", top: 12, right: 12,
+                  display: "flex", alignItems: "center", gap: 6,
+                  padding: "6px 12px",
+                  background: "rgba(0,0,0,0.65)",
+                  backdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: 20,
+                  color: "rgba(255,255,255,0.85)",
+                  fontSize: 12, fontWeight: 600,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
                 }}
               >
-                {uploadingAvatar ? <Loader2 style={{ width: 13, height: 13, animation: "spin 1s linear infinite" }} /> : <Camera style={{ width: 13, height: 13 }} />}
+                {uploadingCover
+                  ? <Loader2 style={{ width: 12, height: 12, animation: "spin 1s linear infinite" }} />
+                  : <ImagePlus style={{ width: 12, height: 12 }} />
+                }
+                Capa
               </button>
             )}
           </div>
-        </div>
-      </div>
-      <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: "none" }}
-        onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f, "avatar", setUploadingAvatar); e.target.value = ""; }} />
 
-      {/* ─── HEADER ─────────────────────────────────────────────────────────── */}
-      <div style={{ padding: "0 24px", maxWidth: 1280, margin: "0 auto" }}>
+          {/* ── 2. IDENTITY BLOCK ──────────────────────────────────────────── */}
+          <div style={{ marginTop: -44, padding: "0 20px", position: "relative", zIndex: 2 }}>
+            {/* Avatar */}
+            <div style={{ position: "relative", display: "inline-block", marginBottom: 12 }}>
+              <img
+                src={profile.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile.displayName)}&backgroundColor=C9A84C&textColor=0a0a0a&fontWeight=700&fontSize=40&radius=50`}
+                alt={profile.displayName}
+                style={{
+                  width: 88, height: 88,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: `3px solid ${GOLD}`,
+                  boxShadow: "0 0 0 4px rgba(201,168,76,0.2)",
+                  background: "#1a1a0e",
+                  display: "block",
+                }}
+              />
+              {isOwner && (
+                <button
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                  disabled={uploadingAvatar}
+                  style={{
+                    position: "absolute", bottom: -4, right: -4,
+                    width: 26, height: 26, borderRadius: "50%",
+                    background: GOLD, color: "#000",
+                    border: "none", display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.6)",
+                  }}
+                >
+                  {uploadingAvatar
+                    ? <Loader2 style={{ width: 11, height: 11, animation: "spin 1s linear infinite" }} />
+                    : <Camera style={{ width: 11, height: 11 }} />
+                  }
+                </button>
+              )}
+            </div>
 
-        {/* Name, meta & action buttons */}
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 16, paddingTop: 80, paddingBottom: 16 }}>
-          {/* Name & meta */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 8 }}>
-              <h1 data-testid="profile-name" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 800, lineHeight: 1.1, color: "var(--creme)" }}>
+            {/* Name */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+              <h1 style={{
+                fontFamily: "Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 700,
+                fontSize: 26,
+                color: "#fff",
+                lineHeight: 1.15,
+                margin: 0,
+              }}>
                 {profile.displayName}
               </h1>
               {profile.isVerified && (
-                <div style={{ background: "var(--verde)", borderRadius: "50%", padding: 4, flexShrink: 0 }}>
-                  <Award style={{ width: 14, height: 14, color: "white" }} />
-                </div>
-              )}
-            </div>
-            {reviewStats && reviewStats.total > 0 && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <StarDisplay rating={reviewStats.avg} size={18} />
-                <span style={{ color: "#D4A017", fontWeight: 700, fontSize: 15 }}>{reviewStats.avg.toFixed(1)}</span>
-                <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>({reviewStats.total} {reviewStats.total === 1 ? "avaliação" : "avaliações"})</span>
-              </div>
-            )}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
-              <span data-testid="profile-type-badge" className="pnsp-badge">
-                {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
-              </span>
-              {profile.city && (
-                <span style={{ color: "var(--creme-50)", fontSize: "var(--text-sm)", display: "flex", alignItems: "center", gap: 4 }}>
-                  <MapPin style={{ width: 13, height: 13 }} />{profile.city}, {profile.state}
+                <span style={{
+                  display: "inline-flex", alignItems: "center", justifyContent: "center",
+                  width: 20, height: 20, borderRadius: "50%",
+                  background: GOLD, color: "#000",
+                  fontSize: 11, fontWeight: 700, flexShrink: 0,
+                }}>
+                  ✓
                 </span>
               )}
             </div>
-            {(() => {
-              const isAllStar = !!(profile.avatarUrl && profile.bio && profile.city && profile.phone && profile.coverUrl);
-              if (!isAllStar && !profile.isVerified) return null;
-              return (
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {isAllStar && (
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999, background: "rgba(27,107,58,0.20)", color: "var(--verde)", border: "1px solid rgba(27,107,58,0.40)" }}>
-                      ⭐ Perfil All-Star
-                    </span>
-                  )}
-                  {profile.isVerified && (
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 9999, background: "rgba(37,99,235,0.20)", color: "#60A5FA", border: "1px solid rgba(37,99,235,0.40)" }}>
-                      ✓ Verificado
-                    </span>
-                  )}
-                </div>
-              );
-            })()}
+
+            {/* Role badge */}
+            <div style={{ marginBottom: 8 }}>
+              <span style={{
+                display: "inline-block",
+                background: GOLD_BG,
+                border: `1px solid ${GOLD_BORDER}`,
+                color: GOLD,
+                fontSize: 12,
+                borderRadius: 20,
+                padding: "4px 12px",
+                fontFamily: "var(--font-body)",
+                fontWeight: 600,
+              }}>
+                {PROFILE_TYPES[profile.profileType as keyof typeof PROFILE_TYPES] || profile.profileType?.replace(/_/g, " ")}
+              </span>
+            </div>
+
+            {/* Location */}
+            {profile.city && (
+              <div style={{ display: "flex", alignItems: "center", gap: 4, color: "rgba(255,255,255,0.55)", fontSize: 13, fontFamily: "var(--font-body)" }}>
+                <MapPin style={{ width: 12, height: 12, flexShrink: 0 }} />
+                {profile.city}, {profile.state}
+              </div>
+            )}
           </div>
 
-          {/* Action buttons */}
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingBottom: 4 }}>
+          {/* ── 3. STATS ROW ───────────────────────────────────────────────── */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1px 1fr 1px 1fr",
+            margin: "20px 0",
+            padding: "16px 0",
+            background: "rgba(255,255,255,0.03)",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+            borderBottom: "1px solid rgba(255,255,255,0.07)",
+          }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", fontFamily: "var(--font-body)" }}>
+                {reviewStats?.avg ? reviewStats.avg.toFixed(1) : "—"}
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-body)", marginTop: 2 }}>
+                ★ Avaliação
+              </div>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.1)" }} />
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", fontFamily: "var(--font-body)" }}>
+                {reviewStats?.total ?? "—"}
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-body)", marginTop: 2 }}>
+                Avaliações
+              </div>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.1)" }} />
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", fontFamily: "var(--font-body)" }}>
+                {memberYear ?? "—"}
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-body)", marginTop: 2 }}>
+                Desde
+              </div>
+            </div>
+          </div>
+
+          {/* ── 4. ACTION BUTTONS ──────────────────────────────────────────── */}
+          <div style={{ padding: "0 20px 24px" }}>
             {isOwner && (
-              <ActionBtn primary onClick={() => navigate("/dashboard")}>
-                <Pencil style={{ width: 13, height: 13 }} /> Editar perfil
-              </ActionBtn>
+              <button
+                type="button"
+                onClick={() => navigate("/dashboard")}
+                style={{
+                  width: "100%", height: 52,
+                  background: `linear-gradient(135deg, #E8C76A 0%, ${GOLD} 60%, #A8832A 100%)`,
+                  color: "#000", fontWeight: 700, fontSize: 16,
+                  borderRadius: 12, border: "none",
+                  cursor: "pointer", fontFamily: "var(--font-body)",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  marginBottom: 10,
+                }}
+              >
+                <Pencil style={{ width: 15, height: 15 }} />
+                Editar perfil
+              </button>
             )}
+
             {!isOwner && user && myProfile && (
               <button
                 type="button"
-                data-testid="booking-button"
                 onClick={() => setShowBookingForm(v => !v)}
                 style={{
-                  display: "inline-flex", alignItems: "center", gap: 6,
-                  padding: "10px 20px",
-                  background: "var(--ouro-sutil)",
-                  border: "1px solid rgba(212,146,10,0.40)",
-                  borderRadius: "var(--radius-md)",
-                  color: "var(--ouro)",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: 700,
-                  fontFamily: "var(--font-body)",
-                  cursor: "pointer",
-                  transition: "var(--transition)",
+                  width: "100%", height: 52,
+                  background: showBookingForm
+                    ? "rgba(201,168,76,0.15)"
+                    : `linear-gradient(135deg, #E8C76A 0%, ${GOLD} 60%, #A8832A 100%)`,
+                  color: showBookingForm ? GOLD : "#000",
+                  fontWeight: 700, fontSize: 16,
+                  borderRadius: 12,
+                  border: showBookingForm ? `1px solid ${GOLD_BORDER}` : "none",
+                  cursor: "pointer", fontFamily: "var(--font-body)",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  marginBottom: 10,
+                  transition: "all 0.2s ease",
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(212,146,10,0.20)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--ouro-sutil)"; }}
               >
-                <FileText style={{ width: 14, height: 14 }} />
-                Propor contratação
+                <FileText style={{ width: 15, height: 15 }} />
+                {showBookingForm ? "Fechar proposta" : "Contratar agora"}
               </button>
             )}
-            {!isOwner && user && myProfile && (
-              <button
-                type="button"
-                onClick={handleStartChat}
-                disabled={startingChat}
+
+            {!isOwner && !user && (
+              <a
+                href="/cadastrar"
                 style={{
-                  display: "inline-flex", alignItems: "center", gap: 6,
-                  padding: "10px 20px",
-                  background: "var(--terra)",
-                  border: "1px solid var(--creme-20)",
-                  borderRadius: "var(--radius-md)",
-                  color: "var(--creme-80)",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: 600,
-                  fontFamily: "var(--font-body)",
-                  cursor: startingChat ? "not-allowed" : "pointer",
-                  transition: "var(--transition)",
-                  opacity: startingChat ? 0.7 : 1,
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  width: "100%", height: 52,
+                  background: `linear-gradient(135deg, #E8C76A 0%, ${GOLD} 60%, #A8832A 100%)`,
+                  color: "#000", fontWeight: 700, fontSize: 16,
+                  borderRadius: 12, textDecoration: "none",
+                  fontFamily: "var(--font-body)", marginBottom: 10,
                 }}
-                onMouseEnter={e => { if (!startingChat) { (e.currentTarget as HTMLElement).style.borderColor = "rgba(212,146,10,0.40)"; (e.currentTarget as HTMLElement).style.color = "var(--ouro)"; } }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--creme-20)"; (e.currentTarget as HTMLElement).style.color = "var(--creme-80)"; }}
               >
-                {startingChat
-                  ? <Loader2 style={{ width: 14, height: 14, animation: "spin 1s linear infinite" }} />
-                  : <MessageSquare style={{ width: 14, height: 14 }} />
-                }
-                Enviar mensagem
-              </button>
-            )}
-            {profile.phone && (
-              <a
-                href={`https://wa.me/55${profile.phone.replace(/\D/g, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 10, background: "#25D366", color: "white", fontWeight: 700, fontSize: "var(--text-sm)", fontFamily: "var(--font-body)", textDecoration: "none", transition: "opacity 0.2s" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                WhatsApp
+                Criar conta para contratar
               </a>
             )}
-            {profile.instagramUrl && (
-              <a
-                href={instagramHref(profile.instagramUrl)}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 10, background: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", color: "white", fontWeight: 700, fontSize: "var(--text-sm)", fontFamily: "var(--font-body)", textDecoration: "none", transition: "opacity 0.2s" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                Instagram
-              </a>
-            )}
-            {profile.youtubeUrl && (
-              <ActionBtn href={profile.youtubeUrl}>
-                <Youtube style={{ width: 14, height: 14 }} />
-              </ActionBtn>
-            )}
-            {profile.website && (
-              <ActionBtn href={profile.website}>
-                <Globe style={{ width: 13, height: 13 }} />
-              </ActionBtn>
-            )}
-            <ShareButton slug={profile.slug ?? ""} name={profile.displayName} />
-          </div>
-        </div>
-      </div>
 
-      {/* ─── BOOKING FORM INLINE ────────────────────────────────────────────── */}
-      {showBookingForm && profile && myProfile && (
-        <div style={{ padding: "0 24px 24px", maxWidth: 1280, margin: "0 auto" }}>
-          <NewBookingForm
-            artistProfileId={profile.id}
-            onSuccess={() => { setShowBookingForm(false); navigate("/negociacoes"); }}
-            onCancel={() => setShowBookingForm(false)}
-          />
-        </div>
-      )}
-
-      {/* ─── BODY ───────────────────────────────────────────────────────────── */}
-      <div style={{ padding: "40px 24px 80px", maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 32 }}>
-
-          {/* Main */}
-          <div style={{ minWidth: 0 }}>
-            {profile.bio && (
-              <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "28px 28px", marginBottom: 20 }}>
-                <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 14, color: "var(--ouro)" }}>
-                  Sobre
-                </h2>
-                <p style={{ color: "var(--creme-80)", lineHeight: 1.7, whiteSpace: "pre-wrap", fontSize: "var(--text-base)" }}>
-                  {profile.bio}
-                </p>
+            {/* Secondary row */}
+            <div style={{ display: "flex", gap: 10 }}>
+              {!isOwner && user && myProfile && (
+                <button
+                  type="button"
+                  onClick={handleStartChat}
+                  disabled={startingChat}
+                  style={{
+                    flex: 1, height: 44,
+                    background: "none",
+                    border: "1px solid rgba(255,255,255,0.18)",
+                    color: "#fff", borderRadius: 12,
+                    fontWeight: 600, fontSize: 14,
+                    cursor: startingChat ? "not-allowed" : "pointer",
+                    fontFamily: "var(--font-body)",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                    opacity: startingChat ? 0.6 : 1,
+                  }}
+                >
+                  {startingChat
+                    ? <Loader2 style={{ width: 14, height: 14, animation: "spin 1s linear infinite" }} />
+                    : <MessageSquare style={{ width: 14, height: 14 }} />
+                  }
+                  Mensagem
+                </button>
+              )}
+              <div style={{ flex: !isOwner && user && myProfile ? 1 : "unset" as any }}>
+                <ShareButton slug={profile.slug ?? ""} name={profile.displayName} />
               </div>
-            )}
+            </div>
+          </div>
 
-            <ReviewSection profileId={profile.id} isOwner={isOwner} currentUserProfileId={myProfile?.id} />
+          {/* ── BOOKING FORM ───────────────────────────────────────────────── */}
+          {showBookingForm && profile && myProfile && (
+            <div style={{ padding: "0 20px 24px" }}>
+              <NewBookingForm
+                artistProfileId={profile.id}
+                onSuccess={() => { setShowBookingForm(false); navigate("/negociacoes"); }}
+                onCancel={() => setShowBookingForm(false)}
+              />
+            </div>
+          )}
 
-            <MemoryTimeline profileId={profile.id} isOwner={isOwner} myProfileId={myProfile?.id} />
-
-            {portfolio.length > 0 && (
-              <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "28px", marginBottom: 20 }}>
-                <h2 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700, marginBottom: 16, color: "var(--ouro)" }}>
-                  Portfólio
-                </h2>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
-                  {portfolio.map((item) => (
-                    <PortfolioItem key={item.id} item={item} />
-                  ))}
+          {/* ── 5. BIO ─────────────────────────────────────────────────────── */}
+          {profile.bio && (
+            <div style={{ padding: "0 20px 28px" }}>
+              <SectionLabel>Sobre</SectionLabel>
+              <p style={{
+                fontSize: 15, color: "rgba(255,255,255,0.75)",
+                lineHeight: 1.7, margin: 0,
+                fontFamily: "var(--font-body)",
+              }}>
+                {bioText}
+              </p>
+              {profile.bio.length > 200 && (
+                <div
+                  onClick={() => setBioExpanded(v => !v)}
+                  style={{
+                    color: GOLD, fontSize: 13, fontWeight: 600,
+                    marginTop: 8, cursor: "pointer",
+                    fontFamily: "var(--font-body)",
+                  }}
+                >
+                  {bioExpanded ? "Ver menos" : "Ver mais"}
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* ── 6. TAGS — horizontal scroll ────────────────────────────────── */}
+          {allTags.length > 0 && (
+            <div style={{ paddingBottom: 28 }}>
+              <div style={{ padding: "0 20px" }}>
+                <SectionLabel>Gêneros & especialidades</SectionLabel>
               </div>
-            )}
-          </div>
+              <div style={{
+                display: "flex", gap: 8,
+                overflowX: "auto", padding: "0 20px",
+                scrollbarWidth: "none",
+              }}>
+                {allTags.map((tag, i) => <TagChip key={i}>{tag}</TagChip>)}
+              </div>
+            </div>
+          )}
 
-          {/* Sidebar */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-
-            {/* Stats */}
-            <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "20px" }}>
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-lg)", fontWeight: 700, marginBottom: 16, color: "var(--creme)" }}>Resumo</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {memberYear && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
-                    <Calendar style={{ width: 14, height: 14, flexShrink: 0, color: "var(--ouro)" }} />
-                    Membro desde {memberYear}
-                  </div>
-                )}
-                {profile.city && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--creme-50)", fontSize: "var(--text-sm)" }}>
-                    <MapPin style={{ width: 14, height: 14, flexShrink: 0, color: "var(--ouro)" }} />
-                    {profile.city}, {profile.state}
-                  </div>
-                )}
-                {profile.spotifyUrl && (
-                  <a href={profile.spotifyUrl} target="_blank" rel="noopener noreferrer"
-                    style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--creme-50)", fontSize: "var(--text-sm)", transition: "color 0.2s" }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#1DB954"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
-                  >
-                    <Music style={{ width: 14, height: 14, flexShrink: 0, color: "#1DB954" }} />
-                    Ouvir no Spotify
-                  </a>
-                )}
-                {profile.phone && (
-                  <a href={phoneHref(profile.phone)}
-                    style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--creme-50)", fontSize: "var(--text-sm)", transition: "color 0.2s" }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--ouro)"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--creme-50)"; }}
-                  >
-                    <Phone style={{ width: 14, height: 14, flexShrink: 0, color: "var(--ouro)" }} />
-                    {profile.phone}
-                  </a>
-                )}
+          {/* ── PRICE / INFO ───────────────────────────────────────────────── */}
+          {hasPriceInfo && (
+            <div style={{ padding: "0 20px 28px" }}>
+              <SectionLabel>Informações</SectionLabel>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {(profile as any).priceMin != null && (
-                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#D4A017" }}>
+                  <div style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "12px 16px", borderRadius: 12,
+                    background: GOLD_BG, border: `1px solid ${GOLD_BORDER}`,
+                    fontSize: 15, fontWeight: 700, color: GOLD,
+                    fontFamily: "var(--font-body)",
+                  }}>
                     💰 Cachê: R$ {Number((profile as any).priceMin).toLocaleString("pt-BR")}
                     {(profile as any).priceMax != null && ` — R$ ${Number((profile as any).priceMax).toLocaleString("pt-BR")}`}
                   </div>
                 )}
                 {(profile as any).durationMin && (
-                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#D4A017" }}>
+                  <div style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", fontFamily: "var(--font-body)" }}>
                     ⏱ Duração: {(profile as any).durationMin}
-                    {(profile as any).durationMax && (profile as any).durationMax !== (profile as any).durationMin
-                      ? ` — ${(profile as any).durationMax}` : ""}
+                    {(profile as any).durationMax && (profile as any).durationMax !== (profile as any).durationMin ? ` — ${(profile as any).durationMax}` : ""}
                   </div>
                 )}
                 {(profile as any).cities && (
-                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#D4A017" }}>
+                  <div style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", fontFamily: "var(--font-body)" }}>
                     📍 Atua em: {(profile as any).cities}
                   </div>
                 )}
                 {instruments.length > 0 && (
-                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#D4A017" }}>
+                  <div style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", fontFamily: "var(--font-body)" }}>
                     🎸 Instrumentos: {instruments.join(", ")}
                   </div>
                 )}
               </div>
             </div>
+          )}
 
-            {/* Tags */}
-            {(specialties.length > 0 || instruments.length > 0 || genres.length > 0) && (
-              <div style={{ background: "var(--terra)", border: "1px solid var(--creme-10)", borderRadius: "var(--radius-lg)", padding: "20px", display: "flex", flexDirection: "column", gap: 16 }}>
-                {genres.length > 0 && (
-                  <div>
-                    <h4 style={{ fontSize: "var(--text-xs)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ouro)", marginBottom: 10 }}>Gêneros</h4>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                      {genres.map(g => <span key={g} className="pnsp-badge" style={{ fontSize: "var(--text-xs)" }}>{g}</span>)}
-                    </div>
-                  </div>
+          {/* ── 7. PORTFOLIO — horizontal scroll ───────────────────────────── */}
+          {portfolio.length > 0 && (
+            <div style={{ paddingBottom: 28 }}>
+              <div style={{ padding: "0 20px" }}>
+                <SectionLabel>Portfólio</SectionLabel>
+              </div>
+              <div style={{
+                display: "flex", gap: 12,
+                overflowX: "auto", padding: "0 20px",
+                scrollbarWidth: "none",
+              }}>
+                {portfolio.map((item) => <PortfolioCard key={item.id} item={item} />)}
+              </div>
+            </div>
+          )}
+
+          {/* ── 8. REVIEWS ─────────────────────────────────────────────────── */}
+          <div style={{ padding: "0 20px 28px" }}>
+            <SectionLabel>Avaliações</SectionLabel>
+            <ReviewSection profileId={profile.id} isOwner={isOwner} currentUserProfileId={myProfile?.id} />
+          </div>
+
+          {/* ── 9. MEMORIES ────────────────────────────────────────────────── */}
+          <div style={{ padding: "0 20px 28px" }}>
+            <SectionLabel>Memórias</SectionLabel>
+            <MemoryTimeline profileId={profile.id} isOwner={isOwner} myProfileId={myProfile?.id} />
+          </div>
+
+          {/* ── 10. CONTACT CHIPS ──────────────────────────────────────────── */}
+          {(profile.phone || profile.instagramUrl || profile.website || profile.youtubeUrl) && (
+            <div style={{ padding: "0 20px 28px" }}>
+              <SectionLabel>Contato</SectionLabel>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                {profile.phone && (
+                  <a
+                    href={`https://wa.me/55${profile.phone.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex", alignItems: "center", gap: 8,
+                      padding: "10px 16px", borderRadius: 10,
+                      background: "#25D366", color: "#fff",
+                      fontWeight: 700, fontSize: 14,
+                      textDecoration: "none", fontFamily: "var(--font-body)",
+                    }}
+                  >
+                    <WhatsAppIcon />
+                    WhatsApp
+                  </a>
                 )}
-                {instruments.length > 0 && (
-                  <div>
-                    <h4 style={{ fontSize: "var(--text-xs)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--creme-50)", marginBottom: 10 }}>Instrumentos</h4>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                      {instruments.map(i => (
-                        <span key={i} style={{ padding: "3px 10px", borderRadius: "var(--radius-full)", fontSize: "var(--text-xs)", border: "1px solid var(--creme-20)", color: "var(--creme-80)", fontFamily: "var(--font-body)" }}>{i}</span>
-                      ))}
-                    </div>
-                  </div>
+                {profile.instagramUrl && (
+                  <a
+                    href={instagramHref(profile.instagramUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex", alignItems: "center", gap: 8,
+                      padding: "10px 16px", borderRadius: 10,
+                      background: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)",
+                      color: "#fff", fontWeight: 700, fontSize: 14,
+                      textDecoration: "none", fontFamily: "var(--font-body)",
+                    }}
+                  >
+                    <InstagramIcon size={18} />
+                    Instagram
+                  </a>
                 )}
-                {specialties.length > 0 && (
-                  <div>
-                    <h4 style={{ fontSize: "var(--text-xs)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--creme-50)", marginBottom: 10 }}>Especialidades</h4>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                      {specialties.map(s => (
-                        <span key={s} style={{ padding: "3px 10px", borderRadius: "var(--radius-full)", fontSize: "var(--text-xs)", border: "1px solid var(--creme-20)", color: "var(--creme-80)", fontFamily: "var(--font-body)" }}>{s}</span>
-                      ))}
-                    </div>
-                  </div>
+                {profile.youtubeUrl && (
+                  <a
+                    href={profile.youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex", alignItems: "center", gap: 8,
+                      padding: "10px 16px", borderRadius: 10,
+                      background: "#FF0000", color: "#fff",
+                      fontWeight: 700, fontSize: 14,
+                      textDecoration: "none", fontFamily: "var(--font-body)",
+                    }}
+                  >
+                    <Youtube style={{ width: 16, height: 16 }} />
+                    YouTube
+                  </a>
+                )}
+                {profile.website && (
+                  <a
+                    href={profile.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex", alignItems: "center", gap: 8,
+                      padding: "10px 16px", borderRadius: 10,
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      color: "rgba(255,255,255,0.8)",
+                      fontWeight: 600, fontSize: 14,
+                      textDecoration: "none", fontFamily: "var(--font-body)",
+                    }}
+                  >
+                    <Globe style={{ width: 16, height: 16 }} />
+                    Website
+                  </a>
                 )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
         </div>
       </div>
+
+      {/* Hidden file inputs */}
+      <input
+        ref={coverInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        style={{ display: "none" }}
+        onChange={e => {
+          const f = e.target.files?.[0];
+          if (f) handleFileUpload(f, "cover", setUploadingCover);
+          e.target.value = "";
+        }}
+      />
+      <input
+        ref={avatarInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        style={{ display: "none" }}
+        onChange={e => {
+          const f = e.target.files?.[0];
+          if (f) handleFileUpload(f, "avatar", setUploadingAvatar);
+          e.target.value = "";
+        }}
+      />
     </PublicLayout>
   );
 }
