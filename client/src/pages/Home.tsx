@@ -432,7 +432,7 @@ export default function Home() {
         <SEO />
 
         {/* ═══ STICKY CTA ═══ */}
-        <div className={`pn-sticky${scrolled ? " show" : ""}`}>
+        <div className={`pn-sticky desktop-only${scrolled ? " show" : ""}`}>
           <img src="/logo-pnsp-crop.png" alt="PNSP" style={{ height: 28, width: "auto", display: "block", filter: "brightness(0) invert(1)" }} />
           <button className="pn-sticky-btn" onClick={() => { window.location.href = "/entrar"; }}>
             Criar conta →
@@ -490,7 +490,7 @@ export default function Home() {
                 color: "rgba(255,255,255,0.8)", fontSize: "1rem",
                 fontWeight: 500, fontFamily: "var(--font-body)",
               }}>Entrar</a>
-              <a href="/entrar" style={{
+              <a href="/cadastrar" style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
                 minHeight: 48, padding: "12px 20px",
                 background: G, color: "#000", fontSize: "1rem",
@@ -530,7 +530,7 @@ export default function Home() {
                   <button className="pn-btn-primary">Acessar Dashboard <IcoArr /></button>
                 </Link>
               ) : (
-                <button className="pn-btn-primary" onClick={() => { window.location.href = "/entrar"; }}>
+                <button className="pn-btn-primary" onClick={() => { window.location.href = "/cadastrar"; }}>
                   Criar minha conta grátis <IcoArr />
                 </button>
               )}
