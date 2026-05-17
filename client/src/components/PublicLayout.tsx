@@ -52,7 +52,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     <div style={{ minHeight: "100vh", background: "var(--preto)", display: "flex", flexDirection: "column" }}>
 
       {/* ── Header ────────────────────────────────────────────────────────── */}
-      <header style={{
+      <header className="desktop-only" style={{
         position: "sticky",
         top: 0,
         zIndex: 50,
@@ -344,7 +344,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 >
                   Entrar
                 </a>
-                <a href="/entrar" style={{
+                <a href="/cadastrar" style={{
                   padding: "8px 18px",
                   background: "var(--ouro)",
                   color: "var(--preto)",
@@ -464,7 +464,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", border: "1px solid var(--creme-20)", borderRadius: "var(--radius-md)", color: "var(--creme-80)", fontSize: "var(--text-sm)", fontWeight: 500, fontFamily: "var(--font-body)" }}>
                 Entrar
               </a>
-              <a href="/entrar" style={{ flex: 1, textAlign: "center", padding: "11px", background: "var(--ouro)", borderRadius: "var(--radius-md)", color: "var(--preto)", fontSize: "var(--text-sm)", fontWeight: 700, fontFamily: "var(--font-body)" }}>
+              <a href="/cadastrar" style={{ flex: 1, textAlign: "center", padding: "11px", background: "var(--ouro)", borderRadius: "var(--radius-md)", color: "var(--preto)", fontSize: "var(--text-sm)", fontWeight: 700, fontFamily: "var(--font-body)" }}>
                 Cadastrar
               </a>
             </div>
